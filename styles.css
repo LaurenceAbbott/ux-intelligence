@@ -224,7 +224,10 @@ select:focus{
 .detail-hero{
   color:var(--white);
   background-color:var(--black);
-  background-image:linear-gradient(#2a2622 4%,#2e2633 32%,#2e3244 56%,#2f3f8c 80%,#2f4bba);
+    background-image:url("./portal.svg"),linear-gradient(#2a2622 4%,#2e2633 32%,#2e3244 56%,#2f3f8c 80%,#2f4bba);
+  background-repeat:no-repeat,no-repeat;
+  background-position:bottom 2rem right 2rem,center;
+  background-size:min(40%,460px) auto,cover;
   border:1px solid var(--line-dark);
   border-radius:var(--radius);
   padding:3rem;

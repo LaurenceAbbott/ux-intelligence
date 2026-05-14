@@ -353,7 +353,6 @@ function renderEvaluation(){
             <label class="check-control"><span>Product / area</span><input id="productArea" class="field" type="text" /></label>
             <label class="check-control"><span>Review stage</span><select id="reviewStage" required><option value="">Select review stage</option>${reviewStages.map(stage => `<option value="${stage}">${stage}</option>`).join('')}</select></label>
             <label class="check-control"><span>Reviewer</span><input id="reviewer" class="field" type="text" /></label>
-            <label class="check-control"><span>Review date</span><input id="reviewDate" class="field" type="date" /></label>
           </div>
            <div class="step-actions">
             <button type="button" class="btn dark step-next" data-next-step="2">Next: Checklist selection</button>
@@ -436,7 +435,6 @@ function validateStep(step){
       { id: 'workItemType', message: 'Please select a work item type.' },
       { id: 'valueStream', message: 'Please select a value stream.' },
       { id: 'reviewStage', message: 'Please select a review stage.' },
-      { id: 'reviewDate', message: 'Please select a review date.' }
     ];
     requiredFields.forEach(({ id, message }) => {
       const el = document.getElementById(id);
@@ -572,7 +570,6 @@ Value stream: ${field('valueStream')}
 Product / area: ${field('productArea')}
 Review stage: ${field('reviewStage')}
 Reviewer: ${field('reviewer')}
-Review date: ${field('reviewDate')}
 Checklist section: ${section}
 UX Quality Score: ${score}
 Concern rating: ${concern}

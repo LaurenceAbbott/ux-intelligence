@@ -290,11 +290,10 @@ select:focus{
 }
 .section-title{
   color:var(--black);
-  margin:0;
-  font-size:1.25vw
-  line-height:1.2;
-  letter-spacing:0em;
-  font-weight:300;
+    max-width: 30ch;
+    font-size: 3vw;
+    line-height: 1.2;
+}
 }
 .section-subtitle{
   color:var(--muted);

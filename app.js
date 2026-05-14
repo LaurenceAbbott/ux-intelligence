@@ -336,7 +336,12 @@ function renderEvaluation(){
      </section>
     <section class="section detail-layout">
       <div>
-      <div class="panel review-details-panel">
+      <div class="review-steps panel">
+        <button type="button" class="step-chip active" data-step="1">1. Review details</button>
+        <button type="button" class="step-chip" data-step="2">2. Checklist selection</button>
+        <button type="button" class="step-chip" data-step="3">3. Review form</button>
+      </div>
+      <div class="panel review-details-panel review-step" data-step-panel="1">
           <h3>Review details</h3>
           <div class="review-details-grid">
             <label class="check-control"><span>Work item name</span><input id="workItemName" class="field" type="text" /></label>
@@ -347,12 +352,24 @@ function renderEvaluation(){
             <label class="check-control"><span>Reviewer</span><input id="reviewer" class="field" type="text" /></label>
             <label class="check-control"><span>Review date</span><input id="reviewDate" class="field" type="date" value="${today}" /></label>
           </div>
+           <div class="step-actions">
+            <button type="button" class="btn dark step-next" data-next-step="2">Next: Checklist selection</button>
+          </div>
         </div>
-        <div class="panel">
+        <div class="panel review-step is-hidden" data-step-panel="2">
           <h3>Checklist section</h3>
           <select id="reviewSection" onchange="renderChecklist()">${sectionOptions}</select>
+          <div class="step-actions">
+            <button type="button" class="btn step-back" data-prev-step="1">Back</button>
+            <button type="button" class="btn dark step-next" data-next-step="3">Next: Review form</button>
+          </div>
         </div>
-        <div id="checklistContainer" class="checklist section"></div>
+        <div class="review-step is-hidden" data-step-panel="3">
+          <div id="checklistContainer" class="checklist"></div>
+          <div class="step-actions">
+            <button type="button" class="btn step-back" data-prev-step="2">Back</button>
+          </div>
+        </div>
       </div>
       <aside class="panel score-output">
         <span class="kicker">UX quality score</span>
@@ -369,7 +386,20 @@ function renderEvaluation(){
     </section>
     <section class="panel section print-only" id="printFailedSection"></section>
   `;
+  initEvaluationSteps();
   renderChecklist();
+}
+
+function initEvaluationSteps(){
+  const stepChips = [...document.querySelectorAll('.step-chip')];
+  const stepPanels = [...document.querySelectorAll('.review-step')];
+  const setStep = (step) => {
+    stepChips.forEach(chip => chip.classList.toggle('active', Number(chip.dataset.step) === step));
+    stepPanels.forEach(panel => panel.classList.toggle('is-hidden', Number(panel.dataset.stepPanel) !== step));
+  };
+  stepChips.forEach(chip => chip.addEventListener('click', () => setStep(Number(chip.dataset.step))));
+  document.querySelectorAll('.step-next').forEach(btn => btn.addEventListener('click', () => setStep(Number(btn.dataset.nextStep))));
+  document.querySelectorAll('.step-back').forEach(btn => btn.addEventListener('click', () => setStep(Number(btn.dataset.prevStep))));
 }
 
 function renderChecklist(){
@@ -387,7 +417,7 @@ function renderChecklist(){
           <input type="radio" id="check-${i}-pass" name="check-${i}" value="pass" class="check-result">
           <label for="check-${i}-pass">Yes</label>
           <input type="radio" id="check-${i}-fail" name="check-${i}" value="fail" class="check-result">
-          <label for="check-${i}-fail">No</label
+          <label for="check-${i}-fail">No</label>
           <input type="radio" id="check-${i}-na" name="check-${i}" value="na" class="check-result" checked>
           <label for="check-${i}-na">Not applicable</label>
         </div>

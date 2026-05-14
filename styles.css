@@ -350,7 +350,7 @@ select:focus{
   border:1px solid var(--line);
 }
 .panel.highlight p,
-.panel.highlight .section-subtitle{color:var(--white)}
+.panel.highlight .section-subtitle{color:var(--black)}
 .panel h3,
 .card h3{
   color:inherit;
@@ -364,7 +364,7 @@ select:focus{
 .card p{
   line-height:1.35;
 }
-.panel.highlight p{color:var(--white)}
+.panel.highlight p{color:var(--black)}
 .meta-row{
   display:flex;
   align-items:center;
@@ -529,6 +529,15 @@ table.data tr:last-child td{border-bottom:0}
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:1rem;
+}
+.calc-field{
+  display:flex;
+  flex-direction:column;
+  gap:.45rem;
+}
+.calc-field span{
+  font-size:.78rem;
+  color:var(--muted);
 }
 .empty{
   color:var(--muted);

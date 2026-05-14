@@ -17,7 +17,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate visibility of system status without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is it immediately clear to the user what state the system or record is in, what has just happened, and what should happen next?",
       "Number": 1
     },
     {
@@ -37,7 +37,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate match with real-world language without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface use language the user would naturally recognise, rather than internal system terms, abbreviations or technical labels?",
       "Number": 2
     },
     {
@@ -57,7 +57,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate recognition rather than recall without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the user see the information, options and context they need without having to remember details from another step or screen?",
       "Number": 3
     },
     {
@@ -77,7 +77,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate user control and freedom without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the user cancel, undo, save progress or recover from a mistake without losing unnecessary work?",
       "Number": 4
     },
     {
@@ -97,7 +97,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate consistency and standards without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do similar actions, labels, fields and patterns behave consistently across this journey and related product areas?",
       "Number": 5
     },
     {
@@ -117,7 +117,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate error prevention without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design prevent likely mistakes before submission, especially where the consequence of an error would create rework or risk?",
       "Number": 6
     },
     {
@@ -137,7 +137,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate flexibility and efficiency of use without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design support both new users who need guidance and frequent users who need faster ways to complete repeat tasks?",
       "Number": 7
     },
     {
@@ -157,7 +157,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate aesthetic and minimalist design without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has unnecessary clutter been removed without hiding information that users genuinely need to complete the task?",
       "Number": 8
     },
     {
@@ -177,7 +177,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate help users recover from errors without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "When something goes wrong, does the message clearly explain the problem and how the user can fix it?",
       "Number": 9
     },
     {
@@ -197,7 +197,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate help and documentation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is help available at the point of need, in language that relates directly to the task the user is completing?",
       "Number": 10
     },
     {
@@ -217,7 +217,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate feedback loops without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "After the user takes an action, does the interface clearly confirm what happened and whether anything else is needed?",
       "Number": 11
     },
     {
@@ -237,7 +237,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate affordances without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is it visually clear which elements are clickable, editable, selectable or purely informational?",
       "Number": 12
     },
     {
@@ -257,7 +257,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate cognitive load without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the task structured so the user can focus on what matters now, without processing unnecessary information or choices?",
       "Number": 13
     },
     {
@@ -277,7 +277,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate working memory limits without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface keep important details visible instead of expecting the user to hold them in memory?",
       "Number": 14
     },
     {
@@ -297,7 +297,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate hick's law without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are choices grouped, prioritised or reduced so the user can make the right decision without unnecessary hesitation?",
       "Number": 15
     },
     {
@@ -317,7 +317,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate fitts's law without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are important controls large enough, close enough and separated enough to select quickly and accurately?",
       "Number": 16
     },
     {
@@ -337,7 +337,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate chunking without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is complex information broken into meaningful groups that are easy to scan and understand?",
       "Number": 17
     },
     {
@@ -357,7 +357,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate mental models without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the journey organised around how users think about the task, rather than how the system or organisation is structured internally?",
       "Number": 18
     },
     {
@@ -377,7 +377,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate decision fatigue without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the journey avoid asking users to make repeated low-value decisions that could be defaulted, grouped or explained?",
       "Number": 19
     },
     {
@@ -397,7 +397,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate choice overload without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are users given a manageable set of clearly differentiated options, rather than too many similar choices at once?",
       "Number": 20
     },
     {
@@ -417,7 +417,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate attention hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the screen guide attention to the most important status, information and next action first?",
       "Number": 21
     },
     {
@@ -437,7 +437,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate change blindness without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "When something changes on the screen, is that change noticeable enough for users to understand it happened?",
       "Number": 22
     },
     {
@@ -457,7 +457,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate peak-end rule without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the end of the journey leave the user with a clear, confident understanding of what was completed and what happens next?",
       "Number": 23
     },
     {
@@ -477,7 +477,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate primacy and recency effects without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are the most important information and actions placed where users are most likely to notice and remember them?",
       "Number": 24
     },
     {
@@ -497,7 +497,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate dense information layouts without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "For frequent or expert users, is the right amount of information visible in one scannable workspace without creating unnecessary clutter?",
       "Number": 25
     },
     {
@@ -517,7 +517,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate workflow continuity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the user complete the task without losing context or repeatedly moving between unrelated screens?",
       "Number": 26
     },
     {
@@ -537,7 +537,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate context switching without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is supporting information available close to the task, reducing the need to open other areas, tabs or systems?",
       "Number": 27
     },
     {
@@ -557,7 +557,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate findability without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users quickly find the record, document, status or action they are looking for using labels and paths that make sense?",
       "Number": 28
     },
     {
@@ -577,7 +577,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate search efficiency without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does search return useful, understandable results that help users identify the right item quickly?",
       "Number": 29
     },
     {
@@ -597,7 +597,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate expert-user shortcuts without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are there efficient shortcuts, saved views or quick actions for users who complete this task frequently?",
       "Number": 30
     },
     {
@@ -617,7 +617,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate role-based views without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface show users the information and actions most relevant to their role or task?",
       "Number": 31
     },
     {
@@ -637,7 +637,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate task prioritisation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are urgent, overdue or high-priority tasks visually and structurally prioritised above routine work?",
       "Number": 32
     },
     {
@@ -657,7 +657,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate auditability without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users understand what changed, when it changed, who changed it and why?",
       "Number": 33
     },
     {
@@ -677,7 +677,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate operational resilience without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "If something fails or is interrupted, can the user recover progress and understand what to do next?",
       "Number": 34
     },
     {
@@ -697,7 +697,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate bulk actions without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Where users need to repeat the same action across multiple items, is there a safe and efficient bulk action pattern?",
       "Number": 35
     },
     {
@@ -717,7 +717,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Clicks Per Task, Context Switches, Servicing Time, Power-user Satisfaction..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate saved views and filters without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users save and reuse views or filters for work they need to return to regularly?",
       "Number": 36
     },
     {
@@ -737,7 +737,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate inline validation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the form show specific validation feedback close to the field while the user can still correct it easily?",
       "Number": 37
     },
     {
@@ -757,7 +757,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate error summaries without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "For longer forms, is there a clear error summary that links users to the fields needing attention?",
       "Number": 38
     },
     {
@@ -777,7 +777,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate field grouping without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are related fields grouped together under clear headings that match the user’s task?",
       "Number": 39
     },
     {
@@ -797,7 +797,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate required and optional fields without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is it clear which fields are required, which are optional, and why sensitive or unusual information is needed?",
       "Number": 40
     },
     {
@@ -817,7 +817,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate progress indicators without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "In a multi-step journey, can the user see where they are, what is complete and what remains?",
       "Number": 41
     },
     {
@@ -837,7 +837,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate save and resume without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the user safely pause and return to a long or interrupted task without losing progress?",
       "Number": 42
     },
     {
@@ -857,7 +857,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate default values without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are defaults helpful, transparent and easy to change if they do not match the user’s situation?",
       "Number": 43
     },
     {
@@ -877,7 +877,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate review before submission without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Before committing a high-impact action, can the user review the key details and consequences?",
       "Number": 44
     },
     {
@@ -897,7 +897,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate data persistence without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does information entered by the user remain available when they move between steps, refresh or return later?",
       "Number": 45
     },
     {
@@ -917,7 +917,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate progressive disclosure without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is additional complexity revealed only when useful, without hiding information that frequent users need quickly?",
       "Number": 46
     },
     {
@@ -937,7 +937,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate conditional logic clarity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "When fields or options appear because of a previous answer, is it clear why they are being shown?",
       "Number": 47
     },
     {
@@ -957,7 +957,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Field Error Rate, Failed Submissions, Correction Time, Drop-off Points..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate confirmation patterns without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are confirmations used for actions that genuinely need reassurance, especially destructive or high-impact actions?",
       "Number": 48
     },
     {
@@ -977,7 +977,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate colour contrast without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do text, icons, statuses and controls have enough contrast to be readable and accessible in context?",
       "Number": 49
     },
     {
@@ -997,7 +997,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate keyboard navigation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the task be completed using the keyboard in a logical order without traps or unreachable controls?",
       "Number": 50
     },
     {
@@ -1017,7 +1017,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate focus visibility without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the current keyboard focus clearly visible on every interactive element?",
       "Number": 51
     },
     {
@@ -1037,7 +1037,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate touch target sizing without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are interactive targets large enough and spaced well enough to avoid accidental selection?",
       "Number": 52
     },
     {
@@ -1057,7 +1057,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate labels and instructions without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do inputs and controls have persistent, understandable labels and instructions where needed?",
       "Number": 53
     },
     {
@@ -1077,7 +1077,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate screen reader structure without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Would a screen reader user understand the page structure, form labels, status messages and available actions?",
       "Number": 54
     },
     {
@@ -1097,7 +1097,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate accessible authentication without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users authenticate without inaccessible puzzles, memory-heavy steps or unclear error recovery?",
       "Number": 55
     },
     {
@@ -1117,7 +1117,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate zoom and scaling without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface remain usable when text is enlarged or the page is zoomed?",
       "Number": 56
     },
     {
@@ -1137,7 +1137,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate cognitive accessibility without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the task predictable, clearly worded and structured to reduce memory burden and confusion?",
       "Number": 57
     },
     {
@@ -1157,7 +1157,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate motion sensitivity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is motion purposeful, controllable and respectful of reduced-motion needs?",
       "Number": 58
     },
     {
@@ -1177,7 +1177,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate colour-independent meaning without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is meaning communicated through text, icons or patterns as well as colour?",
       "Number": 59
     },
     {
@@ -1197,7 +1197,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Accessibility Audit Findings, Keyboard Completion, Contrast Failures, Screen Reader Issues..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate accessible error identification without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are errors identified in text and linked clearly to the field or action that needs correction?",
       "Number": 60
     },
     {
@@ -1217,7 +1217,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate visual hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can the user quickly identify the most important information, current status and primary action?",
       "Number": 61
     },
     {
@@ -1237,7 +1237,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate whitespace without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is spacing used to improve grouping and readability without hiding useful operational context?",
       "Number": 62
     },
     {
@@ -1257,7 +1257,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate alignment without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are labels, values and actions aligned consistently so users can scan and compare information easily?",
       "Number": 63
     },
     {
@@ -1277,7 +1277,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate proximity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are related messages, labels, values and actions placed close enough together to show their relationship?",
       "Number": 64
     },
     {
@@ -1297,7 +1297,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate gestalt grouping without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do visual groups accurately reflect which items belong together and which are separate?",
       "Number": 65
     },
     {
@@ -1317,7 +1317,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate grid systems without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the layout use a consistent grid that supports alignment, scanning and responsive behaviour?",
       "Number": 66
     },
     {
@@ -1337,7 +1337,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate contrast hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does contrast help users distinguish primary, secondary and supporting information?",
       "Number": 67
     },
     {
@@ -1357,7 +1357,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate content prioritisation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the content ordered so the most important information appears before supporting detail?",
       "Number": 68
     },
     {
@@ -1377,7 +1377,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate dominance without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the most visually dominant element match the most important task or decision?",
       "Number": 69
     },
     {
@@ -1397,7 +1397,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate scannability without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users find key information quickly without reading every word on the page?",
       "Number": 70
     },
     {
@@ -1417,7 +1417,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate information density without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the level of information density appropriate for the user’s expertise, task frequency and context?",
       "Number": 71
     },
     {
@@ -1437,7 +1437,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate visual clutter reduction without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has visual noise been reduced so important content and actions are easier to identify?",
       "Number": 72
     },
     {
@@ -1457,7 +1457,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate line length without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are long text lines kept to a readable width so users can follow guidance comfortably?",
       "Number": 73
     },
     {
@@ -1477,7 +1477,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate readable font sizing without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is text large and clear enough to read comfortably in the actual workflow context?",
       "Number": 74
     },
     {
@@ -1497,7 +1497,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate heading hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do headings create a logical structure that helps users scan the page and understand sections?",
       "Number": 75
     },
     {
@@ -1517,7 +1517,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate paragraph spacing without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is text spaced so users can distinguish ideas, instructions and sections without fatigue?",
       "Number": 76
     },
     {
@@ -1537,7 +1537,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate uppercase readability without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is uppercase used sparingly for short labels or tags, rather than long statuses or instructions?",
       "Number": 77
     },
     {
@@ -1557,7 +1557,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate typography rhythm without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is typography spacing consistent enough to make the page feel structured and easy to follow?",
       "Number": 78
     },
     {
@@ -1577,7 +1577,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate character spacing without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is text spacing comfortable, especially for small labels, tags and dense information?",
       "Number": 79
     },
     {
@@ -1597,7 +1597,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate legibility without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are important values and labels legible in terms of size, weight, spacing and contrast?",
       "Number": 80
     },
     {
@@ -1617,7 +1617,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate reading speed without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users scan and understand the content quickly enough for the task they are completing?",
       "Number": 81
     },
     {
@@ -1637,7 +1637,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate plain english without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the content written in plain language that avoids unnecessary jargon or internal terminology?",
       "Number": 82
     },
     {
@@ -1657,7 +1657,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate terminology clarity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the same term used consistently for the same concept throughout the journey?",
       "Number": 83
     },
     {
@@ -1677,7 +1677,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate microcopy clarity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does small helper text, button text and guidance reduce uncertainty at the point of action?",
       "Number": 84
     },
     {
@@ -1697,7 +1697,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate semantic colour systems without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are colours used consistently to communicate meaning such as success, warning, error or information?",
       "Number": 85
     },
     {
@@ -1717,7 +1717,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate status colour meaning without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are status colours paired with clear labels so users understand what each state means?",
       "Number": 86
     },
     {
@@ -1737,7 +1737,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate warning colour usage without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are warning colours reserved for genuine attention states rather than overused for routine information?",
       "Number": 87
     },
     {
@@ -1757,7 +1757,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate colour blindness without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users understand charts, statuses and alerts without relying on colour distinction alone?",
       "Number": 88
     },
     {
@@ -1777,7 +1777,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate accessible palettes without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the colour palette been checked for contrast and distinguishability across key states?",
       "Number": 89
     },
     {
@@ -1797,7 +1797,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate dark mode contrast without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "If dark mode is used, have contrast, focus states and semantic colours been tested in that mode?",
       "Number": 90
     },
     {
@@ -1817,7 +1817,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate saturation fatigue without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are highly saturated colours used sparingly so they do not create visual fatigue or weaken hierarchy?",
       "Number": 91
     },
     {
@@ -1837,7 +1837,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate trust perception without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the visual and content design make the product feel clear, reliable and trustworthy?",
       "Number": 92
     },
     {
@@ -1857,7 +1857,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate contrast perception without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does supporting text remain readable while still feeling lower priority than critical information?",
       "Number": 93
     },
     {
@@ -1877,7 +1877,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate brand consistency without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the experience feel consistent with shared product, brand and design-system patterns?",
       "Number": 94
     },
     {
@@ -1897,7 +1897,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate colour hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does colour guide users toward priority and meaning rather than decorating too many elements?",
       "Number": 95
     },
     {
@@ -1917,7 +1917,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate non-colour cues without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are important states and messages supported by labels, icons or patterns as well as colour?",
       "Number": 96
     },
     {
@@ -1937,7 +1937,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate button hierarchy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the primary action clearly distinguishable from secondary, neutral and destructive actions?",
       "Number": 97
     },
     {
@@ -1957,7 +1957,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate primary vs secondary actions without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users tell which action moves the task forward and which actions are secondary alternatives?",
       "Number": 98
     },
     {
@@ -1977,7 +1977,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate destructive action safety without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are destructive or high-impact actions clearly separated, labelled and protected from accidental selection?",
       "Number": 99
     },
     {
@@ -1997,7 +1997,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate modal interruption without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is a modal used only when the user must make a focused decision before continuing?",
       "Number": 100
     },
     {
@@ -2017,7 +2017,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate hover dependency without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are important actions available without relying on hover-only behaviour?",
       "Number": 101
     },
     {
@@ -2037,7 +2037,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate loading states without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "When the system is working, does the user receive clear feedback about what is happening?",
       "Number": 102
     },
     {
@@ -2057,7 +2057,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate microinteractions without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do small interactions confirm state or action without distracting from the task?",
       "Number": 103
     },
     {
@@ -2077,7 +2077,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate navigation placement without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is navigation predictable and placed where users expect it across related journeys?",
       "Number": 104
     },
     {
@@ -2097,7 +2097,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate touch gestures without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are gesture-based interactions discoverable and not the only way to complete an important action?",
       "Number": 105
     },
     {
@@ -2117,7 +2117,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate motion feedback without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does motion help explain state changes rather than distract or slow the user?",
       "Number": 106
     },
     {
@@ -2137,7 +2137,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate sticky actions without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do sticky actions help users complete long tasks without covering content or creating clutter?",
       "Number": 107
     },
     {
@@ -2157,7 +2157,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate keyboard accelerators without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are keyboard accelerators discoverable, consistent and useful for frequent users?",
       "Number": 108
     },
     {
@@ -2177,7 +2177,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate desktop-first enterprise ux without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the experience optimised for the device context where complex work is actually completed?",
       "Number": 109
     },
     {
@@ -2197,7 +2197,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate mobile customer journeys without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the mobile journey simple, readable and practical for users completing tasks on a small screen?",
       "Number": 110
     },
     {
@@ -2217,7 +2217,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate tablet workflows without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the tablet layout support touch interaction while preserving enough context to complete the task?",
       "Number": 111
     },
     {
@@ -2237,7 +2237,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate responsive density without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface adapt density appropriately without hiding key information or actions?",
       "Number": 112
     },
     {
@@ -2257,7 +2257,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate browser compatibility without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the workflow been tested in the browsers and versions users are expected to use?",
       "Number": 113
     },
     {
@@ -2277,7 +2277,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate viewport prioritisation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "At common viewport sizes, are the most important status and actions visible without unnecessary scrolling?",
       "Number": 114
     },
     {
@@ -2297,7 +2297,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate fold awareness without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are critical messages and actions positioned so users are likely to notice them before continuing?",
       "Number": 115
     },
     {
@@ -2317,7 +2317,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate input methods without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the workflow work across relevant input methods such as mouse, keyboard, touch and assistive technology?",
       "Number": 116
     },
     {
@@ -2337,7 +2337,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate device switching without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users continue or recover their work when switching device or returning later?",
       "Number": 117
     },
     {
@@ -2357,7 +2357,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate multi-screen workflows without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design support users who need to compare or reference information across multiple screens?",
       "Number": 118
     },
     {
@@ -2377,7 +2377,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate large monitor layouts without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "On large screens, does the layout use space productively without creating unreadable line lengths or scattered actions?",
       "Number": 119
     },
     {
@@ -2397,7 +2397,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate print and document outputs without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do exported or printed outputs preserve the information hierarchy, status and key context users need?",
       "Number": 120
     },
     {
@@ -2417,7 +2417,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate digital confidence by age without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the journey support users with different levels of digital confidence without slowing experienced users unnecessarily?",
       "Number": 121
     },
     {
@@ -2437,7 +2437,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate accessibility needs with age without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the interface account for changing vision, motor and cognitive needs through size, contrast and recoverability?",
       "Number": 122
     },
     {
@@ -2457,7 +2457,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate device preferences without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the design informed by the devices users actually use for this journey?",
       "Number": 123
     },
     {
@@ -2477,7 +2477,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate digital literacy without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the experience avoid assuming users understand hidden digital conventions, shorthand or specialist terms?",
       "Number": 124
     },
     {
@@ -2497,7 +2497,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate neurodiversity considerations without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is the interface predictable, calm and clearly structured for users with different cognitive preferences?",
       "Number": 125
     },
     {
@@ -2517,7 +2517,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate task familiarity without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design support both first-time users and users who complete the task frequently?",
       "Number": 126
     },
     {
@@ -2537,7 +2537,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate trust perception differences without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the journey provide enough clarity and reassurance for users who may be uncertain or risk-aware?",
       "Number": 127
     },
     {
@@ -2557,7 +2557,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate user confidence without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the user have enough confirmation and summary information to feel confident the task was completed correctly?",
       "Number": 128
     },
     {
@@ -2577,7 +2577,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate stress and urgency without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "When the task is urgent, does the interface prioritise clarity, recovery and the immediate next action?",
       "Number": 129
     },
     {
@@ -2597,7 +2597,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate learning curve without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users build competence over time without needing excessive training or hidden knowledge?",
       "Number": 130
     },
     {
@@ -2617,7 +2617,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate power users vs occasional users without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design balance speed for power users with clarity for occasional users?",
       "Number": 131
     },
     {
@@ -2637,7 +2637,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Task Completion Rate, Time On Task, Support Themes, Usability Test Observations..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate internal vs external users without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the experience reflect the different training, frequency and support needs of internal and external users?",
       "Number": 132
     },
     {
@@ -2657,7 +2657,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate system usability scale without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has perceived usability been measured in a repeatable way that can be compared over time?",
       "Number": 133
     },
     {
@@ -2677,7 +2677,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate customer effort score without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Have users been asked how easy or difficult the task felt after completing it?",
       "Number": 134
     },
     {
@@ -2697,7 +2697,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate nps without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is NPS used as a broader advocacy signal rather than as the only measure of task usability?",
       "Number": 135
     },
     {
@@ -2717,7 +2717,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate task success rate without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Can users complete the task correctly, without help, in a realistic test scenario?",
       "Number": 136
     },
     {
@@ -2737,7 +2737,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate time on task without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "How long does the task take, and does the design reduce unnecessary time for repeated workflows?",
       "Number": 137
     },
     {
@@ -2757,7 +2757,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate error rate without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Where do users make mistakes, how often do they happen, and what design changes reduce them?",
       "Number": 138
     },
     {
@@ -2777,7 +2777,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate completion rate without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "What percentage of users who start the journey complete it successfully?",
       "Number": 139
     },
     {
@@ -2797,7 +2797,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate abandonment rate without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Where do users leave the journey, and what evidence explains why they drop out?",
       "Number": 140
     },
     {
@@ -2817,7 +2817,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate search success rate without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do users find the correct result through search, and how many attempts does it take?",
       "Number": 141
     },
     {
@@ -2837,7 +2837,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate feature adoption without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are users discovering and repeatedly using the feature after release?",
       "Number": 142
     },
     {
@@ -2857,7 +2857,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate support ticket themes without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are support tickets grouped into recurring UX themes that can inform product improvements?",
       "Number": 143
     },
     {
@@ -2877,7 +2877,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate user sentiment without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "What repeated confidence, frustration, trust or confusion themes appear in user feedback?",
       "Number": 144
     },
     {
@@ -2897,7 +2897,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate research confidence without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "How strong, recent and relevant is the evidence behind this design decision?",
       "Number": 145
     },
     {
@@ -2917,7 +2917,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "SUS, CES, Task Success, Error Rate, Confidence Score..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate usability testing rounds without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the design been tested, improved and retested before expensive build or release?",
       "Number": 146
     },
     {
@@ -2937,7 +2937,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate design system adoption without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are teams using approved design-system components and patterns instead of creating bespoke alternatives?",
       "Number": 147
     },
     {
@@ -2957,7 +2957,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate component reuse without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is this solution reusing an appropriate approved component rather than duplicating a pattern?",
       "Number": 148
     },
     {
@@ -2977,7 +2977,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate pattern governance without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the pattern been reviewed, documented and connected to usage guidance before reuse?",
       "Number": 149
     },
     {
@@ -2997,7 +2997,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate accessibility debt register without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are accessibility issues recorded with severity, affected journey, owner and target resolution?",
       "Number": 150
     },
     {
@@ -3017,7 +3017,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate ux debt register without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Are known UX issues tracked with user impact, evidence, severity and age?",
       "Number": 151
     },
     {
@@ -3037,7 +3037,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate design review quality gates without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Does the design pass agreed UX, accessibility and workflow checks before build?",
       "Number": 152
     },
     {
@@ -3057,7 +3057,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate pre-release ux checks without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the journey been checked for usability, accessibility and content quality before release?",
       "Number": 153
     },
     {
@@ -3077,7 +3077,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate journey complexity scoring without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Has the journey’s complexity been assessed using steps, decisions, dependencies, context switches and recovery points?",
       "Number": 154
     },
     {
@@ -3097,7 +3097,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate evidence-based prioritisation without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Is prioritisation based on user impact, business value, risk and evidence strength rather than opinion alone?",
       "Number": 155
     },
     {
@@ -3117,7 +3117,7 @@ window.UX_DATA = {
       "Enterprise insurance application": "Relevant to broker portals, PAS workflows, quote-and-buy journeys, customer portals, claims, documents, MTAs and servicing tasks.",
       "OGI user considerations": "Apply with context. PAS users may need dense data, shortcuts and persistent workflow context; clarity should support speed, not hide useful information.",
       "Potential metrics/signals": "Component Adoption, UX Debt Items, Review Findings, Reopened Defects..",
-      "Checklist prompt": "Can a user complete this workflow with appropriate continuous learning loops without unnecessary confusion, friction or risk?",
+      "Checklist prompt": "Do insights from research, analytics and support feed back into standards, priorities and future improvements?",
       "Number": 156
     }
   ],

@@ -326,32 +326,48 @@ function panel(label, content){
 
 function renderEvaluation(){
   const sectionOptions = DATA.sections.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  const today = new Date().toISOString().split('T')[0];
   app.innerHTML = `
-    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Evaluation & Scoring', href: '#evaluation' }])}
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'UX Review Form', href: '#evaluation' }])}
     <section class="hero">
-      <span class="kicker">Operational scoring</span>
-      <h1>UX evaluation & scoring</h1>
-      <p>Use the evidence cards as checklist prompts. Select a section, score the prompts, assign severity and create an evidence-led UX quality view.</p>
+      <span class="kicker">Operational review</span>
+      <h1>UX Review Form</h1>
+      <p>Use the evidence cards as checklist prompts. Capture review details, complete Pass/Fail/N/A checks and create an evidence-led UX quality view.</p>
     </section>
     <section class="section detail-layout">
       <div>
+      <div class="panel review-details-panel">
+          <h3>Review details</h3>
+          <div class="review-details-grid">
+            <label class="check-control"><span>Work item name</span><input id="workItemName" class="field" type="text" /></label>
+            <label class="check-control"><span>Work item type</span><select id="workItemType"><option>Feature</option><option>Epic</option><option>Capability</option><option>Journey</option><option>Defect</option><option>Improvement</option><option>Other</option></select></label>
+            <label class="check-control"><span>Value stream</span><select id="valueStream"><option>Acquire</option><option>Distribute</option><option>Serve</option></select></label>
+            <label class="check-control"><span>Product / area</span><input id="productArea" class="field" type="text" /></label>
+            <label class="check-control"><span>Review stage</span><select id="reviewStage"><option>Discovery</option><option>Prototype</option><option>Design review</option><option>Pre-build</option><option>Pre-release</option><option>Post-release</option></select></label>
+            <label class="check-control"><span>Reviewer</span><input id="reviewer" class="field" type="text" /></label>
+            <label class="check-control"><span>Review date</span><input id="reviewDate" class="field" type="date" value="${today}" /></label>
+          </div>
+        </div>
         <div class="panel">
-          <h3>Select review section</h3>
+          <h3>Checklist section</h3>
           <select id="reviewSection" onchange="renderChecklist()">${sectionOptions}</select>
         </div>
         <div id="checklistContainer" class="checklist section"></div>
       </div>
       <aside class="panel score-output">
         <span class="kicker">UX quality score</span>
-        <p class="score-big" id="scoreBig">0%</p>
+        <p class="score-big" id="scoreBig">Not scored yet</p>
         <div class="progress"><span id="scoreBar"></span></div>
-        <p id="maturityText" class="section-subtitle section"></p>
+        <p id="maturityText" class="section-subtitle section">UX concern rating: Not scored yet</p>
+        <div id="scoreCounts" class="panel highlight section score-counts"></div>
+        <div id="failedSummary" class="section"></div>
         <div class="section">
-          <button class="btn dark" onclick="scoreChecklist()">Calculate score</button>
+          <button class="btn dark" onclick="downloadReviewPdf()">Download PDF</button>
           <button class="btn" onclick="copyReviewSummary()">Copy summary</button>
         </div>
       </aside>
     </section>
+    <section class="panel section print-only" id="printFailedSection"></section>
   `;
   renderChecklist();
 }
@@ -365,46 +381,93 @@ function renderChecklist(){
         <strong>${esc(c.Name)}</strong>
         <p class="section-subtitle">${esc(c["Checklist prompt"])}</p>
       </div>
+      <fieldset class="check-control toggle-group">
+        <span>Result</span>
+        <div class="segmented-control">
+          <input type="radio" id="check-${i}-pass" name="check-${i}" value="pass" class="check-result">
+          <label for="check-${i}-pass">Pass</label>
+          <input type="radio" id="check-${i}-fail" name="check-${i}" value="fail" class="check-result">
+          <label for="check-${i}-fail">Fail</label>
+          <input type="radio" id="check-${i}-na" name="check-${i}" value="na" class="check-result" checked>
+          <label for="check-${i}-na">N/A</label>
+        </div>
+      </fieldset>
       <label class="check-control">
-        <span>Score</span>
-        <select class="check-score" aria-label="Score">
-          <option value="0">0 — Fail</option>
-          <option value="1">1 — Major issue</option>
-          <option value="2">2 — Friction</option>
-          <option value="3" selected>3 — Acceptable</option>
-          <option value="4">4 — Strong</option>
-          <option value="5">5 — Excellent</option>
-        </select>
-      </label>
-      <label class="check-control">
-        <span>Severity</span>
-        <select class="check-severity" aria-label="Severity">
-          <option>Low</option>
-          <option selected>Medium</option>
-          <option>High</option>
-          <option>Critical</option>
-        </select>
+        <span>Comment (optional)</span>
+        <textarea class="check-comment field" rows="3" placeholder="Add notes..."></textarea>
       </label>
     </div>
   `).join('');
+  document.querySelectorAll('.check-result, .check-comment').forEach(el => {
+    el.addEventListener('change', scoreChecklist);
+    el.addEventListener('input', scoreChecklist);
+  });
   scoreChecklist();
 }
 
 function scoreChecklist(){
-  const scores = [...document.querySelectorAll('.check-score')].map(s => Number(s.value));
-  const total = scores.reduce((a,b)=>a+b,0);
-  const max = scores.length * 5;
-  const pct = max ? Math.round((total/max)*100) : 0;
-  document.getElementById('scoreBig').textContent = pct + '%';
-  document.getElementById('scoreBar').style.width = pct + '%';
-  let maturity = pct < 31 ? 'Reactive' : pct < 51 ? 'Basic' : pct < 71 ? 'Developing' : pct < 86 ? 'Mature' : 'Optimised';
-  document.getElementById('maturityText').textContent = `Maturity level: ${maturity}. Use high and critical severity items as priority actions.`;
+  const items = [...document.querySelectorAll('.check-item')].map((item, idx) => {
+    const result = item.querySelector(`input[name="check-${idx}"]:checked`)?.value || 'na';
+    const comment = item.querySelector('.check-comment')?.value?.trim() || '';
+    const question = item.querySelector('.section-subtitle')?.textContent || '';
+    const title = item.querySelector('strong')?.textContent || '';
+    return { result, comment, question, title };
+  });
+  const passed = items.filter(i => i.result === 'pass').length;
+  const failed = items.filter(i => i.result === 'fail').length;
+  const na = items.filter(i => i.result === 'na').length;
+  const applicable = passed + failed;
+  const pct = applicable ? Math.round((passed / applicable) * 100) : null;
+  const scoreText = pct === null ? 'Not scored yet' : `${pct}%`;
+  document.getElementById('scoreBig').textContent = scoreText;
+  document.getElementById('scoreBar').style.width = pct === null ? '0%' : `${pct}%`;
+  document.getElementById('maturityText').textContent = `UX concern rating: ${concernRating(pct)}`;
+  document.getElementById('scoreCounts').innerHTML = `
+    <p><strong>Passed checks:</strong> ${passed}</p>
+    <p><strong>Failed checks:</strong> ${failed}</p>
+    <p><strong>Not applicable checks:</strong> ${na}</p>
+    <p><strong>Total applicable checks:</strong> ${applicable}</p>
+  `;
+  const failedItems = items.filter(i => i.result === 'fail');
+  const failedList = failedItems.length ? failedItems.map((i, index) => `<li><strong>${index + 1}. ${esc(i.title)}</strong><br>${esc(i.question)}${i.comment ? `<br><em>Comment:</em> ${esc(i.comment)}` : ''}</li>`).join('') : '<p>No failed checks.</p>';
+  document.getElementById('failedSummary').innerHTML = `<h3>Failed checks</h3>${failedItems.length ? `<ol>${failedList}</ol>` : failedList}`;
+  document.getElementById('printFailedSection').innerHTML = `<h2>Failed checks</h2>${failedItems.length ? `<ol>${failedList}</ol>` : '<p>No failed checks.</p>'}`;
+}
+
+function concernRating(pct){
+  if(pct === null) return 'Not scored yet';
+  if(pct >= 90) return 'Low concern — Minor improvements only';
+  if(pct >= 75) return 'Medium concern — Noticeable friction or inconsistency';
+  if(pct >= 50) return 'High concern — Significant usability, accessibility or workflow issue';
+  return 'Critical concern — Blocks completion, creates risk or prevents accessibility';
+}
+
+function downloadReviewPdf(){
+  scoreChecklist();
+  window.print();
 }
 
 function copyReviewSummary(){
+  const field = id => document.getElementById(id)?.value || '';
   const section = document.getElementById('reviewSection').value;
   const score = document.getElementById('scoreBig').textContent;
-  const summary = `UX Review Summary\nSection: ${section}\nScore: ${score}\nNotes: Review high/critical severity items first.`;
+  const concern = document.getElementById('maturityText').textContent.replace('UX concern rating: ', '');
+  const counts = document.getElementById('scoreCounts').innerText.trim();
+  const failed = document.getElementById('failedSummary').innerText.trim();
+  const summary = `UX Review Form Summary
+Work item name: ${field('workItemName')}
+Work item type: ${field('workItemType')}
+Value stream: ${field('valueStream')}
+Product / area: ${field('productArea')}
+Review stage: ${field('reviewStage')}
+Reviewer: ${field('reviewer')}
+Review date: ${field('reviewDate')}
+Checklist section: ${section}
+UX Quality Score: ${score}
+Concern rating: ${concern}
+${counts}
+
+${failed}`;
   navigator.clipboard?.writeText(summary);
   alert('Review summary copied to clipboard.');
 }

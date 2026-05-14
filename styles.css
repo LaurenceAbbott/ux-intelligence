@@ -75,14 +75,14 @@ button,input,select,textarea{font:inherit}
   border-radius:var(--radius-pill);
   display:grid;
   place-items:center;
-  font-weight:700;
+  font-weight:300;
   letter-spacing:.04em;
 }
 .brand strong{
   display:block;
   font-size:1rem;
   line-height:1.15;
-  font-weight:700;
+  font-weight:300;
 }
 .brand small{
   display:block;
@@ -123,7 +123,7 @@ button,input,select,textarea{font:inherit}
 }
 .sidebar-card strong{
   display:block;
-  font-weight:700;
+  font-weight:300;
   margin-bottom:.35rem;
 }
 .sidebar-card p{
@@ -181,7 +181,7 @@ select:focus{
   border-radius:var(--radius-pill);
   padding:.8rem 1rem;
   text-decoration:none;
-  font-weight:700;
+  font-weight:300;
 }
 .content{
   width:100%;
@@ -222,7 +222,7 @@ select:focus{
   color:var(--white);
   text-transform:uppercase;
   letter-spacing:2px;
-  font-weight:700;
+  font-weight:300;
   font-size:.75rem;
   line-height:1.2;
   margin-bottom:.75rem;
@@ -236,7 +236,7 @@ select:focus{
   font-size:clamp(3rem,6vw,6.75rem);
   line-height:.95;
   letter-spacing:-.06em;
-  font-weight:700;
+  font-weight:300;
 }
 .hero p,
 .detail-definition{
@@ -265,7 +265,7 @@ select:focus{
   align-items:center;
   justify-content:center;
   gap:.5rem;
-  font-weight:700;
+  font-weight:300;
   cursor:pointer;
 }
 .btn.primary,
@@ -294,7 +294,7 @@ select:focus{
   font-size:clamp(2rem,3.5vw,4rem);
   line-height:1;
   letter-spacing:-.055em;
-  font-weight:700;
+  font-weight:300;
 }
 .section-subtitle{
   color:var(--muted);
@@ -329,7 +329,7 @@ select:focus{
   font-size:clamp(1.35rem,1.8vw,2rem);
   line-height:1.1;
   letter-spacing:-.035em;
-  font-weight:700;
+  font-weight:300;
 }
 .panel p,
 .card p{
@@ -354,7 +354,7 @@ select:focus{
   padding:.45rem .75rem .5rem;
   font-size:.72rem;
   line-height:1;
-  font-weight:700;
+  font-weight:300;
   text-decoration:none;
 }
 .pill.brand{
@@ -406,7 +406,7 @@ select:focus{
 }
 .link{
   color:var(--blue);
-  font-weight:700;
+  font-weight:300;
   text-decoration:none;
 }
 
@@ -423,7 +423,7 @@ select:focus{
   font-size:.75rem;
   text-transform:uppercase;
   letter-spacing:2px;
-  font-weight:700;
+  font-weight:300;
   margin-bottom:.75rem;
 }
 .content-block{
@@ -481,7 +481,7 @@ table.data tr:last-child td{border-bottom:0}
   font-size:5rem;
   line-height:.95;
   letter-spacing:-.06em;
-  font-weight:700;
+  font-weight:300;
   margin:0;
   color:var(--blue);
 }

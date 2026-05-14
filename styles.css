@@ -377,9 +377,9 @@ select:focus{
   margin-bottom: 1rem;
 }
 .pill.brand{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:var(--white);
+  background:var(--off-white);
+  border-color:var(--line);
+  color:var(--black);
 }
 .pill.good{background:#e9f7ef;border-color:#bfe7cf;color:#136c3d}
 .pill.warn{background:#fff6df;border-color:#f0d399;color:#8c5a00}

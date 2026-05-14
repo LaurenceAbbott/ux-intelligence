@@ -140,10 +140,10 @@ function renderValue(){
           <h3>Operational time saving</h3>
           <p>Estimate the potential annual value of a small repeated task saving.</p>
           <div class="calc-grid section">
-            <input class="field" id="secondsSaved" type="number" value="15" placeholder="Seconds saved" />
-            <input class="field" id="users" type="number" value="500" placeholder="Users" />
-            <input class="field" id="tasksPerDay" type="number" value="10" placeholder="Tasks/day" />
-            <input class="field" id="hourlyCost" type="number" value="35" placeholder="£/hour" />
+            <label class="calc-field"><span>Seconds saved per task</span><input class="field" id="secondsSaved" type="number" value="15" placeholder="Seconds saved" /></label>
+            <label class="calc-field"><span>Number of users</span><input class="field" id="users" type="number" value="500" placeholder="Users" /></label>
+            <label class="calc-field"><span>Tasks per user per day</span><input class="field" id="tasksPerDay" type="number" value="10" placeholder="Tasks/day" /></label>
+            <label class="calc-field"><span>Hourly cost (£)</span><input class="field" id="hourlyCost" type="number" value="35" placeholder="£/hour" /></label>
           </div>
           <button class="btn dark section" onclick="calcTimeSaving()">Calculate</button>
           <div id="timeSavingResult" class="panel highlight section"></div>
@@ -152,10 +152,10 @@ function renderValue(){
           <h3>Developer rework avoided</h3>
           <p>Estimate value when early UX review prevents late-stage change or defects.</p>
           <div class="calc-grid section">
-            <input class="field" id="issuesAvoided" type="number" value="8" placeholder="Issues avoided" />
-            <input class="field" id="hoursPerIssue" type="number" value="6" placeholder="Hours/issue" />
-            <input class="field" id="devCost" type="number" value="60" placeholder="£/hour" />
-            <input class="field" id="cycles" type="number" value="4" placeholder="Cycles/year" />
+            <label class="calc-field"><span>Issues avoided per cycle</span><input class="field" id="issuesAvoided" type="number" value="8" placeholder="Issues avoided" /></label>
+            <label class="calc-field"><span>Hours per issue</span><input class="field" id="hoursPerIssue" type="number" value="6" placeholder="Hours/issue" /></label>
+            <label class="calc-field"><span>Developer cost per hour (£)</span><input class="field" id="devCost" type="number" value="60" placeholder="£/hour" /></label>
+            <label class="calc-field"><span>Release cycles per year</span><input class="field" id="cycles" type="number" value="4" placeholder="Cycles/year" /></label>
           </div>
           <button class="btn dark section" onclick="calcRework()">Calculate</button>
           <div id="reworkResult" class="panel highlight section"></div>

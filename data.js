@@ -3183,8 +3183,8 @@ window.UX_DATA = {
       "description": "Device, viewport, input method and responsive behaviour considerations across desktop, mobile and tablet."
     },
     {
-      "name": "demographics & behaviour",
-      "slug": "demographics-behaviour",
+      "name": "Demographics & behaviour",
+      "slug": "Demographics-behaviour",
       "count": 12,
       "description": "Evidence cards in this section support better design decisions and operational experience quality."
     },

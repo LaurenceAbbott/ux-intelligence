@@ -556,7 +556,7 @@ table.data tr:last-child td{border-bottom:0}
 }
 .review-step.is-hidden{display:none}
 .step-actions{
-  margin-top:1rem;
+  margin-top:2rem;
   display:flex;
   gap:.75rem;
 }

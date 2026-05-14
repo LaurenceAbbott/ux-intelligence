@@ -326,7 +326,9 @@ function panel(label, content){
 
 function renderEvaluation(){
   const sectionOptions = DATA.sections.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
-  const today = new Date().toISOString().split('T')[0];
+    const workItemTypes = ['Feature', 'Epic', 'Capability', 'Journey', 'Defect', 'Improvement', 'Other'];
+  const valueStreams = ['Acquire', 'Distribute', 'Serve'];
+  const reviewStages = ['Discovery', 'Prototype', 'Design review', 'Pre-build', 'Pre-release', 'Post-release'];
   app.innerHTML = `
     ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'UX Review Form', href: '#evaluation' }])}
     <section class="hero">
@@ -346,12 +348,12 @@ function renderEvaluation(){
           <h3>Review details</h3>
           <div class="review-details-grid">
             <label class="check-control"><span>Work item name</span><input id="workItemName" class="field" type="text" /></label>
-            <label class="check-control"><span>Work item type</span><select id="workItemType"><option>Feature</option><option>Epic</option><option>Capability</option><option>Journey</option><option>Defect</option><option>Improvement</option><option>Other</option></select></label>
-            <label class="check-control"><span>Value stream</span><select id="valueStream"><option>Acquire</option><option>Distribute</option><option>Serve</option></select></label>
+            <label class="check-control"><span>Work item type</span><select id="workItemType" required><option value="">Select work item type</option>${workItemTypes.map(type => `<option value="${type}">${type}</option>`).join('')}</select></label>
+            <label class="check-control"><span>Value stream</span><select id="valueStream" required><option value="">Select value stream</option>${valueStreams.map(stream => `<option value="${stream}">${stream}</option>`).join('')}</select></label>
             <label class="check-control"><span>Product / area</span><input id="productArea" class="field" type="text" /></label>
-            <label class="check-control"><span>Review stage</span><select id="reviewStage"><option>Discovery</option><option>Prototype</option><option>Design review</option><option>Pre-build</option><option>Pre-release</option><option>Post-release</option></select></label>
+            <label class="check-control"><span>Review stage</span><select id="reviewStage" required><option value="">Select review stage</option>${reviewStages.map(stage => `<option value="${stage}">${stage}</option>`).join('')}</select></label>
             <label class="check-control"><span>Reviewer</span><input id="reviewer" class="field" type="text" /></label>
-            <label class="check-control"><span>Review date</span><input id="reviewDate" class="field" type="date" value="${today}" /></label>
+            <label class="check-control"><span>Review date</span><input id="reviewDate" class="field" type="date" /></label>
           </div>
            <div class="step-actions">
             <button type="button" class="btn dark step-next" data-next-step="2">Next: Checklist selection</button>
@@ -359,7 +361,8 @@ function renderEvaluation(){
         </div>
         <div class="panel review-step is-hidden" data-step-panel="2">
           <h3>Checklist section</h3>
-          <select id="reviewSection" onchange="renderChecklist()">${sectionOptions}</select>
+          <select id="reviewSection" required><option value="">Select checklist section</option>${sectionOptions}</select>
+          <p id="reviewSectionError" class="field-error is-hidden">Please select a checklist section.</p>
           <div class="step-actions">
             <button type="button" class="btn step-back" data-prev-step="1">Back</button>
             <button type="button" class="btn dark step-next" data-next-step="3">Next: Review form</button>
@@ -405,13 +408,86 @@ function initEvaluationSteps(){
     stepChips.forEach(chip => chip.classList.toggle('active', Number(chip.dataset.step) === step));
     stepPanels.forEach(panel => panel.classList.toggle('is-hidden', Number(panel.dataset.stepPanel) !== step));
   };
-  stepChips.forEach(chip => chip.addEventListener('click', () => setStep(Number(chip.dataset.step))));
-  document.querySelectorAll('.step-next').forEach(btn => btn.addEventListener('click', () => setStep(Number(btn.dataset.nextStep))));
+  stepChips.forEach(chip => chip.addEventListener('click', () => {
+    const targetStep = Number(chip.dataset.step);
+    const activeStep = Number(document.querySelector('.step-chip.active')?.dataset.step || 1);
+    if(targetStep > activeStep){
+      for(let current = activeStep; current < targetStep; current += 1){
+        if(!validateStep(current)) return;
+      }
+    }
+    setStep(targetStep);
+  }));
+  document.querySelectorAll('.step-next').forEach(btn => btn.addEventListener('click', () => {
+    const activeStep = Number(document.querySelector('.step-chip.active')?.dataset.step || 1);
+    if(!validateStep(activeStep)) return;
+    setStep(Number(btn.dataset.nextStep));
+  }));
   document.querySelectorAll('.step-back').forEach(btn => btn.addEventListener('click', () => setStep(Number(btn.dataset.prevStep))));
+  document.getElementById('reviewSection')?.addEventListener('change', renderChecklist);
+}
+
+
+function validateStep(step){
+  if(step === 1){
+    let valid = true;
+    const requiredFields = [
+      { id: 'workItemName', message: 'Please enter a work item name.' },
+      { id: 'workItemType', message: 'Please select a work item type.' },
+      { id: 'valueStream', message: 'Please select a value stream.' },
+      { id: 'reviewStage', message: 'Please select a review stage.' },
+      { id: 'reviewDate', message: 'Please select a review date.' }
+    ];
+    requiredFields.forEach(({ id, message }) => {
+      const el = document.getElementById(id);
+      const v = (el?.value || '').trim();
+      const isValid = v.length > 0;
+      el?.classList.toggle('is-invalid', !isValid);
+      setFieldError(el, message, !isValid);
+      if(!isValid) valid = false;
+    });
+    return valid;
+  }
+
+  if(step === 2){
+    const section = document.getElementById('reviewSection');
+    const isValid = Boolean(section?.value);
+    section?.classList.toggle('is-invalid', !isValid);
+    const err = document.getElementById('reviewSectionError');
+    err?.classList.toggle('is-hidden', isValid);
+    return isValid;
+  }
+
+  if(step === 3){
+    const items = [...document.querySelectorAll('.check-item')];
+    let valid = true;
+    items.forEach((item, idx) => {
+      const selected = item.querySelector(`input[name="check-${idx}"]:checked`);
+      item.classList.toggle('is-invalid', !selected);
+      if(!selected) valid = false;
+    });
+    return valid && items.length > 0;
+  }
+
+  return true;
+}
+
+function setFieldError(el, message, show){
+  if(!el) return;
+  let error = el.parentElement.querySelector('.field-error');
+  if(!error){
+    error = document.createElement('p');
+    error.className = 'field-error is-hidden';
+    el.parentElement.appendChild(error);
+  }
+  error.textContent = message;
+  error.classList.toggle('is-hidden', !show);
 }
 
 function renderChecklist(){
   const section = document.getElementById('reviewSection').value;
+  const sectionError = document.getElementById('reviewSectionError');
+  if(sectionError) sectionError.classList.add('is-hidden');
   const cards = DATA.cards.filter(c => c["Reference to taxonomy"] === section).slice(0,14);
   document.getElementById('checklistContainer').innerHTML = cards.map((c,i) => `
     <div class="check-item">
@@ -426,7 +502,7 @@ function renderChecklist(){
           <label for="check-${i}-pass">Yes</label>
           <input type="radio" id="check-${i}-fail" name="check-${i}" value="fail" class="check-result">
           <label for="check-${i}-fail">No</label>
-          <input type="radio" id="check-${i}-na" name="check-${i}" value="na" class="check-result" checked>
+                  <input type="radio" id="check-${i}-na" name="check-${i}" value="na" class="check-result">
           <label for="check-${i}-na">Not applicable</label>
         </div>
       </fieldset>
@@ -442,7 +518,7 @@ function renderChecklist(){
 
 function scoreChecklist(){
   const items = [...document.querySelectorAll('.check-item')].map((item, idx) => {
-    const result = item.querySelector(`input[name="check-${idx}"]:checked`)?.value || 'na';
+    const result = item.querySelector(`input[name="check-${idx}"]:checked`)?.value || '';
     const question = item.querySelector('.section-subtitle')?.textContent || '';
     const title = item.querySelector('strong')?.textContent || '';
     return { result, question, title };
@@ -484,6 +560,8 @@ function downloadReviewPdf(){
 function copyReviewSummary(){
   const field = id => document.getElementById(id)?.value || '';
   const section = document.getElementById('reviewSection').value;
+  const sectionError = document.getElementById('reviewSectionError');
+  if(sectionError) sectionError.classList.add('is-hidden');
   const score = document.getElementById('scoreBig').textContent;
   const concern = document.getElementById('maturityText').textContent.replace('UX concern rating: ', '');
   const counts = document.getElementById('scoreCounts').innerText.trim();

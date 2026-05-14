@@ -504,6 +504,30 @@ table.data th{
 table.data tr:last-child td{border-bottom:0}
 
 /* Evaluation */
+.review-steps{
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+}
+.step-chip{
+  border:1px solid var(--line);
+  border-radius:var(--radius-pill);
+  background:var(--white);
+  color:var(--black);
+  padding:.5rem .9rem;
+  cursor:pointer;
+}
+.step-chip.active{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:var(--white);
+}
+.review-step.is-hidden{display:none}
+.step-actions{
+  margin-top:1rem;
+  display:flex;
+  gap:.75rem;
+}
 .checklist{display:grid;gap:1rem}
 .check-item{
   display:grid;

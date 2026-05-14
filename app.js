@@ -339,10 +339,10 @@ function renderEvaluation(){
     <section class="section detail-layout">
       <div>
       <div class="review-steps panel">
-        <button type="button" class="step-chip active" data-step="1">1. Review details</button>
-        <button type="button" class="step-chip" data-step="2">2. Checklist selection</button>
-        <button type="button" class="step-chip" data-step="3">3. Review form</button>
-        <button type="button" class="step-chip" data-step="4">4. UX score</button>
+        <button type="button" class="step-chip active" data-step="1">Review details</button>
+        <button type="button" class="step-chip" data-step="2">Checklist selection</button>
+        <button type="button" class="step-chip" data-step="3">Review form</button>
+        <button type="button" class="step-chip" data-step="4">UX score</button>
       </div>
       <div class="panel review-details-panel review-step" data-step-panel="1">
           <h3>Review details</h3>

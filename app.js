@@ -355,20 +355,26 @@ function renderChecklist(){
         <strong>${esc(c.Name)}</strong>
         <p class="section-subtitle">${esc(c["Checklist prompt"])}</p>
       </div>
-      <select class="check-score">
-        <option value="0">0 — Fail</option>
-        <option value="1">1 — Major issue</option>
-        <option value="2">2 — Friction</option>
-        <option value="3" selected>3 — Acceptable</option>
-        <option value="4">4 — Strong</option>
-        <option value="5">5 — Excellent</option>
-      </select>
-      <select class="check-severity">
-        <option>Low</option>
-        <option selected>Medium</option>
-        <option>High</option>
-        <option>Critical</option>
-      </select>
+      <label class="check-control">
+        <span>Score</span>
+        <select class="check-score" aria-label="Score">
+          <option value="0">0 — Fail</option>
+          <option value="1">1 — Major issue</option>
+          <option value="2">2 — Friction</option>
+          <option value="3" selected>3 — Acceptable</option>
+          <option value="4">4 — Strong</option>
+          <option value="5">5 — Excellent</option>
+        </select>
+      </label>
+      <label class="check-control">
+        <span>Severity</span>
+        <select class="check-severity" aria-label="Severity">
+          <option>Low</option>
+          <option selected>Medium</option>
+          <option>High</option>
+          <option>Critical</option>
+        </select>
+      </label>
     </div>
   `).join('');
   scoreChecklist();

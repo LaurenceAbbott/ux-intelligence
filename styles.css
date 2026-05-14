@@ -193,7 +193,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
   color:var(--white);
   background:var(--black);
   border:1px solid var(--black);
-  border-radius:var(--radius-pill);
+  border-radius:.5rem;
   padding:.8rem 1rem;
   text-decoration:none;
   font-weight:300;

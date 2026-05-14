@@ -301,11 +301,14 @@ function renderCard(slug){
         </div>
         <div class="compare-head">
           <h2 class="section-title">Visual good / bad example</h2>
-          <div class="meta-row"><span class="pill good">Good example</span><span class="pill bad">Bad example</span></div>
+                    <div class="meta-row">
+            <span class="pill good"><span class="example-icon good">✓</span>Good example</span>
+            <span class="pill bad"><span class="example-icon bad">✕</span>Bad example</span>
+          </div>
         </div>
         <div class="compare">
-          <div class="panel good-box"><div class="label">Good</div><div class="content-block">${esc(c["Good example"])}</div></div>
-          <div class="panel bad-box"><div class="label">Bad</div><div class="content-block">${esc(c["Bad example"])}</div></div>
+              <div class="panel good-box"><div class="label example-label"><span class="example-icon good">✓</span>Good example</div><div class="content-block">${esc(c["Good example"])}</div></div>
+          <div class="panel bad-box"><div class="label example-label"><span class="example-icon bad">✕</span>Bad example</div><div class="content-block">${esc(c["Bad example"])}</div></div>
         </div>
         ${panel("Evidence / Research", c["Evidence / Research"])}
         ${panel("Potential metrics / signals", c["Potential metrics/signals"])}

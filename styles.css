@@ -356,6 +356,7 @@ select:focus{
   line-height:1;
   font-weight:300;
   text-decoration:none;
+  margin-bottom: 1rem;
 }
 .pill.brand{
   background:var(--blue);

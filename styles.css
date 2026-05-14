@@ -331,9 +331,7 @@ select:focus{
 }
 .panel p,
 .card p{
-  color:var(--muted);
   line-height:1.35;
-  margin:0 0 .65rem;
 }
 .panel.highlight p{color:var(--white)}
 .meta-row{

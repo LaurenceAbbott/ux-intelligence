@@ -615,7 +615,7 @@ table.data tr:last-child td{border-bottom:0}
   font-weight:300;
 }
 .card-chip-row{
-  display:flex;
+  display:none;
   flex-wrap:wrap;
   gap:.5rem;
 }

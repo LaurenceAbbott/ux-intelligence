@@ -261,11 +261,11 @@ select:focus{
 }
 .hero p,
 .detail-definition{
-  color:var(--white);
   max-width:62ch;
   font-size:clamp(1rem,1.35vw,1.35rem);
   line-height:1.35;
   margin:0;
+  margin-bottom: 1rem;
 }
 .hero-actions{
   display:flex;

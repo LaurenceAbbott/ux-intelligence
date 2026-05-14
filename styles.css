@@ -505,21 +505,54 @@ table.data tr:last-child td{border-bottom:0}
 /* Evaluation */
 .review-steps{
   display:flex;
-  gap:.6rem;
-  flex-wrap:wrap;
+  gap:.8rem;
+  flex-wrap:nowrap;
+  align-items:center;
+  position:relative;
+  isolation:isolate;
+}
+.review-steps::before{
+  content:"";
+  position:absolute;
+  left:1.5rem;
+  right:1.5rem;
+  top:50%;
+  height:2px;
+  background:var(--line);
+  transform:translateY(-50%);
+  z-index:-1;
 }
 .step-chip{
   border:1px solid var(--line);
-  border-radius:var(--radius-pill);
+  border-radius:999px;
   background:var(--white);
   color:var(--black);
-  padding:.5rem .9rem;
+  padding:.5rem 1rem .5rem .7rem;
   cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  font-weight:500;
+}
+.step-chip::before{
+  content:attr(data-step);
+  width:1.65rem;
+  height:1.65rem;
+  border-radius:50%;
+  border:1px solid var(--line);
+  display:grid;
+  place-items:center;
+  font-size:.8rem;
+  background:var(--white);
 }
 .step-chip.active{
   background:var(--blue);
   border-color:var(--blue);
   color:var(--white);
+}
+.step-chip.active::before{
+  border-color:rgba(255,255,255,.45);
+  background:rgba(255,255,255,.18);
 }
 .review-step.is-hidden{display:none}
 .step-actions{
@@ -685,6 +718,10 @@ table.data tr:last-child td{border-bottom:0}
   .filters{grid-template-columns:1fr}
   .check-item{flex-direction:column; align-items:flex-start}
   .review-details-grid{grid-template-columns:1fr}
+    .review-steps{
+    overflow-x:auto;
+    padding-bottom:.25rem;
+  }
 }
 
 .card-layout{

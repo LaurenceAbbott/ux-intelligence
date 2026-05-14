@@ -67,16 +67,11 @@ button,input,select,textarea{font:inherit}
   padding:.5rem;
 }
 .brand-mark{
-  background:var(--blue);
-  color:var(--white);
-  width:46px;
-  height:46px;
-  min-width:46px;
-  border-radius:var(--radius-pill);
-  display:grid;
-  place-items:center;
-  font-weight:300;
-  letter-spacing:.0em;
+  width:84px;
+  height:84px;
+  min-width:84px;
+  display:block;
+  object-fit:contain;
 }
 .brand strong{
   display:block;

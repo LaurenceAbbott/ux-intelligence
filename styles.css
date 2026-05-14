@@ -510,6 +510,7 @@ table.data tr:last-child td{border-bottom:0}
   align-items:center;
   position:relative;
   isolation:isolate;
+  margin-bottom: 1rem;
 }
 .review-steps::before{
   content:"";
@@ -517,7 +518,7 @@ table.data tr:last-child td{border-bottom:0}
   left:1.5rem;
   right:1.5rem;
   top:50%;
-  height:2px;
+  height:1px;
   background:var(--line);
   transform:translateY(-50%);
   z-index:-1;
@@ -532,7 +533,6 @@ table.data tr:last-child td{border-bottom:0}
   display:inline-flex;
   align-items:center;
   gap:.55rem;
-  font-weight:500;
 }
 .step-chip::before{
   content:attr(data-step);

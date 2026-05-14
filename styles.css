@@ -497,13 +497,26 @@ table.data tr:last-child td{border-bottom:0}
 .checklist{display:grid;gap:1rem}
 .check-item{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 120px 130px;
+  grid-template-columns:minmax(0,1fr) 180px 170px;
   gap:1rem;
   align-items:center;
   padding:1rem;
   border:1px solid var(--line);
   background:var(--white);
 }
+
+.check-control{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+}
+.check-control span{
+  font-size:.72rem;
+  text-transform:uppercase;
+  color:var(--muted);
+  letter-spacing:0;
+}
+
 .score-output{position:sticky;top:90px}
 .score-big{
   font-size:5rem;

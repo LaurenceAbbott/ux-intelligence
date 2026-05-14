@@ -15,6 +15,7 @@ function setActive(route){
 }
 
 function render(){
+  window.scrollTo({ top: 0, behavior: 'auto' });
   const hash = location.hash.replace(/^#/, '') || 'home';
   const [route, ...parts] = hash.split('/');
   setActive(route);

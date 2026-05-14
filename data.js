@@ -3184,7 +3184,7 @@ window.UX_DATA = {
     },
     {
       "name": "Demographics & behaviour",
-      "slug": "Demographics-behaviour",
+      "slug": "demographics-behaviour",
       "count": 12,
       "description": "Evidence cards in this section support better design decisions and operational experience quality."
     },

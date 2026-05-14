@@ -427,9 +427,8 @@ select:focus{
 
 /* Detail pages */
 .detail-layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 360px;
-  gap:1rem;
+  display:block;
+  width:100%;
   margin-top:1rem;
 }
 .stack{display:grid;gap:1rem}
@@ -530,8 +529,8 @@ table.data tr:last-child td{border-bottom:0}
 }
 .checklist{display:grid;gap:1rem}
 .check-item{
-  display:grid;
-    grid-template-columns:minmax(0,1fr) 280px 220px;
+  display:flex;
+  justify-content:space-between;
   gap:1rem;
   align-items:center;
   padding:1rem;
@@ -588,10 +587,25 @@ table.data tr:last-child td{border-bottom:0}
   border:0;
   margin:0;
   padding:0;
-  justify-self:start;
+  margin-left:auto;
+  align-items:flex-end;
 }
 
 .toggle-group .segmented-control{white-space:nowrap}
+
+
+.field-error{
+  color:var(--bad);
+  font-size:.75rem;
+  margin:.1rem 0 0;
+}
+.is-hidden{display:none !important}
+.field.is-invalid, select.is-invalid, .check-item.is-invalid{
+  border-color:var(--bad) !important;
+}
+.check-item.is-invalid{
+  box-shadow:0 0 0 1px var(--bad) inset;
+}
 
 .score-counts p{margin:.45rem 0}
 .print-only{display:none}
@@ -669,7 +683,7 @@ table.data tr:last-child td{border-bottom:0}
   .hero h1,.detail-title{font-size:3rem}
   .card-grid,.grid.cols-2,.grid.cols-3,.grid.cols-4,.compare,.calc-grid{grid-template-columns:1fr}
   .filters{grid-template-columns:1fr}
-  .check-item{grid-template-columns:1fr}
+  .check-item{flex-direction:column; align-items:flex-start}
   .review-details-grid{grid-template-columns:1fr}
 }
 

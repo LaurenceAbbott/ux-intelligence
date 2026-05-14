@@ -496,7 +496,6 @@ function renderChecklist(){
         <p class="section-subtitle">${esc(c["Checklist prompt"])}</p>
       </div>
       <fieldset class="check-control toggle-group">
-        <span>Result</span>
         <div class="segmented-control">
           <input type="radio" id="check-${i}-pass" name="check-${i}" value="pass" class="check-result">
           <label for="check-${i}-pass">Yes</label>

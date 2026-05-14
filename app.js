@@ -340,6 +340,7 @@ function renderEvaluation(){
         <button type="button" class="step-chip active" data-step="1">1. Review details</button>
         <button type="button" class="step-chip" data-step="2">2. Checklist selection</button>
         <button type="button" class="step-chip" data-step="3">3. Review form</button>
+        <button type="button" class="step-chip" data-step="4">4. UX score</button>
       </div>
       <div class="panel review-details-panel review-step" data-step-panel="1">
           <h3>Review details</h3>
@@ -368,21 +369,28 @@ function renderEvaluation(){
           <div id="checklistContainer" class="checklist"></div>
           <div class="step-actions">
             <button type="button" class="btn step-back" data-prev-step="2">Back</button>
+            <button type="button" class="btn dark step-next" data-next-step="4">Next: UX score</button>
+          </div>
+        </div>
+       <div class="panel review-step is-hidden" data-step-panel="4">
+          <h3>UX score</h3>
+          <div class="score-output">
+            <span class="kicker">UX quality score</span>
+            <p class="score-big" id="scoreBig">Not scored yet</p>
+            <div class="progress"><span id="scoreBar"></span></div>
+            <p id="maturityText" class="section-subtitle section">UX concern rating: Not scored yet</p>
+            <div id="scoreCounts" class="panel highlight section score-counts"></div>
+            <div id="failedSummary" class="section"></div>
+            <div class="section">
+              <button class="btn dark" onclick="downloadReviewPdf()">Download PDF</button>
+              <button class="btn" onclick="copyReviewSummary()">Copy summary</button>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button type="button" class="btn step-back" data-prev-step="3">Back</button>
           </div>
         </div>
       </div>
-      <aside class="panel score-output">
-        <span class="kicker">UX quality score</span>
-        <p class="score-big" id="scoreBig">Not scored yet</p>
-        <div class="progress"><span id="scoreBar"></span></div>
-        <p id="maturityText" class="section-subtitle section">UX concern rating: Not scored yet</p>
-        <div id="scoreCounts" class="panel highlight section score-counts"></div>
-        <div id="failedSummary" class="section"></div>
-        <div class="section">
-          <button class="btn dark" onclick="downloadReviewPdf()">Download PDF</button>
-          <button class="btn" onclick="copyReviewSummary()">Copy summary</button>
-        </div>
-      </aside>
     </section>
     <section class="panel section print-only" id="printFailedSection"></section>
   `;
@@ -422,37 +430,11 @@ function renderChecklist(){
           <label for="check-${i}-na">Not applicable</label>
         </div>
       </fieldset>
-       <div class="check-notes">
-        <button type="button" class="btn-link note-trigger" data-note-index="${i}">Add notes</button>
-        <p class="note-preview" id="note-preview-${i}">No notes added.</p>
-      </div>
-      <dialog class="note-modal" id="note-modal-${i}">
-        <form method="dialog" class="note-modal-card">
-          <div class="note-modal-header">
-            <strong>Add notes</strong>
-            <button type="submit" class="note-close" aria-label="Close notes modal">✕</button>
-          </div>
-          <p class="section-subtitle">${esc(c.Name)}</p>
-          <label class="check-control">
-            <span>Comment (optional)</span>
-            <textarea class="check-comment field" rows="4" placeholder="Add notes..."></textarea>
-          </label>
-          <div class="note-actions">
-            <button type="submit" class="btn dark">Done</button>
-          </div>
-        </form>
-      </dialog>
     </div>
   `).join('');
-  document.querySelectorAll('.check-result, .check-comment').forEach(el => {
+  document.querySelectorAll('.check-result').forEach(el => {
     el.addEventListener('change', scoreChecklist);
     el.addEventListener('input', scoreChecklist);
-  });
-  document.querySelectorAll('.note-trigger').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modal = document.getElementById(`note-modal-${btn.dataset.noteIndex}`);
-      modal?.showModal();
-    });
   });
   scoreChecklist();
 }
@@ -461,12 +443,9 @@ function renderChecklist(){
 function scoreChecklist(){
   const items = [...document.querySelectorAll('.check-item')].map((item, idx) => {
     const result = item.querySelector(`input[name="check-${idx}"]:checked`)?.value || 'na';
-    const comment = item.querySelector('.check-comment')?.value?.trim() || '';
-    const preview = item.querySelector(`#note-preview-${idx}`);
-    if(preview) preview.textContent = comment ? comment : 'No notes added.';
     const question = item.querySelector('.section-subtitle')?.textContent || '';
     const title = item.querySelector('strong')?.textContent || '';
-    return { result, comment, question, title };
+    return { result, question, title };
   });
   const passed = items.filter(i => i.result === 'pass').length;
   const failed = items.filter(i => i.result === 'fail').length;
@@ -484,7 +463,7 @@ function scoreChecklist(){
     <p><strong>Total applicable checks:</strong> ${applicable}</p>
   `;
   const failedItems = items.filter(i => i.result === 'fail');
-  const failedList = failedItems.length ? failedItems.map((i, index) => `<li><strong>${index + 1}. ${esc(i.title)}</strong><br>${esc(i.question)}${i.comment ? `<br><em>Comment:</em> ${esc(i.comment)}` : ''}</li>`).join('') : '<p>No failed checks.</p>';
+  const failedList = failedItems.length ? failedItems.map((i, index) => `<li><strong>${index + 1}. ${esc(i.title)}</strong><br>${esc(i.question)}</li>`).join('') : '<p>No failed checks.</p>';
   document.getElementById('failedSummary').innerHTML = `<h3>Failed checks</h3>${failedItems.length ? `<ol>${failedList}</ol>` : failedList}`;
   document.getElementById('printFailedSection').innerHTML = `<h2>Failed checks</h2>${failedItems.length ? `<ol>${failedList}</ol>` : '<p>No failed checks.</p>'}`;
 }

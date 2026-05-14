@@ -294,10 +294,7 @@ function renderCard(slug){
         <div class="card-chip-row">
           ${esc(c["Enterprise insurance application"]).split(',').map(item => `<span class="pill">${item.trim()}</span>`).join('')}
         </div>
-        <div class="panel checklist-callout">
-          <div class="label">Checklist prompt</div>
-          <div class="content-block">${esc(c["Checklist prompt"])}</div>
-        </div>
+        ${panel("Evidence / Research", c["Evidence / Research"])}
         <div class="compare-head">
           <h2 class="section-title">Visual good / bad example</h2>
                     <div class="meta-row">
@@ -309,8 +306,11 @@ function renderCard(slug){
               <div class="panel good-box"><div class="label example-label"><span class="example-icon good">✓</span>Good example</div><div class="content-block">${esc(c["Good example"])}</div></div>
           <div class="panel bad-box"><div class="label example-label"><span class="example-icon bad">✕</span>Bad example</div><div class="content-block">${esc(c["Bad example"])}</div></div>
         </div>
-        ${panel("Evidence / Research", c["Evidence / Research"])}
         ${panel("Potential metrics / signals", c["Potential metrics/signals"])}
+        <div class="panel checklist-callout">
+          <div class="label">Checklist prompt</div>
+          <div class="content-block">${esc(c["Checklist prompt"])}</div>
+        </div>
       </div>
     </section>
     <section class="section">

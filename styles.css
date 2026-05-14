@@ -127,8 +127,7 @@ button,input,select,textarea{font:inherit}
   margin-bottom:.35rem;
 }
 .sidebar-card p{
-  color:var(--muted-dark);
-  margin:0;
+  margin-bottom:2rem;
   font-size:.78rem;
   line-height:1.35;
 }

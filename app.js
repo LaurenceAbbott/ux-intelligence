@@ -332,8 +332,8 @@ function renderEvaluation(){
     <section class="hero">
       <span class="kicker">Operational review</span>
       <h1>UX Review Form</h1>
-      <p>Use the evidence cards as checklist prompts. Capture review details, complete Pass/Fail/N/A checks and create an evidence-led UX quality view.</p>
-    </section>
+     <p>Use the evidence cards as checklist prompts. Capture review details, complete Yes/No/Not applicable checks and create an evidence-led UX quality view.</p>
+     </section>
     <section class="section detail-layout">
       <div>
       <div class="panel review-details-panel">
@@ -385,30 +385,55 @@ function renderChecklist(){
         <span>Result</span>
         <div class="segmented-control">
           <input type="radio" id="check-${i}-pass" name="check-${i}" value="pass" class="check-result">
-          <label for="check-${i}-pass">Pass</label>
+          <label for="check-${i}-pass">Yes</label>
           <input type="radio" id="check-${i}-fail" name="check-${i}" value="fail" class="check-result">
-          <label for="check-${i}-fail">Fail</label>
+          <label for="check-${i}-fail">No</label
           <input type="radio" id="check-${i}-na" name="check-${i}" value="na" class="check-result" checked>
-          <label for="check-${i}-na">N/A</label>
+          <label for="check-${i}-na">Not applicable</label>
         </div>
       </fieldset>
-      <label class="check-control">
-        <span>Comment (optional)</span>
-        <textarea class="check-comment field" rows="3" placeholder="Add notes..."></textarea>
-      </label>
+       <div class="check-notes">
+        <button type="button" class="btn-link note-trigger" data-note-index="${i}">Add notes</button>
+        <p class="note-preview" id="note-preview-${i}">No notes added.</p>
+      </div>
+      <dialog class="note-modal" id="note-modal-${i}">
+        <form method="dialog" class="note-modal-card">
+          <div class="note-modal-header">
+            <strong>Add notes</strong>
+            <button type="submit" class="note-close" aria-label="Close notes modal">✕</button>
+          </div>
+          <p class="section-subtitle">${esc(c.Name)}</p>
+          <label class="check-control">
+            <span>Comment (optional)</span>
+            <textarea class="check-comment field" rows="4" placeholder="Add notes..."></textarea>
+          </label>
+          <div class="note-actions">
+            <button type="submit" class="btn dark">Done</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   `).join('');
   document.querySelectorAll('.check-result, .check-comment').forEach(el => {
     el.addEventListener('change', scoreChecklist);
     el.addEventListener('input', scoreChecklist);
   });
+  document.querySelectorAll('.note-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(`note-modal-${btn.dataset.noteIndex}`);
+      modal?.showModal();
+    });
+  });
   scoreChecklist();
 }
+
 
 function scoreChecklist(){
   const items = [...document.querySelectorAll('.check-item')].map((item, idx) => {
     const result = item.querySelector(`input[name="check-${idx}"]:checked`)?.value || 'na';
     const comment = item.querySelector('.check-comment')?.value?.trim() || '';
+    const preview = item.querySelector(`#note-preview-${idx}`);
+    if(preview) preview.textContent = comment ? comment : 'No notes added.';
     const question = item.querySelector('.section-subtitle')?.textContent || '';
     const title = item.querySelector('strong')?.textContent || '';
     return { result, comment, question, title };
@@ -423,8 +448,8 @@ function scoreChecklist(){
   document.getElementById('scoreBar').style.width = pct === null ? '0%' : `${pct}%`;
   document.getElementById('maturityText').textContent = `UX concern rating: ${concernRating(pct)}`;
   document.getElementById('scoreCounts').innerHTML = `
-    <p><strong>Passed checks:</strong> ${passed}</p>
-    <p><strong>Failed checks:</strong> ${failed}</p>
+    <p><strong>Yes checks:</strong> ${passed}</p>
+    <p><strong>No checks:</strong> ${failed}</p>
     <p><strong>Not applicable checks:</strong> ${na}</p>
     <p><strong>Total applicable checks:</strong> ${applicable}</p>
   `;

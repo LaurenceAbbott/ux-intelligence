@@ -296,7 +296,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
   color:var(--black);
   background:var(--white);
   border:1px solid var(--black);
-  border-radius:var(--radius-pill);
+  border-radius:.5rem;
   padding:.85rem 1rem .95rem;
   text-decoration:none;
   display:inline-flex;

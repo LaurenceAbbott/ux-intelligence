@@ -188,6 +188,37 @@ select:focus{
   padding:2rem;
 }
 
+.breadcrumbs{
+  margin-bottom:1rem;
+}
+.breadcrumbs ol{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  align-items:center;
+}
+.breadcrumbs li{
+  display:flex;
+  align-items:center;
+  color:var(--muted);
+  font-size:.8rem;
+}
+.breadcrumbs li+li:before{
+  content:"/";
+  margin-right:.5rem;
+  color:var(--muted);
+}
+.breadcrumbs a{
+  color:var(--blue-dark);
+  text-decoration:none;
+}
+.breadcrumbs a:hover{
+  text-decoration:underline;
+}
+
 /* Hero sections */
 .hero,
 .detail-hero{

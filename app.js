@@ -267,7 +267,6 @@ function renderCard(slug){
       <aside class="card-meta-rail panel">
         <div class="label">Card</div>
         <p class="meta-number">#${String(c.Number).padStart(3,'0')}</p>
-        <span class="pill brand">Core principle</span>
         <div class="meta-group">
           <div class="label">Confidence level</div>
           <p class="content-block">${esc(c.Confidence)}</p>

@@ -561,7 +561,8 @@ table.data tr:last-child td{border-bottom:0}
 }
 .segmented-control{
   display:inline-flex;
-   flex-wrap:nowrap;
+  width:max-content;
+  flex-wrap:nowrap;
   border:1px solid var(--line);
   border-radius:999px;
   overflow:hidden;
@@ -576,6 +577,7 @@ table.data tr:last-child td{border-bottom:0}
   cursor:pointer;
   background:var(--white);
   border-right:1px solid var(--line);
+  flex:0 0 auto;
 }
 .segmented-control label:last-of-type{border-right:0}
 .segmented-control input:checked + label{
@@ -586,23 +588,15 @@ table.data tr:last-child td{border-bottom:0}
   border:0;
   margin:0;
   padding:0;
+  justify-self:start;
 }
 
 .toggle-group .segmented-control{white-space:nowrap}
-.check-notes{display:flex;flex-direction:column;gap:.45rem;align-items:flex-start}
-.btn-link{background:none;border:0;color:var(--blue-dark);padding:0;text-decoration:underline;cursor:pointer}
-.note-preview{margin:0;color:var(--muted);font-size:.8rem;max-width:28ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.note-modal{border:0;padding:0;background:transparent}
-.note-modal::backdrop{background:rgba(0,0,0,.35)}
-.note-modal-card{width:min(560px,92vw);background:var(--white);border:1px solid var(--line);padding:1rem;display:grid;gap:.8rem}
-.note-modal-header{display:flex;justify-content:space-between;align-items:center}
-.note-close{border:0;background:none;cursor:pointer;font-size:1.1rem}
-.note-actions{display:flex;justify-content:flex-end}
 
 .score-counts p{margin:.45rem 0}
 .print-only{display:none}
 
-.score-output{position:sticky;top:90px}
+.score-output{position:static}.score-output{position:static}
 .score-big{
   font-size:5rem;
   line-height:.95;

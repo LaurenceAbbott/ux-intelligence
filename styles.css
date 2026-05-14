@@ -515,11 +515,13 @@ table.data td{
   border-bottom:1px solid var(--line);
 }
 table.data th{
-  color:var(--black);
-  background:#ebe7df;
-  text-transform:uppercase;
-  letter-spacing:0px;
-  font-size:.72rem;
+    color: var(--black);
+    background: #ebe7df;
+    /* text-transform: uppercase; */
+    letter-spacing: 0px;
+    font-size: 14px;
+    font-weight: bolder;
+}
 }
 table.data tr:last-child td{border-bottom:0}
 

@@ -245,7 +245,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
   background-position:bottom 2rem right 2rem,center;
   background-size:min(40%,460px) auto,cover;
   border:1px solid var(--line-dark);
-  border-radius:var(--radius);
+  border-radius:1rem;
   padding:3rem;
   min-height:420px;
   display:flex;
@@ -526,6 +526,9 @@ table.data tr:last-child td{border-bottom:0}
 /* Evaluation */
 .review-steps{
   display:inline-flex;
+  background:transparent;
+  border:0;
+  padding:0;
   gap:.8rem;
   flex-wrap:nowrap;
   align-items:center;
@@ -538,8 +541,8 @@ table.data tr:last-child td{border-bottom:0}
 .review-steps::before{
   content:"";
   position:absolute;
-  left:1.5rem;
-  right:1.5rem;
+  left:2.35rem;
+  right:2.35rem;
   top:50%;
   height:1px;
   background:var(--line);

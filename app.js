@@ -1,4 +1,3 @@
-
 const DATA = window.UX_DATA;
 const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
@@ -12,6 +11,18 @@ const sectionSlug = name => DATA.sections.find(s => s.name === name)?.slug || sl
 
 function setActive(route){
   document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
+}
+
+function renderBreadcrumbs(items = []){
+  if(!items.length) return '';
+  const links = items.map((item, index) => {
+    const isCurrent = index === items.length - 1;
+    if(isCurrent){
+      return `<li aria-current="page"><span>${esc(item.label)}</span></li>`;
+    }
+    return `<li><a href="${item.href}">${esc(item.label)}</a></li>`;
+  }).join('');
+  return `<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>${links}</ol></nav>`;
 }
 
 function render(){
@@ -48,6 +59,7 @@ function statCards(){
 
 function renderHome(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }])}
     <section class="hero">
       <span class="kicker">Evidence-led enterprise UX</span>
       <h1>Operational UX Intelligence Framework</h1>
@@ -88,6 +100,7 @@ function renderHome(){
 
 function renderValue(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Business Value', href: '#value' }])}
     <section class="hero">
       <span class="kicker">Business value and ROI</span>
       <h1>What is the value of good UX?</h1>
@@ -155,6 +168,7 @@ function renderValue(){
 function renderLibrary(){
   const categoryOptions = DATA.sections.map(s => `<option value="${esc(s.name)}">${esc(s.name)} (${s.count})</option>`).join('');
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Evidence Library', href: '#library' }])}
     <section class="detail-hero">
       <span class="kicker">Evidence library</span>
       <h1 class="detail-title">All evidence cards</h1>
@@ -223,6 +237,11 @@ function renderSection(slug){
   if(!section) return renderLibrary();
   const cards = DATA.cards.filter(c => c["Reference to taxonomy"] === section.name);
   app.innerHTML = `
+    ${renderBreadcrumbs([
+      { label: 'Framework', href: '#home' },
+      { label: 'Evidence Library', href: '#library' },
+      { label: section.name, href: `#section/${section.slug}` }
+    ])}
     <section class="detail-hero">
       <span class="kicker">Framework section</span>
       <h1 class="detail-title">${esc(section.name)}</h1>
@@ -238,6 +257,12 @@ function renderCard(slug){
   if(!c) return renderLibrary();
   const related = DATA.cards.filter(x => x["Reference to taxonomy"] === c["Reference to taxonomy"] && x.Slug !== c.Slug).slice(0,6);
   app.innerHTML = `
+    ${renderBreadcrumbs([
+      { label: 'Framework', href: '#home' },
+      { label: 'Evidence Library', href: '#library' },
+      { label: c["Reference to taxonomy"], href: `#section/${sectionSlug(c["Reference to taxonomy"])}` },
+      { label: c.Name, href: `#card/${c.Slug}` }
+    ])}
     <section class="detail-hero">
       <div class="meta-row">
         <span class="pill">${String(c.Number).padStart(3,'0')}</span>
@@ -292,6 +317,7 @@ function panel(label, content){
 function renderEvaluation(){
   const sectionOptions = DATA.sections.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Evaluation & Scoring', href: '#evaluation' }])}
     <section class="hero">
       <span class="kicker">Operational scoring</span>
       <h1>UX evaluation & scoring</h1>
@@ -369,6 +395,7 @@ function copyReviewSummary(){
 
 function renderStandards(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'UX Standards', href: '#standards' }])}
     <section class="detail-hero">
       <span class="kicker">Practical application</span>
       <h1 class="detail-title">UX standards</h1>
@@ -388,6 +415,7 @@ function renderStandards(){
 
 function renderAntiPatterns(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Anti-UX Patterns', href: '#anti-patterns' }])}
     <section class="detail-hero">
       <span class="kicker">Anti-UX</span>
       <h1 class="detail-title">Enterprise UX anti-patterns</h1>
@@ -410,6 +438,7 @@ function renderAntiPatterns(){
 
 function renderPlaybooks(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Playbooks', href: '#playbooks' }])}
     <section class="detail-hero">
       <span class="kicker">Contextual UX</span>
       <h1 class="detail-title">Playbooks</h1>
@@ -430,6 +459,7 @@ function renderPlaybooks(){
 
 function renderSources(){
   app.innerHTML = `
+    ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'Sources', href: '#sources' }])}
     <section class="detail-hero">
       <span class="kicker">Source library</span>
       <h1 class="detail-title">Trusted research sources</h1>

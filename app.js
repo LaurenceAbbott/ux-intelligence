@@ -263,45 +263,53 @@ function renderCard(slug){
       { label: c["Reference to taxonomy"], href: `#section/${sectionSlug(c["Reference to taxonomy"])}` },
       { label: c.Name, href: `#card/${c.Slug}` }
     ])}
-    <section class="detail-hero">
-      <div class="meta-row">
-        <span class="pill">${String(c.Number).padStart(3,'0')}</span>
-        <a class="pill brand" href="#section/${sectionSlug(c["Reference to taxonomy"])}">${esc(c["Reference to taxonomy"])}</a>
-        <span class="pill good">${esc(c.Confidence)}</span>
-      </div>
-      <h1 class="detail-title">${esc(c.Name)}</h1>
-      <p class="detail-definition">${esc(c.Definition)}</p>
-    </section>
-    <section class="detail-layout">
-      <div class="stack">
-        ${panel("Evidence / Research", c["Evidence / Research"])}
-        ${panel("Source", c.Source)}
-        <div class="compare">
-          <div class="panel good-box"><div class="label">Good example</div><div class="content-block">${esc(c["Good example"])}</div></div>
-          <div class="panel bad-box"><div class="label">Bad example</div><div class="content-block">${esc(c["Bad example"])}</div></div>
+        <section class="card-layout">
+      <aside class="card-meta-rail panel">
+        <div class="label">Card</div>
+        <p class="meta-number">#${String(c.Number).padStart(3,'0')}</p>
+        <span class="pill brand">Core principle</span>
+        <div class="meta-group">
+          <div class="label">Confidence level</div>
+          <p class="content-block">${esc(c.Confidence)}</p>
         </div>
-        ${panel("Enterprise insurance application", c["Enterprise insurance application"])}
-        ${panel("OGI user considerations", c["OGI user considerations"])}
-        ${panel("Checklist prompt", c["Checklist prompt"])}
-      </div>
-      <aside class="stack">
-        <div class="panel highlight">
+                <div class="meta-group">
+          <div class="label">Source</div>
+          <p class="content-block">${esc(c.Source)}</p>
+        </div>
+                <div class="meta-group">
           <div class="label">Potential value</div>
-          <div class="content-block">${esc(c["Potential value"])}</div>
+          <p class="content-block">${esc(c["Potential value"])}</p>
         </div>
-        <div class="panel">
-          <div class="label">Value type</div>
-          <div class="content-block">${esc(c["Value type"])}</div>
-        </div>
-        <div class="panel">
+       <div class="meta-group">
           <div class="label">Operational / ROI impact</div>
-          <div class="content-block">${esc(c["Operational/ROI impact"])}</div>
-        </div>
-        <div class="panel">
-          <div class="label">Potential metrics / signals</div>
-          <div class="content-block">${esc(c["Potential metrics/signals"])}</div>
+          <p class="content-block">${esc(c["Operational/ROI impact"])}</p>
         </div>
       </aside>
+      <div class="card-main panel">
+        <div class="meta-row">
+          <a class="pill brand" href="#section/${sectionSlug(c["Reference to taxonomy"])}">${esc(c["Reference to taxonomy"])}</a>
+          <span class="pill good">${esc(c["Value type"])}</span>
+        </div>
+        <h1 class="card-main-title">${esc(c.Name)}</h1>
+        <p class="detail-definition">${esc(c.Definition)}</p>
+        <div class="card-chip-row">
+          ${esc(c["Enterprise insurance application"]).split(',').map(item => `<span class="pill">${item.trim()}</span>`).join('')}
+        </div>
+        <div class="panel checklist-callout">
+          <div class="label">Checklist prompt</div>
+          <div class="content-block">${esc(c["Checklist prompt"])}</div>
+        </div>
+        <div class="compare-head">
+          <h2 class="section-title">Visual good / bad example</h2>
+          <div class="meta-row"><span class="pill good">Good example</span><span class="pill bad">Bad example</span></div>
+        </div>
+        <div class="compare">
+          <div class="panel good-box"><div class="label">Good</div><div class="content-block">${esc(c["Good example"])}</div></div>
+          <div class="panel bad-box"><div class="label">Bad</div><div class="content-block">${esc(c["Bad example"])}</div></div>
+        </div>
+        ${panel("Evidence / Research", c["Evidence / Research"])}
+        ${panel("Potential metrics / signals", c["Potential metrics/signals"])}
+      </div>
     </section>
     <section class="section">
       <h2 class="section-title">Related cards</h2>

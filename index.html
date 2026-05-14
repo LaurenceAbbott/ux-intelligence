@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Operational UX Intelligence Framework</title>
+  <meta name="description" content="Evidence-led enterprise UX framework, card library, standards, anti-patterns and evaluation tools." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#home">
+        <span class="brand-mark">UX</span>
+        <span>
+          <strong>Operational UX</strong>
+          <small>Intelligence Framework</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#home" data-route="home">Framework</a>
+        <a href="#value" data-route="value">Business Value</a>
+        <a href="#library" data-route="library">Evidence Library</a>
+        <a href="#evaluation" data-route="evaluation">Evaluation & Scoring</a>
+        <a href="#standards" data-route="standards">UX Standards</a>
+        <a href="#anti-patterns" data-route="anti-patterns">Anti-UX Patterns</a>
+        <a href="#playbooks" data-route="playbooks">Playbooks</a>
+        <a href="#sources" data-route="sources">Sources</a>
+      </nav>
+      <div class="sidebar-card">
+        <strong>Local prototype</strong>
+        <p>Static HTML/CSS/JS. No build tools. Open index.html locally.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
+        <div class="topbar-search">
+          <input id="globalSearch" type="search" placeholder="Search evidence cards…" />
+        </div>
+        <a class="topbar-cta" href="#evaluation">Run a UX review</a>
+      </header>
+
+      <div id="app" class="content"></div>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

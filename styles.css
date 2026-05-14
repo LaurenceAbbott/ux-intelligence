@@ -263,6 +263,7 @@ select:focus{
   margin:0;
   margin-bottom: 1rem;
 }
+
 .hero-actions{
   display:flex;
   flex-wrap:wrap;
@@ -504,13 +505,15 @@ table.data tr:last-child td{border-bottom:0}
 
 /* Evaluation */
 .review-steps{
-  display:flex;
+  display:inline-flex;
   gap:.8rem;
   flex-wrap:nowrap;
   align-items:center;
   position:relative;
   isolation:isolate;
   margin-bottom: 1rem;
+  width:fit-content;
+  max-width:100%;
 }
 .review-steps::before{
   content:"";

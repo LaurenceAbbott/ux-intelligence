@@ -293,6 +293,7 @@ select:focus{
     max-width: 30ch;
     font-size: 3vw;
     line-height: 1.2;
+    font-weight: 300;
 }
 }
 .section-subtitle{

@@ -316,9 +316,8 @@ select:focus{
   box-shadow:none;
 }
 .panel.highlight{
-  background:var(--blue);
-  color:var(--white);
-  border-color:var(--blue);
+  background:var(--white);
+  border:1px solid var(--line);
 }
 .panel.highlight p,
 .panel.highlight .section-subtitle{color:var(--white)}

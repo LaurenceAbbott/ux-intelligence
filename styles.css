@@ -115,6 +115,7 @@ button,input,select,textarea{font:inherit}
   border:1px solid var(--line-dark);
   border-radius:var(--radius-soft);
   padding:1rem;
+  display: none;
 }
 .sidebar-card strong{
   display:block;

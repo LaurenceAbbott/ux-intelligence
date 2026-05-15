@@ -768,27 +768,29 @@ function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) ||
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
 function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
-function scoreIssuePriority(issue={}){const text=`${issue.title||''} ${issue.issue||''} ${issue.recommendation||''} ${issue.impact||''}`.toLowerCase(); if(/(accessibility|contrast|validation|blocked|block|destructive|error|screen reader|keyboard|missing next step|unsafe|risk)/.test(text)) return 'must'; if(/(unclear|hierarchy|findability|scan|confidence|navigation|label|layout|information)/.test(text)) return 'needs'; return 'could';}
 function toPlainEnglish(text=''){
  const source=tidyText(text);
  if(!source) return '';
  const replacements=[
-  [/\binformation density\b/ig,'how much information is shown at once'],
+  [/\binformation density\b/ig,'how much is shown at once'],
   [/\bhierarchy\b/ig,'what stands out first'],
-  [/\baffordance\b/ig,'whether something looks clickable'],
+  [/\baffordance\b/ig,'whether it looks clickable'],
   [/\bcognitive load\b/ig,'how much the user has to work out'],
-  [/\bprogressive disclosure\b/ig,'showing extra detail only when it is needed']
+  [/\bprogressive disclosure\b/ig,'showing extra detail only when needed'],
+  [/\bcontrast ratio\b/ig,'text and button contrast']
  ];
- return replacements.reduce((out,[pattern,value])=>out.replace(pattern,value),source);
+ let out=replacements.reduce((txt,[pattern,value])=>txt.replace(pattern,value),source);
+ out=out.replace(/\bheuristic\b/ig,'design signal').replace(/\bThis fails\b/ig,'This could be clearer').replace(/\bUsers will definitely\b/ig,'Users may');
+ return out;
 }
-function summariseIssue(issue={}){
- return toPlainEnglish(tidyText(issue.recommendation||issue.issue||issue.title||''));
-}
-function dedupeTextList(items=[],limit=5,blocked=new Set()){
- const seen=new Set([...blocked].map(x=>tidyText(x).toLowerCase()));
+function toSentenceCase(text=''){const t=toPlainEnglish(text); if(!t) return ''; return t.charAt(0).toUpperCase()+t.slice(1);}
+function textFromItem(item){if(typeof item==='string') return item; if(!item||typeof item!=='object') return ''; return item.detail||item.title||item.issue||item.recommendation||item.action||item.why||item.text||'';}
+function dedupeTextList(items=[],limit=5,blocked=[]){
+ const stop=new Set(blocked.map(x=>toPlainEnglish(tidyText(x)).toLowerCase()).filter(Boolean));
+ const seen=new Set([...stop]);
  const out=[];
  for(const raw of items){
-  const text=toPlainEnglish(tidyText(raw));
+  const text=toSentenceCase(tidyText(textFromItem(raw)));
   const key=text.toLowerCase();
   if(!text||seen.has(key)) continue;
   seen.add(key);
@@ -797,75 +799,52 @@ function dedupeTextList(items=[],limit=5,blocked=new Set()){
  }
  return out;
 }
-function splitActionPlan(actions=[]){
- const buckets={now:[],next:[],later:[]};
- for(const action of actions){
-  const text=toPlainEnglish(tidyText(action.action||action.recommendation||''));
-  if(!text) continue;
-  const p=String(action.priority||'medium').toLowerCase();
-  if(p==='high') buckets.now.push(text);
-  else if(p==='low') buckets.later.push(text);
-  else buckets.next.push(text);
- }
- return buckets;
+function getSimpleRating(score){
+ if(score>=90) return 'Excellent';
+ if(score>=75) return 'Strong';
+ if(score>=60) return 'Needs work';
+ return 'Needs attention';
 }
-function normaliseConversationalReview(review={}){
- const strengths=Array.isArray(review.whatsWorking)?review.whatsWorking:review.strengths||[];
- const issues=Array.isArray(review.whatIdImprove)?review.whatIdImprove:review.potentialIssues||[];
- const actions=Array.isArray(review.recommendedActions)?review.recommendedActions:[];
- const fallbackTake=[review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'From the screenshot, this looks like a solid starting point with a few areas where clearer guidance and stronger hierarchy could improve confidence.';
- const working=dedupeTextList(strengths.map(s=>typeof s==='string'?s:(s.detail||s.title||'')),5);
- const improveRaw=issues.map(i=>typeof i==='string'?i:summariseIssue(i));
- const planned=splitActionPlan(actions);
- const nowSeed=[...planned.now,...issues.filter(i=>scoreIssuePriority(i)==='must').map(summariseIssue)];
- const nextSeed=[...planned.next,...issues.filter(i=>scoreIssuePriority(i)==='needs').map(summariseIssue)];
- const laterSeed=[...planned.later,...issues.filter(i=>scoreIssuePriority(i)==='could').map(summariseIssue)];
- const now=dedupeTextList(nowSeed,4);
- const next=dedupeTextList(nextSeed,4,new Set(now));
- const later=dedupeTextList(laterSeed,4,new Set([...now,...next]));
- const improve=dedupeTextList(improveRaw,6,new Set(now));
- const ideas=dedupeTextList((review.ideas||[]).concat(actions.filter(a=>String(a.priority||'').toLowerCase()==='low').map(a=>a.why||a.action)),5,new Set([...now,...next,...later,...improve]));
- const take=toPlainEnglish(fallbackTake);
- return {designersTake:take,whatsWorking:working,whatIdImprove:improve,actionPlan:{now:now.length?now:['Make the primary next step clearer so people know where to start.'],next:next.length?next:['Tidy grouping and spacing so related items feel more intentional.'],later:later.length?later:['Explore helpful enhancements once core clarity is in place.']},ideas:ideas.length?ideas:['If this screen is used frequently, consider personalised shortcuts for repeat tasks.']};
+function scoreRingTone(label=''){if(label==='Excellent') return 'excellent'; if(label==='Strong') return 'strong'; if(label==='Needs work') return 'needs-work'; return 'needs-attention';}
+function normaliseSimpleAiReview(review={}){
+ const scoreRaw=Number(review.uxQualityScore);
+ const score=Number.isFinite(scoreRaw)?Math.max(0,Math.min(100,Math.round(scoreRaw))):72;
+ const ratingLabel=getSimpleRating(score);
+ const summarySource=[review.screenSummary,review.designersTake,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'This is a promising direction with a clear starting point. I\'d focus next on making the most important decision points easier to scan and act on quickly.';
+ let summary=toPlainEnglish(summarySource);
+ if(/\b(this screen|screen contains|login screen|dashboard|form)\b/i.test(summary)) summary=`Overall, ${summary.charAt(0).toLowerCase()+summary.slice(1)}`;
+ const summarySentences=summary.split(/(?<=[.!?])\s+/).filter(Boolean).slice(0,4);
+ summary=summarySentences.join(' ');
+ const strengths=dedupeTextList((review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent)/i.test(String(x)))),5);
+ const improveSeed=[];
+ (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(/^I\b|^Consider\b|^This could/i.test(txt)?txt:`I’d check ${txt.charAt(0).toLowerCase()+txt.slice(1)}`);});
+ (review.recommendedActions||[]).forEach(a=>{const txt=toSentenceCase(a.action||a.recommendation||a.why||''); if(!txt) return; improveSeed.push(/^I\b|^Consider\b|^This could/i.test(txt)?txt:`Consider ${txt.charAt(0).toLowerCase()+txt.slice(1)}`);});
+ if(Array.isArray(review.ideas)) review.ideas.forEach(i=>improveSeed.push(toSentenceCase(i)));
+ const criticalImprovements=dedupeTextList(improveSeed,5,strengths);
+ return {score,ratingLabel,summary,topStrengths:strengths.length?strengths:['Clear core flow with a focused starting point.'],criticalImprovements:criticalImprovements.length?criticalImprovements:['I’d make the next best action clearer so users can move forward with less hesitation.']};
 }
-function renderParagraphs(text=''){
- const parts=String(text).split(/\n+/).map(t=>tidyText(t)).filter(Boolean);
- const para=parts.length?parts:[text];
- return para.slice(0,4).map(p=>`<p>${esc(p)}</p>`).join('');
-}
-function renderListItems(items=[],fallback='No items identified.'){
- return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;
-}
+function renderListItems(items=[],fallback='No items identified.'){return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;}
 function renderAiReport(r){
  const report=document.getElementById('aiReport');
-  const c=normaliseConversationalReview(r);
+  const simple=normaliseSimpleAiReview(r);
+ const tone=scoreRingTone(simple.ratingLabel);
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  report.innerHTML=`
- <section class="ai-conversation-layout">
-   <section class="panel ai-section ai-uploaded-design">
-    <h3>Uploaded design</h3>
-    <div class="ai-image-simple">${AI_REVIEW_STATE.image?`<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
-   </section>
-   <section class="panel ai-section ai-designers-take">
-    <h3>Designer’s take</h3>
-    ${renderParagraphs(c.designersTake)}
-   </section>
- </section>
- <section class="ai-two-col">
-   <section class="panel ai-section ai-good"><h3>What’s working</h3>${renderListItems(c.whatsWorking,'The overall direction feels promising and easy to follow at first glance.')}</section>
-   <section class="panel ai-section ai-improve"><h3>What I’d improve</h3>${renderListItems(c.whatIdImprove,'I’d sharpen what stands out first so people can act with less hesitation.')}</section>
- </section>
- <section class="panel ai-section">
-   <h3>Action plan</h3>
-   <div class="ai-plan-grid">
-    <article><h4>Now</h4>${renderListItems(c.actionPlan.now)}</article>
-    <article><h4>Next</h4>${renderListItems(c.actionPlan.next)}</article>
-    <article><h4>Later</h4>${renderListItems(c.actionPlan.later)}</article>
+ <section class="ai-simple-review">
+   <div class="ai-simple-image-wrap">${AI_REVIEW_STATE.image?`<img class="ai-simple-image" src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
+   <div class="ai-review-score-wrap">
+     <div class="ai-review-score-ring ${tone}" style="--score:${simple.score}">
+       <div class="ai-review-score-inner">
+         <div class="ai-review-score-number">${simple.score}</div>
+         <div class="ai-review-score-label">${esc(simple.ratingLabel)}</div>
+       </div>
+     </div>
    </div>
- </section>
- <section class="panel ai-section ai-ideas">
-   <h3>Ideas</h3>
-   ${renderListItems(c.ideas)}
+   <p class="ai-review-summary-copy">${esc(simple.summary)}</p>
+   <div class="ai-review-two-cards">
+     <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simple.topStrengths)}</section>
+     <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simple.criticalImprovements)}</section>
+   </div>
  </section>`;
 }
 function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}

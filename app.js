@@ -699,36 +699,36 @@ function renderAiDesignReview(){
   ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
   <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get a polished UX review report with score, concern level, key issues and prioritised recommendations.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
-  <section class="panel section">
-    <div class="ai-upload-layout">
-      <div>
+   <section class="panel section ai-upload-section">
+      <div class="ai-upload-header">
         <h3>Upload design screenshot</h3>
         <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
+        </div>
+      <div class="ai-upload-panel-wrap">
         <input id="aiImageUpload" class="ai-file-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
-        <div id="aiDropZone" class="ai-drop-zone" role="button" tabindex="0" aria-label="Upload design image">
-          <div class="ai-drop-content">
+        <div id="aiDropZone" class="ai-drop-zone ai-upload-panel" role="button" tabindex="0" aria-label="Upload design image">
+          <div id="aiDropEmpty" class="ai-drop-content ai-upload-empty">
             <div class="ai-drop-icon">✦</div>
             <h4>Drag & drop your screenshot</h4>
             <p>or <button type="button" class="ai-browse-link" id="aiBrowseBtn">browse files</button></p>
             <small>Accepted file types: .png, .jpg, .jpeg</small>
           </div>
-          <div id="aiImagePreview" class="ai-image-preview">Your uploaded image preview will appear here.</div>
-          <div id="aiDropLoader" class="ai-drop-loader is-hidden" aria-live="polite">
-            <div class="spinner"></div>
-            <p>AI UX expert is reviewing your screen…</p>
-            <div class="progress"><span id="aiLoadingProgress"></span></div>
+          <div id="aiImagePreview" class="ai-image-preview is-hidden"></div>
+          <div id="aiDropLoader" class="ai-drop-loader ai-upload-loading-overlay is-hidden" aria-live="polite">
+            <div class="ai-upload-loading-content">
+              <div class="spinner ai-upload-spinner"></div>
+              <h4>Building your AI design review report...</h4>
+              <p id="loadingMessage" class="ai-upload-status-text section-subtitle"></p>
+              <div class="progress"><span id="aiLoadingProgress"></span></div>
+            </div>
           </div>
         </div>
-        <div id="aiImageMeta" class="section-subtitle section"></div>
+        <div id="aiImageMeta" class="ai-upload-meta section-subtitle is-hidden"></div>
+        <div class="ai-upload-actions section"><button class="btn dark" id="runAiReviewBtn">Run AI Design Review</button> <button class="btn" id="clearAiImageBtn">Clear image</button></div>
         <p id="aiValidation" class="field-error is-hidden"></p>
       </div>
-      <div>
-        <div class="section"><button class="btn dark" id="runAiReviewBtn">Run AI Design Review</button> <button class="btn" id="clearAiImageBtn">Clear image</button></div>
-      </div>
-    </div>
     <div id="aiErrorPanel" class="panel highlight is-hidden section"></div>
   </section>
-  <section id="aiLoadingState" class="panel section ai-loading-card is-hidden"><h3>Building your AI design review report…</h3><p id="loadingMessage" class="section-subtitle"></p></section>
   <section id="aiReport" class="section"></section>`;
   AI_REVIEW_STATE.reviewResults = null;
  bindAiReviewEvents();
@@ -747,7 +747,7 @@ function bindAiReviewEvents(){
  document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
 }
 function handleAiImageUpload(e){const file=e.target.files[0]; if(file) loadAiImageFile(file);}
-function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; document.getElementById('aiImageMeta').textContent=`${file.name} • ${file.type} • ${img.width}x${img.height}`; document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`;}; img.src=reader.result;}; reader.readAsDataURL(file);} 
+function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; const meta=document.getElementById('aiImageMeta'); meta.textContent=`${file.name} · ${file.type} · ${img.width}×${img.height}`; meta.classList.remove('is-hidden'); document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`; document.getElementById('aiImagePreview').classList.remove('is-hidden'); document.getElementById('aiDropEmpty').classList.add('is-hidden');}; img.src=reader.result;}; reader.readAsDataURL(file);}  
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
 function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
@@ -766,7 +766,7 @@ function normaliseAiReviewResponse(response={}){const norm={...response}; norm.m
 function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,8); const score=Math.max(55,Math.min(92,70+cards.length)); return {mode:'Local prototype review',reviewConfidence:'Medium',uxQualityScore:score,concernRating:getConcernRating(score),headlineFindings:['Primary actions are visible, but hierarchy may not always guide first click effectively.','Information grouping could be improved to reduce scan effort.','Accessibility risks may exist around contrast, labels and focus cues.'],strengths:[{title:'Clear review framing',detail:'Context and uploaded screenshot provide enough information for a first-pass UX report.'},{title:'Framework coverage',detail:'Selected framework cards create good breadth across usability and accessibility concerns.'}],potentialIssues:cards.slice(0,5).map(c=>({title:`Potential gap: ${c.name}`,issue:'The current layout may not fully support fast decision-making for the target user flow.',relatedCards:[c.name],impact:'Could increase completion time, errors or support dependency.',recommendation:`Review and iterate using this evidence prompt: ${c.checklistPrompt}`,confidence:'Medium'})),recommendedActions:cards.slice(0,5).map((c,i)=>({priority:i<2?'High':i<4?'Medium':'Low',action:`Prioritise improvements aligned to ${c.name}.`,why:'Improves completion speed and consistency.',relatedCards:[c.name]})),relatedEvidence:cards.map(c=>({cardName:c.name,slug:c.slug,reason:'Matched from selected screen type and user type context.'})),checklistResults:cards.map(c=>({cardName:c.name,slug:c.slug,checklistPrompt:c.checklistPrompt,result:'Review manually',comment:''})),limitations:['This review cannot verify real user behaviour without task-based testing.','This review cannot confirm technical accessibility compliance from screenshot alone.']};}
 function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions));}
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
-function toggleAiLoading(show){const el=document.getElementById('aiLoadingState'); const inlineLoader=document.getElementById('aiDropLoader'); if(!el) return; el.classList.toggle('is-hidden',!show); inlineLoader?.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy…','Checking accessibility signals…','Mapping findings to framework evidence…','Prioritising recommendations…','Building your review report…']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
+function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function getOutcomeBadge(score){
  const badge=getPassFailBadge(score);
  return {label:badge.label.split(' — ')[0],className:badge.className};
@@ -816,7 +816,7 @@ function renderAiReport(r){
  const evidenceCount=(r.relatedEvidence||[]).length;
  const screenType='Other';
  const userType='Mixed / unknown';
- document.querySelector('.ai-upload-layout')?.classList.add('ai-upload-layout-collapsed');
+ document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  report.innerHTML=`
  <section class="ai-report-dashboard">
   <div class="ai-score-ring" style="--score:${Math.max(0,Math.min(100,score))}"><div><div class="ai-score-value">${esc(scoreDisplay)}</div><div class="ai-score-label">UX Score</div></div></div>
@@ -838,7 +838,7 @@ function renderAiReport(r){
  <section class="ai-evidence-compact section"><h3>Related framework evidence</h3>${(r.relatedEvidence||[]).map(e=>`<article><div><strong>${esc(e.cardName||'Evidence card')}</strong><p>${esc(e.reason||'Relevant to this review.')}</p></div><a class="link" href="#card/${esc(e.slug||matchRelatedEvidenceSlug(e.cardName)||'')}">View card →</a></article>`).join('')}</section>
  <section class="ai-limitations-compact section"><h4>What this review cannot confirm</h4><ul>${(r.limitations||[]).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></section>`;
 }
-function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; document.getElementById('aiImageMeta').textContent=''; document.getElementById('aiImagePreview').textContent='Upload a PNG/JPG to preview it here.'; document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
+function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
 
 function calcTimeSaving(){
   const seconds = Number(document.getElementById('secondsSaved').value || 0);

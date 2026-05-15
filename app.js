@@ -2,7 +2,7 @@ const DATA = window.UX_DATA;
 const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
-const AI_REVIEW_ENDPOINT = "";
+const AI_REVIEW_ENDPOINT = "https://long-rain-83b1ux-ai-review-agent.laurence-ogi.workers.dev/review-image";
 document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
 
 const esc = (str='') => String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));

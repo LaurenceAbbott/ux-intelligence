@@ -749,7 +749,7 @@ function bindAiReviewEvents(){
 function handleAiImageUpload(e){const file=e.target.files[0]; if(file) loadAiImageFile(file);}
 function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; const meta=document.getElementById('aiImageMeta'); meta.textContent=`${file.name} · ${file.type} · ${img.width}×${img.height}`; meta.classList.remove('is-hidden'); document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`; document.getElementById('aiImagePreview').classList.remove('is-hidden'); document.getElementById('aiDropEmpty').classList.add('is-hidden');}; img.src=reader.result;}; reader.readAsDataURL(file);}  
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
-function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),preferredOutput:{designersTake:'2-4 short paragraphs in plain English',whatsWorking:'3-5 concise points',whatIdImprove:'practical points',actionPlanNow:'short and clear',actionPlanNext:'short and clear',actionPlanLater:'short and clear',ideas:'optional exploratory ideas'}};}
+function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"You are not writing alt text. Do not describe the screen object-by-object. Write a short design critique as if you are a senior UX/product designer giving feedback to another designer. Your summary should say what feels strong, what feels weak and what should be improved first. Use natural sentences. Avoid jargon. Avoid broken fragments. Do not use phrases like ‘The screen is’ or ‘The screenshot shows’. Do not overclaim from a static image.",preferredOutput:{designerSummary:'short critique paragraph for direct display',topStrengths:['3 concise complete sentences'],criticalImprovements:['3 concise action sentences'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
 function getScoreBand(score){if(typeof score!=='number'||Number.isNaN(score))return 'Not scored'; if(score>=90)return 'excellent'; if(score>=75)return 'good'; if(score>=50)return 'watch'; return 'critical';}
 function getPassFailBadge(score){if(typeof score!=='number'||Number.isNaN(score)) return {label:'REVIEW REQUIRED',className:'review'}; if(score>=90) return {label:'PASS — Low concern',className:'pass'}; if(score>=75) return {label:'PASS WITH WATCHOUTS — Medium concern',className:'watch'}; if(score>=50) return {label:'NEEDS REVIEW — High concern',className:'needs-review'}; return {label:'FAIL — Critical concern',className:'fail'};}
@@ -787,6 +787,9 @@ function cleanAiSentence(text=''){
  let out=toPlainEnglish(tidyText(text));
  if(!out) return '';
  out=out
+   .replace(/\bbutton\s+what\s+stands\s+out\s+first\b/ig,'what stands out first')
+  .replace(/\bclear\s+visual\s+what\s+stands\s+out\s+first\b/ig,'Clear visual priority')
+  .replace(/\bconsider\s+ensure\b/ig,'Ensure')
   .replace(/\bcheck\s+check\b/ig,'check')
   .replace(/^i['’]d\s+check\s+increase\b/i,'Increase')
   .replace(/^i['’]d\s+check\s+add\b/i,'Add')
@@ -794,7 +797,9 @@ function cleanAiSentence(text=''){
   .replace(/^i['’]d\s+check\s+review\b/i,'Review')
   .replace(/^i['’]d\s+check\s+clarify\b/i,'Clarify')
   .replace(/^i['’]d\s+check\s+tighten\b/i,'Tighten')
+   .replace(/\bi['’]d\s+check\s+check\b/ig,'Review')
   .replace(/\bi['’]d\s+check\b/ig,'Check whether')
+   .replace(/\bcognitive and recognition load\b/ig,'how much the user has to work out')
   .replace(/\bthis screenshot shows\b/ig,'')
   .replace(/\bthe screen contains\b/ig,'')
   .replace(/\s*([,;:.!?])\1+/g,'$1')
@@ -846,6 +851,27 @@ function rewriteImprovementBullet(text=''){
  if(/consisten|alignment/.test(lower)) return 'Tighten visual alignment and spacing so the interface feels more consistent and intentional.';
  return seed.match(/^(check whether|increase|make|consider|clarify|tighten|review|add)\b/i) ? `${seed}.` : `Consider ${seed.charAt(0).toLowerCase()+seed.slice(1)}.`;
 }
+
+const FALLBACK_SUMMARY='Overall, this feels clean and focused. The main task is easy to identify, but a few supporting elements could work harder. I’d focus first on making the secondary actions clearer and checking the contrast and clickable areas of smaller controls.';
+const FALLBACK_STRENGTHS=['The main task is easy to identify.','The layout feels focused and avoids unnecessary clutter.','The primary action is visually clear.'];
+const FALLBACK_IMPROVEMENTS=['Review the contrast of secondary links and lower-emphasis text.','Increase the clickable area around smaller links and icon controls.','Add short helper text where first-time users may need more guidance.'];
+function startsWithScreenDescription(text=''){return /^(the screen is|this screen is|this is a\b|the screenshot shows|the design features|there is\b)/i.test(tidyText(text));}
+function hasObviousGrammarIssue(text=''){return /\b(button what stands out first|consider ensure|i['’]d check (increase|add|check)|clear visual what stands out first)\b/i.test(String(text)) || /\b[a-z]+\s+what\s+stands\s+out\s+first\b/i.test(String(text));}
+function topicKey(text=''){const t=String(text).toLowerCase(); if(/contrast/.test(t)) return 'contrast'; if(/clickable area|tap target|spacing|smaller controls|icon controls/.test(t)) return 'clickable'; if(/helper text|guidance|first-time|label/.test(t)) return 'guidance'; return '';}
+function dedupeAndBalanceBullets(items=[],limit=3){
+ const out=[]; const seenTopics=new Set();
+ for(const item of items){
+  const cleaned=cleanAiSentence(item);
+  if(!cleaned || hasObviousGrammarIssue(cleaned)) continue;
+  const t=topicKey(cleaned);
+  if(t && seenTopics.has(t)) continue;
+  if(t) seenTopics.add(t);
+  out.push(cleaned);
+  if(out.length>=limit) break;
+ }
+ return out;
+}
+
 function getSimpleRating(score){
  if(score>=90) return 'Excellent';
  if(score>=75) return 'Strong';
@@ -857,26 +883,28 @@ function normaliseSimpleAiReview(review={}){
  const scoreRaw=Number(review.uxQualityScore);
  const score=Number.isFinite(scoreRaw)?Math.max(0,Math.min(100,Math.round(scoreRaw))):72;
  const ratingLabel=getSimpleRating(score);
- const strengthSeed=dedupeTextList((review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),6).map(rewriteStrengthBullet).filter(Boolean);
- const topStrengths=dedupeTextList(strengthSeed,4).slice(0,4);
+  const strengthSeed=dedupeTextList((review.topStrengths||[]).concat(review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),8).map(rewriteStrengthBullet).filter(Boolean);
+ const topStrengths=dedupeAndBalanceBullets(dedupeTextList(strengthSeed,6),3);
  const improveSeed=[];
  (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(rewriteImprovementBullet(txt));});
  (review.recommendedActions||[]).forEach(a=>{const txt=toSentenceCase(a.action||a.recommendation||a.why||''); if(!txt) return; improveSeed.push(rewriteImprovementBullet(txt));});
- if(Array.isArray(review.ideas)) review.ideas.forEach(i=>{const txt=rewriteImprovementBullet(i); if(txt) improveSeed.push(txt);});
- const criticalImprovements=dedupeTextList(improveSeed,4,topStrengths).slice(0,4);
- const summarySource=[review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'';
+ (review.criticalImprovements||[]).forEach(i=>{const txt=toSentenceCase(i); if(txt) improveSeed.push(rewriteImprovementBullet(txt));});
+  if(Array.isArray(review.ideas)) review.ideas.forEach(i=>{const txt=rewriteImprovementBullet(i); if(txt) improveSeed.push(txt);});
+  const criticalImprovements=dedupeAndBalanceBullets(dedupeTextList(improveSeed,8,topStrengths),3);
+ const summarySource=[review.designerSummary,review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'';
  let summary=cleanAiSentence(summarySource).replace(/^overall,?\s+a\b/i,'Overall, this feels like a').replace(/^(this screen contains|this is a screen with)\b/i,'Overall, this feels');
- if(!summary || /\b(screen contains|screenshot|this is a screen with|overall,\s+a\s+[a-z])/i.test(summary)){
-  const strengthLine=topStrengths[0]||'The main task is easy to understand.';
-  const improveLine=criticalImprovements[0]||'The main thing I’d improve is making secondary actions clearer.';
-  summary=`Overall, this feels focused and on the right track. ${strengthLine} ${improveLine}`;
+  if(!summary || startsWithScreenDescription(summary)){
+  const strengthLine=topStrengths[0]||FALLBACK_STRENGTHS[0];
+  const improveLine=criticalImprovements[0]||FALLBACK_IMPROVEMENTS[0];
+  summary=`Overall, this feels clean and focused. ${strengthLine} ${improveLine}`;
  }
  let summarySentences=summary.split(/(?<=[.!?])\s+/).map(cleanAiSentence).filter(Boolean);
  if(summarySentences.length<2){
-  summarySentences=['Overall, this feels focused and on the right track.',topStrengths[0]||'The main task is easy to understand.',criticalImprovements[0]||'The main thing I’d improve is making secondary actions clearer.'];
+    summarySentences=['Overall, this feels clean and focused.',topStrengths[0]||FALLBACK_STRENGTHS[0],criticalImprovements[0]||FALLBACK_IMPROVEMENTS[0]];
  }
  summary=summarySentences.slice(0,4).join(' ');
- return {score,ratingLabel,summary,topStrengths:topStrengths.length?topStrengths:['The core flow is clear and gives users a focused starting point.'],criticalImprovements:criticalImprovements.length?criticalImprovements:['Make the next best action clearer so users can move forward with less hesitation.']};
+ if(startsWithScreenDescription(summary) || hasObviousGrammarIssue(summary)) summary=FALLBACK_SUMMARY;
+ return {score,ratingLabel,summary,topStrengths:topStrengths.length?topStrengths:FALLBACK_STRENGTHS,criticalImprovements:criticalImprovements.length?criticalImprovements:FALLBACK_IMPROVEMENTS};
 }
 function renderListItems(items=[],fallback='No items identified.'){return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;}
 function renderAiReport(r){

@@ -695,27 +695,10 @@ const USER_CARD_MAP = {
 };
 
 function renderAiDesignReview(){
- const today = new Date().toISOString().slice(0,10);
- const workItemTypes = ['Feature', 'Epic', 'Capability', 'Journey', 'Defect', 'Improvement', 'Other'];
- const valueStreams = ['Acquire', 'Distribute', 'Serve'];
- const reviewStages = ['Discovery', 'Prototype', 'Design review', 'Pre-build', 'Pre-release', 'Post-release'];
- const screenTypes = ['Dashboard','Form','Table','Workflow','Modal','Detail page','Document / PDF output','Other'];
- const userTypes = ['Customer','Broker','Internal user','Power user','Mixed / unknown'];
  app.innerHTML = `
   ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
   <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get a polished UX review report with score, concern level, key issues and prioritised recommendations.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
-  <section class="panel section ai-context-panel"><h3>Review context</h3><div class="review-details-grid">
-    <label class="check-control"><span>Work item name</span><input id="aiWorkItemName" class="field" type="text" placeholder="e.g. New claims dashboard"></label>
-    <label class="check-control"><span>Work item type</span><select id="aiWorkItemType">${workItemTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
-    <label class="check-control"><span>Value stream</span><select id="aiValueStream">${valueStreams.map(v=>`<option>${v}</option>`).join('')}</select></label>
-    <label class="check-control"><span>Product / area</span><input id="aiProductArea" class="field" type="text" placeholder="e.g. Broker portal"></label>
-    <label class="check-control"><span>Review stage</span><select id="aiReviewStage">${reviewStages.map(v=>`<option>${v}</option>`).join('')}</select></label>
-    <label class="check-control"><span>Screen type</span><select id="aiScreenType">${screenTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
-    <label class="check-control"><span>User type</span><select id="aiUserType">${userTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
-    <label class="check-control"><span>Reviewer</span><input id="aiReviewer" class="field" type="text" placeholder="Your name"></label>
-    <label class="check-control"><span>Review date</span><input id="aiReviewDate" class="field" type="date"></label>
-  </div><p id="contextChangedNote" class="section-subtitle is-hidden">Context changed. Run review again to refresh the report.</p></section>
   <section class="panel section">
     <div class="ai-upload-layout">
       <div>
@@ -734,19 +717,17 @@ function renderAiDesignReview(){
   </section>
   <section id="aiLoadingState" class="panel section ai-loading-card is-hidden"><div class="spinner"></div><h3>Building your AI design review report…</h3><p id="loadingMessage" class="section-subtitle"></p><div class="progress"><span id="aiLoadingProgress"></span></div></section>
   <section id="aiReport" class="section"></section>`;
- document.getElementById('aiReviewDate').value = today;
   AI_REVIEW_STATE.reviewResults = null;
  bindAiReviewEvents();
 }
 function bindAiReviewEvents(){
- ['aiScreenType','aiUserType'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>document.getElementById('contextChangedNote')?.classList.remove('is-hidden')));
  document.getElementById('aiImageUpload')?.addEventListener('change', handleAiImageUpload);
  document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
  document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
 }
 function handleAiImageUpload(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; document.getElementById('aiImageMeta').textContent=`${file.name} • ${file.type} • ${img.width}x${img.height}`; document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`;}; img.src=reader.result;}; reader.readAsDataURL(file);} 
-function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP[document.getElementById('aiScreenType').value]||[]),...(USER_CARD_MAP[document.getElementById('aiUserType').value]||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
-function buildAiReviewPayload(){return {context:{workItemName:document.getElementById('aiWorkItemName').value,workItemType:document.getElementById('aiWorkItemType').value,valueStream:document.getElementById('aiValueStream').value,productArea:document.getElementById('aiProductArea').value,reviewStage:document.getElementById('aiReviewStage').value,screenType:document.getElementById('aiScreenType').value,userType:document.getElementById('aiUserType').value,reviewer:document.getElementById('aiReviewer').value,reviewDate:document.getElementById('aiReviewDate').value},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
+function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
+function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
 function getScoreBand(score){if(typeof score!=='number'||Number.isNaN(score))return 'Not scored'; if(score>=90)return 'excellent'; if(score>=75)return 'good'; if(score>=50)return 'watch'; return 'critical';}
 function getPassFailBadge(score){if(typeof score!=='number'||Number.isNaN(score)) return {label:'REVIEW REQUIRED',className:'review'}; if(score>=90) return {label:'PASS — Low concern',className:'pass'}; if(score>=75) return {label:'PASS WITH WATCHOUTS — Medium concern',className:'watch'}; if(score>=50) return {label:'NEEDS REVIEW — High concern',className:'needs-review'}; return {label:'FAIL — Critical concern',className:'fail'};}

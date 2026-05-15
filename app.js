@@ -764,184 +764,101 @@ function normaliseAiReviewResponse(response={}){const norm={...response}; norm.m
  return norm;
 }
 function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,8); const score=Math.max(55,Math.min(92,70+cards.length)); return {mode:'Local prototype review',reviewConfidence:'Medium',uxQualityScore:score,concernRating:getConcernRating(score),headlineFindings:['Primary actions are visible, but hierarchy may not always guide first click effectively.','Information grouping could be improved to reduce scan effort.','Accessibility risks may exist around contrast, labels and focus cues.'],strengths:[{title:'Clear review framing',detail:'Context and uploaded screenshot provide enough information for a first-pass UX report.'},{title:'Framework coverage',detail:'Selected framework cards create good breadth across usability and accessibility concerns.'}],potentialIssues:cards.slice(0,5).map(c=>({title:`Potential gap: ${c.name}`,issue:'The current layout may not fully support fast decision-making for the target user flow.',relatedCards:[c.name],impact:'Could increase completion time, errors or support dependency.',recommendation:`Review and iterate using this evidence prompt: ${c.checklistPrompt}`,confidence:'Medium'})),recommendedActions:cards.slice(0,5).map((c,i)=>({priority:i<2?'High':i<4?'Medium':'Low',action:`Prioritise improvements aligned to ${c.name}.`,why:'Improves completion speed and consistency.',relatedCards:[c.name]})),relatedEvidence:cards.map(c=>({cardName:c.name,slug:c.slug,reason:'Matched from selected screen type and user type context.'})),checklistResults:cards.map(c=>({cardName:c.name,slug:c.slug,checklistPrompt:c.checklistPrompt,result:'Review manually',comment:''})),limitations:['This review cannot verify real user behaviour without task-based testing.','This review cannot confirm technical accessibility compliance from screenshot alone.']};}
-function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions));}
+function validateAiResponse(x){return !!(x && (x.designerSummary || Array.isArray(x.topStrengths) || Array.isArray(x.criticalImprovements) || Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions)));}
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
 function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
-function toPlainEnglish(text=''){
- const source=tidyText(text);
- if(!source) return '';
- const replacements=[
-  [/\binformation density\b/ig,'how much is shown at once'],
-  [/\bhierarchy\b/ig,'what stands out first'],
-  [/\baffordance\b/ig,'whether it looks clickable'],
-  [/\bcognitive load\b/ig,'how much the user has to work out'],
-  [/\bprogressive disclosure\b/ig,'showing extra detail only when needed'],
-  [/\bcontrast ratio\b/ig,'text and button contrast']
- ];
- let out=replacements.reduce((txt,[pattern,value])=>txt.replace(pattern,value),source);
- out=out.replace(/\bheuristic\b/ig,'design signal').replace(/\bThis fails\b/ig,'This could be clearer').replace(/\bUsers will definitely\b/ig,'Users may');
- return out;
+function getValidScore(value){
+ const raw=Number(value);
+ if(!Number.isFinite(raw)) return 72;
+ return Math.max(0,Math.min(100,Math.round(raw)));
 }
-function cleanAiSentence(text=''){
- let out=toPlainEnglish(tidyText(text));
- if(!out) return '';
- out=out
-   .replace(/\bbutton\s+what\s+stands\s+out\s+first\b/ig,'what stands out first')
-  .replace(/\bclear\s+visual\s+what\s+stands\s+out\s+first\b/ig,'Clear visual priority')
-  .replace(/\bconsider\s+ensure\b/ig,'Ensure')
-  .replace(/\bcheck\s+check\b/ig,'check')
-  .replace(/^i['’]d\s+check\s+increase\b/i,'Increase')
-  .replace(/^i['’]d\s+check\s+add\b/i,'Add')
-  .replace(/^i['’]d\s+check\s+make\b/i,'Make')
-  .replace(/^i['’]d\s+check\s+review\b/i,'Review')
-  .replace(/^i['’]d\s+check\s+clarify\b/i,'Clarify')
-  .replace(/^i['’]d\s+check\s+tighten\b/i,'Tighten')
-   .replace(/\bi['’]d\s+check\s+check\b/ig,'Review')
-  .replace(/\bi['’]d\s+check\b/ig,'Check whether')
-   .replace(/\bcognitive and recognition load\b/ig,'how much the user has to work out')
-  .replace(/\bthis screenshot shows\b/ig,'')
-  .replace(/\bthe screen contains\b/ig,'')
-  .replace(/\s*([,;:.!?])\1+/g,'$1')
-  .replace(/\s{2,}/g,' ')
-  .trim();
- out=out.replace(/^[,:;\-\s]+/,'').trim();
- if(!out) return '';
- out=out.charAt(0).toUpperCase()+out.slice(1);
- if(!/[.!?]$/.test(out)) out+='.';
- return out;
-}
-function toSentenceCase(text=''){const t=cleanAiSentence(text); if(!t) return ''; return t.charAt(0).toUpperCase()+t.slice(1);}
-function textFromItem(item){if(typeof item==='string') return item; if(!item||typeof item!=='object') return ''; return item.detail||item.title||item.issue||item.recommendation||item.action||item.why||item.text||'';}
-function similarityKey(text=''){return cleanAiSentence(text).toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\b(the|a|an|and|to|of|for|with|that|this|is|are)\b/g,'').replace(/\s+/g,' ').trim();}
-function dedupeTextList(items=[],limit=5,blocked=[]){
-  const stop=new Set(blocked.map(x=>similarityKey(x)).filter(Boolean));
- const seen=new Set([...stop]);
- const out=[];
- for(const raw of items){
-  const text=toSentenceCase(tidyText(textFromItem(raw)));
-  const key=similarityKey(text);
-  if(!text||!key||seen.has(key)) continue;
-  seen.add(key);
-  out.push(text);
-  if(out.length>=limit) break;
- }
- return out;
-}
-function rewriteStrengthBullet(text=''){
- const seed=cleanAiSentence(text).replace(/[.!?]+$/,'');
- const lower=seed.toLowerCase();
- if(!seed) return '';
- if(/plain english|digital literacy|straightforward language/.test(lower)) return 'The language is straightforward and should be easy for most users to understand.';
- if(/free of unnecessary choices|unnecessary choices|distractions/.test(lower)) return 'The screen avoids unnecessary distractions, which keeps the main task focused.';
- if(/primary,? secondary,? and tertiary actions|visually distinguishable/.test(lower)) return 'The primary and secondary actions are visually distinct enough to reduce accidental choices.';
- if(/clear primary action|primary action/.test(lower)) return 'The primary action is easy to identify and remains the clearest next step.';
- if(/central form|form placement|main form/.test(lower)) return 'The main task area is positioned clearly, so users can start quickly.';
- if(/navigation|scan|scann/.test(lower)) return 'The structure is easy to scan, which helps users choose the right route quickly.';
- return seed.startsWith('The ') ? `${seed}.` : `${seed.charAt(0).toUpperCase()+seed.slice(1)}.`;
-}
-function cleanImprovementBullet(text=''){
- let cleaned=cleanAiSentence(text).replace(/[.!?]+$/,'');
- if(!cleaned) return '';
- cleaned=cleaned
-  .replace(/^consider\s+show\b/i,'Show')
-  .replace(/^consider\s+ensure\b/i,'Ensure')
-  .replace(/^consider\s+increase\b/i,'Increase')
-  .replace(/^consider\s+add\b/i,'Add')
-  .replace(/^i['’]d check\s+increase\b/i,'Increase')
-  .replace(/^i['’]d check\s+add\b/i,'Add')
-  .replace(/^i['’]d check\s+check\b/i,'Review')
-  .replace(/\bcheck color contrast\b/i,'Review text and button contrast')
-  .replace(/\bminimum hit area\b/ig,'clickable area')
-  .replace(/\bbefore submitting\b/ig,'before the user submits');
- const lower=cleaned.toLowerCase();
- if(/clickable area|tap target|spacing/.test(lower)) return 'Increase the clickable area around smaller controls so they are easier to select.';
- if(/tooltip|label|helper|guidance/.test(lower)) return 'Add short helper text where users may need more guidance.';
- if(/contrast|low-?emphasis/.test(lower)) return 'Review the contrast of secondary links and low-emphasis text, especially on dark backgrounds.';
- if(/account creation|sign up|create account/.test(lower)) return 'Make the account creation route easier to find for first-time users.';
- if(/social sign.?in|social login/.test(lower)) return 'Clarify social sign-in options so they feel as clear as the main login route.';
- if(/secondary link|secondary action/.test(lower)) return 'Clarify secondary links so they are easy to find without competing with the primary action.';
- if(/consisten|alignment/.test(lower)) return 'Increase spacing consistency so the interface feels more intentional and easier to scan.';
- return cleaned.match(/^(show|increase|review|clarify|make|add|ensure)\b/i) ? `${cleaned}.` : `Review ${cleaned.charAt(0).toLowerCase()+cleaned.slice(1)}.`;
-}
-
-const FALLBACK_SUMMARY='Overall, this feels clean and focused. The main task is easy to identify, but a few supporting elements could work harder. I’d focus first on making the secondary actions clearer and checking the contrast and clickable areas of smaller controls.';
-const FALLBACK_STRENGTHS=['The main task is easy to identify.','The layout feels focused and avoids unnecessary clutter.','The primary action is visually clear.'];
-const FALLBACK_IMPROVEMENTS=['Review the contrast of secondary links and lower-emphasis text.','Increase the clickable area around smaller links and icon controls.','Add short helper text where first-time users may need more guidance.'];
-function isDescriptiveSummary(text=''){return /^(a login page|a screen|this screen|the screen|the screenshot|this screenshot|the design features|a portal screen|a dashboard screen|a form screen)\b/i.test(tidyText(text));}
-function hasObviousGrammarIssue(text=''){return /\b(button what stands out first|consider ensure|i['’]d check (increase|add|check)|clear visual what stands out first)\b/i.test(String(text)) || /\b[a-z]+\s+what\s+stands\s+out\s+first\b/i.test(String(text));}
-function topicKey(text=''){const t=String(text).toLowerCase(); if(/contrast/.test(t)) return 'contrast'; if(/clickable area|tap target|spacing|smaller controls|icon controls/.test(t)) return 'clickable'; if(/helper text|guidance|first-time|label/.test(t)) return 'guidance'; return '';}
-function buildCritiqueSummary(strengths=[],improvements=[],screenType='screen'){
- const strong=strengths[0]||'The main task is easy to identify.';
- const improve=improvements[0]||'I’d mainly improve the supporting options and guidance so users feel more confident when they need help.';
- const context=/login/i.test(String(screenType))?'this login flow':'this screen';
- return `Overall, ${context} feels clean and focused. ${strong} I’d prioritise improving the supporting routes and guidance first so users feel more confident when they need an alternative path.`;
-}
-function dedupeAndBalanceBullets(items=[],limit=3){
- const out=[]; const seenTopics=new Set();
- for(const item of items){
-  const cleaned=cleanAiSentence(item);
-  if(!cleaned || hasObviousGrammarIssue(cleaned)) continue;
-  const t=topicKey(cleaned);
-  if(t && seenTopics.has(t)) continue;
-  if(t) seenTopics.add(t);
-  out.push(cleaned);
-  if(out.length>=limit) break;
- }
- return out;
-}
-
-function getSimpleRating(score){
+function getRatingLabel(score){
  if(score>=90) return 'Excellent';
  if(score>=75) return 'Strong';
  if(score>=60) return 'Needs work';
  return 'Needs attention';
 }
-function scoreRingTone(label=''){if(label==='Excellent') return 'excellent'; if(label==='Strong') return 'strong'; if(label==='Needs work') return 'needs-work'; return 'needs-attention';}
-function normaliseSimpleAiReview(review={}){
- const scoreRaw=Number(review.uxQualityScore);
- const score=Number.isFinite(scoreRaw)?Math.max(0,Math.min(100,Math.round(scoreRaw))):72;
- const ratingLabel=getSimpleRating(score);
-  const strengthSeed=dedupeTextList((review.topStrengths||[]).concat(review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),8).map(rewriteStrengthBullet).filter(Boolean);
- const topStrengths=dedupeAndBalanceBullets(dedupeTextList(strengthSeed,6),3);
- const improveSeed=[];
-  (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(cleanImprovementBullet(txt));});
- (review.recommendedActions||[]).forEach(a=>{const txt=toSentenceCase(a.action||a.recommendation||a.why||''); if(!txt) return; improveSeed.push(cleanImprovementBullet(txt));});
- (review.criticalImprovements||[]).forEach(i=>{const txt=toSentenceCase(i); if(txt) improveSeed.push(cleanImprovementBullet(txt));});
-  if(Array.isArray(review.ideas)) review.ideas.forEach(i=>{const txt=cleanImprovementBullet(i); if(txt) improveSeed.push(txt);});
-  const criticalImprovements=dedupeAndBalanceBullets(dedupeTextList(improveSeed,8,topStrengths),3);
- const summarySource=[review.designerSummary,review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'';
- let summary=cleanAiSentence(summarySource).replace(/^overall,?\s+a\b/i,'Overall, this feels like a').replace(/^(this screen contains|this is a screen with)\b/i,'Overall, this feels');
-    if(!summary || isDescriptiveSummary(summary)) summary=buildCritiqueSummary(topStrengths,criticalImprovements,review?.context?.screenType||'screen');
- let summarySentences=summary.split(/(?<=[.!?])\s+/).map(cleanAiSentence).filter(Boolean);
- if(summarySentences.length<2){
-    summarySentences=['Overall, this feels clean and focused.',topStrengths[0]||FALLBACK_STRENGTHS[0],criticalImprovements[0]||FALLBACK_IMPROVEMENTS[0]];
- }
- summary=summarySentences.slice(0,4).join(' ');
- if(isDescriptiveSummary(summary) || hasObviousGrammarIssue(summary)) summary=buildCritiqueSummary(topStrengths,criticalImprovements,review?.context?.screenType||'screen');
- return {score,ratingLabel,summary,topStrengths:topStrengths.length?topStrengths:FALLBACK_STRENGTHS,criticalImprovements:criticalImprovements.length?criticalImprovements:FALLBACK_IMPROVEMENTS};
+function cleanDisplayText(text=''){
+ let out=String(text||'').trim().replace(/\s+/g,' ');
+ if(!out) return '';
+ out=out.replace(/^[-*•]\s*/,'').trim();
+ if(!out) return '';
+ out=out.charAt(0).toUpperCase()+out.slice(1);
+ if(!/[.!?]$/.test(out)) out+='.';
+ return out;
 }
+function isBrokenDisplayText(text=''){
+ return /\b(increase the visual whether|button what stands out|clear visual what|review consider|consider show|consider ensure|i['’]d check increase|i['’]d check check)\b/i.test(String(text));
+}
+const FALLBACK_SUMMARY='Overall, this feels clean and focused. The main task is easy to identify, but a few supporting elements could work harder. I’d focus first on making the secondary actions clearer and improving the sense of confidence around the next step.';
+const FALLBACK_STRENGTHS=['The main task is easy to identify.','The layout feels focused and avoids unnecessary distractions.','The primary action is visually clear.'];
+const FALLBACK_IMPROVEMENTS=['Make the supporting actions easier to scan.','Clarify secondary routes so users understand their options.','Use the available space more intentionally on larger screens.'];
+
+function cleanList(items=[]){
+ if(!Array.isArray(items)) return [];
+ return items
+  .map(item => cleanDisplayText(typeof item==='string'?item:(item?.detail||item?.title||item?.text||'')))
+  .filter(Boolean)
+  .filter(item => !isBrokenDisplayText(item));
+}
+function fallbackSummary(){return FALLBACK_SUMMARY;}
+
+function normaliseSimpleAiReview(review={}){
+ const score=getValidScore(review.score ?? review.uxQualityScore);
+ const ratingLabel=review.ratingLabel || getRatingLabel(score);
+ const summary=cleanDisplayText(review.designerSummary)
+  || cleanDisplayText(review.screenSummary)
+  || fallbackSummary();
+
+ const directStrengths=cleanList(review.topStrengths);
+ const fallbackStrengths=directStrengths.length?[]:cleanList(review.strengths||review.headlineFindings);
+ const topStrengths=(directStrengths.length?directStrengths:fallbackStrengths).slice(0,3);
+
+ const directImprovements=cleanList(review.criticalImprovements);
+ const fallbackImprovements=directImprovements.length?[]:cleanList([...(review.potentialIssues||[]).map(i=>i?.recommendation||i?.issue||i?.title||''),...(review.recommendedActions||[]).map(a=>a?.action||a?.recommendation||a?.why||'')]);
+ const criticalImprovements=(directImprovements.length?directImprovements:fallbackImprovements).slice(0,3);
+
+ return {
+  score,
+  ratingLabel,
+  summary,
+  topStrengths:topStrengths.length?topStrengths:FALLBACK_STRENGTHS,
+  criticalImprovements:criticalImprovements.length?criticalImprovements:FALLBACK_IMPROVEMENTS
+ };
+}
+
+function scoreRingTone(label=''){if(label==='Excellent') return 'excellent'; if(label==='Strong') return 'strong'; if(label==='Needs work') return 'needs-work'; return 'needs-attention';}
 function renderListItems(items=[],fallback='No items identified.'){return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;}
-function renderAiReport(r){
+function renderAiReport(review){
  const report=document.getElementById('aiReport');
-  const simple=normaliseSimpleAiReview(r);
- const tone=scoreRingTone(simple.ratingLabel);
+ console.log('Raw AI review from Worker:', review);
+ console.log('Direct Worker fields:', {
+  designerSummary: review?.designerSummary,
+  topStrengths: review?.topStrengths,
+  criticalImprovements: review?.criticalImprovements,
+  score: review?.score,
+  ratingLabel: review?.ratingLabel
+ });
+ const simpleReview=normaliseSimpleAiReview(review||{});
+ console.log('Rendered simple review:', simpleReview);
+ const tone=scoreRingTone(simpleReview.ratingLabel);
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  report.innerHTML=`
  <section class="ai-simple-review">
    <div class="ai-simple-image-wrap">${AI_REVIEW_STATE.image?`<img class="ai-simple-image" src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
    <div class="ai-review-score-wrap">
-     <div class="ai-review-score-ring ${tone}" style="--score:${simple.score}">
+     <div class="ai-review-score-ring ${tone}" style="--score:${simpleReview.score}">
        <div class="ai-review-score-inner">
-         <div class="ai-review-score-number">${simple.score}</div>
-         <div class="ai-review-score-label">${esc(simple.ratingLabel)}</div>
+         <div class="ai-review-score-number">${simpleReview.score}</div>
+         <div class="ai-review-score-label">${esc(simpleReview.ratingLabel)}</div>
        </div>
      </div>
    </div>
-   <p class="ai-review-summary-copy">${esc(simple.summary)}</p>
+   <p class="ai-review-summary-copy">${esc(simpleReview.summary)}</p>
    <div class="ai-review-two-cards">
-     <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simple.topStrengths)}</section>
-     <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simple.criticalImprovements)}</section>
+     <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simpleReview.topStrengths)}</section>
+     <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
    </div>
  </section>`;
 }

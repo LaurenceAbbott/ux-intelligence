@@ -2,6 +2,7 @@ const DATA = window.UX_DATA;
 const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
+const AI_REVIEW_ENDPOINT = "";
 document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
 
 const esc = (str='') => String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
@@ -38,6 +39,7 @@ function render(){
   if(route === 'section') return renderSection(parts.join('/'));
   if(route === 'card') return renderCard(parts.join('/'));
   if(route === 'evaluation') return renderEvaluation();
+  if(route === 'ai-design-review') return renderAiDesignReview();
   if(route === 'standards') return renderStandards();
   if(route === 'anti-patterns') return renderAntiPatterns();
   if(route === 'playbooks') return renderPlaybooks();
@@ -663,6 +665,82 @@ function renderSources(){
     </section>
   `;
 }
+
+
+
+const AI_REVIEW_STATE = {
+  image: null,
+  imageMeta: null,
+  reviewResults: null,
+  checklistResponses: {},
+  loadingInterval: null
+};
+
+const SCREEN_CARD_MAP = {
+  'Dashboard': ['Visual hierarchy','Information density','Scannability','Status colour meaning','Task prioritisation','Findability','Button hierarchy','Colour contrast'],
+  'Form': ['Inline validation','Error summaries','Field grouping','Required and optional fields','Labels and instructions','Error prevention','Cognitive load','Review before submission'],
+  'Table': ['Information density','Scannability','Touch target sizing','Keyboard navigation','Search efficiency','Bulk actions','Visual hierarchy','Colour contrast'],
+  'Workflow': ['Workflow continuity','Context switching','Progress indicators','Save and resume','Review before submission','Visibility of system status','Recognition rather than recall'],
+  'Modal': ['Modal interruption','User control and freedom','Destructive action safety','Button hierarchy','Focus visibility','Keyboard navigation'],
+  'Detail page': ['Recognition rather than recall','Visual hierarchy','Findability','Auditability','Content prioritisation','Scannability'],
+  'Document / PDF output': ['Print and document outputs','Typography rhythm','Line length','Heading hierarchy','Plain English','Readable font sizing'],
+  'Other': ['Cognitive load','Visual hierarchy','Recognition rather than recall','Error prevention','Colour contrast','Button hierarchy','Plain English']
+};
+const USER_CARD_MAP = {
+  'Power user': ['Dense information layouts','Expert-user shortcuts','Keyboard accelerators','Desktop-first enterprise UX','Workflow continuity'],
+  'Broker': ['Workflow continuity','Findability','Status colour meaning','Search efficiency','Task prioritisation'],
+  'Customer': ['Plain English','Digital confidence by age','Mobile customer journeys','Trust perception','Customer Effort Score'],
+  'Internal user': ['Role-based views','Auditability','Operational resilience','Saved views and filters'],
+  'Mixed / unknown': ['Accessibility needs with age','Digital literacy','Cognitive accessibility','Colour contrast']
+};
+
+function renderAiDesignReview(){
+ const today = new Date().toISOString().slice(0,10);
+ const workItemTypes = ['Feature', 'Epic', 'Capability', 'Journey', 'Defect', 'Improvement', 'Other'];
+ const valueStreams = ['Acquire', 'Distribute', 'Serve'];
+ const reviewStages = ['Discovery', 'Prototype', 'Design review', 'Pre-build', 'Pre-release', 'Post-release'];
+ const screenTypes = ['Dashboard','Form','Table','Workflow','Modal','Detail page','Document / PDF output','Other'];
+ const userTypes = ['Customer','Broker','Internal user','Power user','Mixed / unknown'];
+ app.innerHTML = `
+  ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
+  <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get a first-pass UX, accessibility and product experience review against the Operational UX Intelligence Framework.</p></section>
+  <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks, hierarchy issues, accessibility concerns and likely anti-patterns, but it does not replace user research, accessibility testing, workflow validation or design judgement.</section>
+  <section class="panel section"><h3>Review context</h3><div class="review-details-grid">
+    <label class="check-control"><span>Work item name</span><input id="aiWorkItemName" class="field" type="text"></label>
+    <label class="check-control"><span>Work item type</span><select id="aiWorkItemType">${workItemTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
+    <label class="check-control"><span>Value stream</span><select id="aiValueStream">${valueStreams.map(v=>`<option>${v}</option>`).join('')}</select></label>
+    <label class="check-control"><span>Product / area</span><input id="aiProductArea" class="field" type="text"></label>
+    <label class="check-control"><span>Review stage</span><select id="aiReviewStage">${reviewStages.map(v=>`<option>${v}</option>`).join('')}</select></label>
+    <label class="check-control"><span>Screen type</span><select id="aiScreenType">${screenTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
+    <label class="check-control"><span>User type</span><select id="aiUserType">${userTypes.map(v=>`<option>${v}</option>`).join('')}</select></label>
+    <label class="check-control"><span>Reviewer</span><input id="aiReviewer" class="field" type="text"></label>
+    <label class="check-control"><span>Review date</span><input id="aiReviewDate" class="field" type="date"></label>
+  </div><p id="contextChangedNote" class="section-subtitle is-hidden">Review context changed. Rerun the review to refresh results.</p></section>
+  <section class="panel section"><h3>Upload design screenshot</h3><input id="aiImageUpload" class="field" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png"><div id="aiImageMeta" class="section-subtitle section"></div><div id="aiImagePreview" class="ai-image-preview section">Upload a PNG/JPG to preview it here.</div><div class="section"><button class="btn dark" id="runAiReviewBtn">Run AI Design Review</button> <button class="btn" id="clearAiImageBtn">Clear image</button></div><p id="aiValidation" class="field-error is-hidden"></p><div id="aiErrorPanel" class="panel highlight is-hidden"></div></section>
+  <section id="aiLoadingState" class="panel section is-hidden"><div class="spinner"></div><p>Reviewing design against the UX Intelligence Framework…</p><p id="loadingMessage" class="section-subtitle"></p></section>
+  <section id="aiReport" class="section"></section>`;
+ document.getElementById('aiReviewDate').value = today;
+ AI_REVIEW_STATE.reviewResults = null; AI_REVIEW_STATE.checklistResponses = {};
+ bindAiReviewEvents();
+}
+function bindAiReviewEvents(){
+ ['aiScreenType','aiUserType'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>document.getElementById('contextChangedNote')?.classList.remove('is-hidden')));
+ document.getElementById('aiImageUpload')?.addEventListener('change', handleAiImageUpload);
+ document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
+ document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
+}
+function handleAiImageUpload(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; document.getElementById('aiImageMeta').textContent=`${file.name} • ${file.type} • ${img.width}x${img.height}`; document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`;}; img.src=reader.result;}; reader.readAsDataURL(file);} 
+function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP[document.getElementById('aiScreenType').value]||[]),...(USER_CARD_MAP[document.getElementById('aiUserType').value]||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
+function buildAiReviewPayload(){return {context:{workItemName:document.getElementById('aiWorkItemName').value,workItemType:document.getElementById('aiWorkItemType').value,valueStream:document.getElementById('aiValueStream').value,productArea:document.getElementById('aiProductArea').value,reviewStage:document.getElementById('aiReviewStage').value,screenType:document.getElementById('aiScreenType').value,userType:document.getElementById('aiUserType').value,reviewer:document.getElementById('aiReviewer').value,reviewDate:document.getElementById('aiReviewDate').value},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
+async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
+function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,8); const score=Math.max(55,Math.min(92,70+cards.length)); return {mode:'Local prototype review',screenSummary:`Prototype review for a ${payload.context.screenType} screen targeting ${payload.context.userType}. Based on metadata only (${payload.image.width}x${payload.image.height}).`,reviewConfidence:'Medium',uxQualityScore:score,concernRating:concernRating(score),headlineFindings:['Hierarchy appears serviceable but primary action clarity may vary by context.','Potential scanning friction if dense content lacks grouping.','Accessibility risks likely around contrast, focus order and label clarity.'],strengths:[{title:'Framework-aligned scope',detail:'Selected evidence cards create a focused and practical first-pass review.'},{title:'Likely task orientation',detail:'Screen type suggests clear operational intent.'},{title:'Good review setup',detail:'Context fields improve interpretation and reproducibility.'}],potentialIssues:cards.slice(0,5).map(c=>({title:`Review ${c.name}`,issue:'Potential mismatch between information hierarchy and user decision flow.',relatedCards:[c.name],impact:'May increase completion time and error rate.',recommendation:`Validate and refine against checklist prompt: ${c.checklistPrompt}`,confidence:'Medium'})),recommendedActions:cards.slice(0,5).map((c,i)=>({priority:i<2?'High':i<4?'Medium':'Low',action:`Run a focused pass on ${c.name}.`,why:'Likely to reduce friction and improve consistency.',relatedCards:[c.name]})),relatedEvidence:cards.map(c=>({cardName:c.name,slug:c.slug,reason:'Matched by screen type/user type context.'})),checklistResults:cards.map(c=>({cardName:c.name,slug:c.slug,checklistPrompt:c.checklistPrompt,result:'Review manually',comment:''})),limitations:['Local prototype review does not analyze pixels or true UI semantics.','Use as preparation before research, accessibility testing and design judgement.']};}
+function validateAiResponse(x){return x && Array.isArray(x.headlineFindings) && Array.isArray(x.checklistResults);}
+async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=runLocalDesignReview(payload); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=result; renderAiReport(result);} 
+function toggleAiLoading(show){const el=document.getElementById('aiLoadingState'); if(!el) return; el.classList.toggle('is-hidden',!show); const messages=['Reading the uploaded design…','Identifying screen type and visible structure…','Checking hierarchy and information density…','Reviewing forms, labels and actions…','Comparing against accessibility and usability standards…','Mapping observations to framework cards…','Looking for likely anti-patterns…','Preparing improvement recommendations…','Building the review summary…']; if(show){let i=0; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i];},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval);} }
+function renderAiReport(r){const report=document.getElementById('aiReport'); const actions=prio=>r.recommendedActions.filter(a=>a.priority===prio); report.innerHTML=`<div class="panel"><h3>Summary</h3><p><strong>Mode:</strong> ${esc(r.mode)} | <strong>Review confidence:</strong> ${esc(r.reviewConfidence)} | <strong>UX score:</strong> ${r.uxQualityScore}% | <strong>Concern:</strong> ${esc(r.concernRating)}</p><p><strong>Screen type:</strong> ${esc(document.getElementById('aiScreenType').value)} | <strong>User type:</strong> ${esc(document.getElementById('aiUserType').value)} | <strong>Related cards:</strong> ${r.relatedEvidence.length} | <strong>Checklist items:</strong> ${r.checklistResults.length}</p></div><div class="panel section"><h3>Screen summary</h3><p>${esc(r.screenSummary)}</p></div><div class="panel section"><h3>Headline findings</h3><ul>${r.headlineFindings.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div><div class="panel section"><h3>Strengths</h3><ul>${r.strengths.map(s=>`<li><strong>${esc(s.title)}:</strong> ${esc(s.detail)}</li>`).join('')}</ul></div><div class="section">${r.potentialIssues.map(i=>`<div class="panel section"><h4>${esc(i.title)}</h4><p>${esc(i.issue)}</p><p><strong>Impact:</strong> ${esc(i.impact)}</p><p><strong>Recommendation:</strong> ${esc(i.recommendation)}</p><p><strong>Related:</strong> ${i.relatedCards.map(esc).join(', ')} | <strong>Confidence:</strong> ${esc(i.confidence)}</p></div>`).join('')}</div><div class="panel section"><h3>Recommended actions</h3>${['High','Medium','Low'].map(p=>`<h4>${p}</h4><ul>${actions(p).map(a=>`<li>${esc(a.action)} — ${esc(a.why)}</li>`).join('')}</ul>`).join('')}</div><div class="panel section"><h3>Related evidence</h3>${r.relatedEvidence.map(e=>`<p><a href="#card/${esc(e.slug)}">${esc(e.cardName)}</a> — ${esc(e.reason)}</p>`).join('')}</div><div class="panel section"><h3>Checklist review</h3><div id="aiChecklistWrap"></div><div id="aiChecklistCounts" class="section"></div><div id="aiAttention" class="section"></div></div>`; renderAiChecklist(r.checklistResults);} 
+function renderAiChecklist(items){const wrap=document.getElementById('aiChecklistWrap'); wrap.innerHTML=items.map((it,i)=>`<div class="check-item"><p><strong>${esc(it.cardName)}</strong><br>${esc(it.checklistPrompt)}</p><div class="segmented-control"><input type="radio" id="ai-${i}-yes" name="ai-${i}" value="Yes" ${it.result==='Yes'?'checked':''}><label for="ai-${i}-yes">Yes</label><input type="radio" id="ai-${i}-no" name="ai-${i}" value="No" ${it.result==='No'?'checked':''}><label for="ai-${i}-no">No</label><input type="radio" id="ai-${i}-na" name="ai-${i}" value="Not applicable" ${it.result==='Not applicable'?'checked':''}><label for="ai-${i}-na">Not applicable</label></div><textarea class="field" data-comment="${i}" placeholder="Comment">${esc(it.comment||'')}</textarea></div>`).join(''); wrap.querySelectorAll('input[type="radio"]').forEach(el=>el.addEventListener('change',()=>updateAiChecklist(items))); wrap.querySelectorAll('textarea').forEach(el=>el.addEventListener('input',()=>updateAiChecklist(items))); updateAiChecklist(items);} 
+function updateAiChecklist(items){items.forEach((it,i)=>{it.result=document.querySelector(`input[name="ai-${i}"]:checked`)?.value||'Review manually'; it.comment=document.querySelector(`textarea[data-comment="${i}"]`)?.value||'';}); const yes=items.filter(i=>i.result==='Yes').length,no=items.filter(i=>i.result==='No').length,na=items.filter(i=>i.result==='Not applicable').length,rm=items.filter(i=>!['Yes','No','Not applicable'].includes(i.result)).length,app=yes+no,score=app?Math.round((yes/app)*100):null; document.getElementById('aiChecklistCounts').innerHTML=`<p><strong>Yes:</strong> ${yes} | <strong>No:</strong> ${no} | <strong>Not applicable:</strong> ${na} | <strong>Review manually:</strong> ${rm} | <strong>Total applicable:</strong> ${app} | <strong>Total reviewed:</strong> ${yes+no+na}</p><p><strong>Manual UX Quality Score:</strong> ${score===null?'Not scored yet':score+'%'} | <strong>Concern:</strong> ${concernRating(score)}</p>`; const fails=items.filter(i=>i.result==='No'); document.getElementById('aiAttention').innerHTML=`<h4>Items needing attention</h4>${fails.length?'<ul>'+fails.map(f=>`<li><strong>${esc(f.cardName)}:</strong> ${esc(f.checklistPrompt)} ${f.comment?`<em>— ${esc(f.comment)}</em>`:''}</li>`).join('')+'</ul>':'<p>No items marked No.</p>'}`;}
+function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; AI_REVIEW_STATE.checklistResponses={}; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; document.getElementById('aiImageMeta').textContent=''; document.getElementById('aiImagePreview').textContent='Upload a PNG/JPG to preview it here.'; document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
 
 function calcTimeSaving(){
   const seconds = Number(document.getElementById('secondsSaved').value || 0);

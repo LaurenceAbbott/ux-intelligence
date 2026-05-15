@@ -703,7 +703,7 @@ function renderAiDesignReview(){
     <div class="ai-upload-layout">
       <div>
         <h3>Upload design screenshot</h3>
-        <<p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
+        <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
         <input id="aiImageUpload" class="ai-file-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
         <div id="aiDropZone" class="ai-drop-zone" role="button" tabindex="0" aria-label="Upload design image">
           <div class="ai-drop-content">
@@ -767,14 +767,76 @@ function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,
 function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions));}
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
 function toggleAiLoading(show){const el=document.getElementById('aiLoadingState'); const inlineLoader=document.getElementById('aiDropLoader'); if(!el) return; el.classList.toggle('is-hidden',!show); inlineLoader?.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy…','Checking accessibility signals…','Mapping findings to framework evidence…','Prioritising recommendations…','Building your review report…']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
-function renderAiReport(r){const report=document.getElementById('aiReport'); const badge=getPassFailBadge(r.uxQualityScore); const scoreDisplay=(typeof r.uxQualityScore==='number'&&!Number.isNaN(r.uxQualityScore))?`${Math.round(r.uxQualityScore)}/100`:'Not scored'; const issues=r.potentialIssues||[]; const highCount=countHighPriorityActions(r.recommendedActions); const evidenceCount=r.relatedEvidence.length;
- report.innerHTML=`<section class="panel ai-scorecard"><div><div class="ai-score-number ${getScoreBand(r.uxQualityScore)}">${esc(scoreDisplay)}</div><div class="section-subtitle">UX Quality Score</div></div><div><div class="meta-row"><span class="ai-score-badge ${badge.className}">${esc(badge.label)}</span><span class="pill">${esc(r.mode)}</span></div><p class="section"><strong>Summary:</strong> ${esc((r.headlineFindings[0]||'AI review completed.').toString())}</p><div class="ai-score-meta"><p><strong>Concern rating:</strong> ${esc(r.concernRating)}</p><p><strong>Review confidence:</strong> ${esc(r.reviewConfidence||'Not provided')}</p><p><strong>Issues found:</strong> ${issues.length}</p><p><strong>High-priority recommendations:</strong> ${highCount}</p><p><strong>Related framework cards:</strong> ${evidenceCount}</p></div></div></section>
- <section class="ai-report-layout section"><div class="ai-report-main">
- <div class="panel"><h3>Headline findings</h3><div class="grid cols-3">${r.headlineFindings.map(f=>`<article class="ai-finding-card"><p>${esc(f)}</p></article>`).join('')||'<p class="section-subtitle">No headline findings returned.</p>'}</div></div>
- <div class="panel section"><h3>What appears to be working well</h3><div class="grid cols-2">${r.strengths.map(s=>`<article class="ai-strength-card"><h4>${esc(s.title||'Strength')}</h4><p>${esc(s.detail||'')}</p></article>`).join('')||'<p class="section-subtitle">No strengths were returned.</p>'}</div></div>
- <div class="panel section"><h3>Key issues to review</h3>${issues.map(i=>`<article class="ai-issue-card ${String(i.confidence).toLowerCase()==='high'?'high-confidence':''}"><h4>${esc(i.title||'Issue')}</h4><p>${esc(i.issue||'')}</p><p><strong>Impact:</strong> ${esc(i.impact||'')}</p><p><strong>Recommendation:</strong> ${esc(i.recommendation||'')}</p><div class="meta-row"><span class="pill">Confidence: ${esc(i.confidence||'Not stated')}</span>${(i.relatedCards||[]).map(c=>`<span class="pill brand">${esc(c)}</span>`).join('')}</div></article>`).join('')||'<p class="section-subtitle">No key issues were returned.</p>'}</div>
- <div class="panel section"><h3>Recommended improvements</h3>${r.recommendedActions.map(a=>`<article class="ai-action-card ai-priority-${String(a.priority).toLowerCase()}"><div class="meta-row"><span class="pill">${esc(a.priority||'Medium')}</span>${(a.relatedCards||[]).map(c=>`<span class="pill brand">${esc(c)}</span>`).join('')}</div><p><strong>${esc(a.action||'Action')}</strong></p><p>${esc(a.why||'')}</p></article>`).join('')||'<p class="section-subtitle">No recommended actions were returned.</p>'}</div>
- </div><aside class="ai-image-side-panel"><div class="panel"><h3>Uploaded image</h3><div class="ai-image-preview">${AI_REVIEW_STATE.image?`<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'No image uploaded.'}</div><p class="section-subtitle section">${esc(AI_REVIEW_STATE.imageMeta?`${AI_REVIEW_STATE.imageMeta.fileName} • ${AI_REVIEW_STATE.imageMeta.width}x${AI_REVIEW_STATE.imageMeta.height}`:'')}</p></div><div class="panel section"><h3>Related framework evidence</h3>${r.relatedEvidence.map(e=>`<article class="ai-evidence-card"><p><a href="#card/${esc(e.slug||'')}">${esc(e.cardName||'Evidence card')}</a></p><p class="section-subtitle">${esc(e.reason||'Relevant to this review.')}</p></article>`).join('')||'<p class="section-subtitle">No related evidence returned.</p>'}</div><div class="panel section ai-limitations"><h3>What this review cannot confirm</h3><ul>${r.limitations.map(l=>`<li>${esc(l)}</li>`).join('')||'<li>Limitations were not returned by the AI response.</li>'}</ul></div></aside></section>`;
+function getOutcomeBadge(score){
+ const badge=getPassFailBadge(score);
+ return {label:badge.label.split(' — ')[0],className:badge.className};
+}
+function getIssueTone(issue={}){
+ const text=`${issue.issue||''} ${issue.recommendation||''}`.toLowerCase();
+ const risky=/(accessibility|contrast|error|blocked|unclear|missing|risk|destructive|validation)/.test(text);
+ const high=String(issue.confidence||'').toLowerCase()==='high';
+ if(high&&risky) return 'must-fix';
+ if(high) return 'needs-improvement';
+ return 'idea';
+}
+function getActionGroup(action={}){
+ const p=String(action.priority||'Medium').toLowerCase();
+ if(p==='high') return 'must-fix';
+ if(p==='medium') return 'improvements';
+ return 'ideas';
+}
+function getCalloutMarkers(issues=[]){
+ const defaults=[{top:'14%',left:'12%'},{top:'16%',right:'12%'},{top:'46%',left:'49%'},{top:'77%',left:'18%'},{top:'79%',right:'16%'},{top:'55%',right:'9%'}];
+ return issues.slice(0,6).map((issue,i)=>({index:i+1,...defaults[i],tone:getIssueTone(issue)}));
+}
+function groupTakeaways(review){
+ const mustFix=(review.potentialIssues||[]).filter(i=>getIssueTone(i)==='must-fix').map(i=>i.title||i.issue).slice(0,4);
+ const improve=(review.potentialIssues||[]).filter(i=>getIssueTone(i)==='needs-improvement').map(i=>i.title||i.issue).slice(0,4);
+ const good=(review.strengths||[]).map(s=>s.title||s.detail).slice(0,4);
+ const ideas=(review.recommendedActions||[]).filter(a=>getActionGroup(a)==='ideas').map(a=>a.action).slice(0,4);
+ return {good,improve,mustFix,ideas};
+}
+function groupRecommendedActions(actions=[]){
+ return actions.reduce((acc,a)=>{const g=getActionGroup(a);acc[g].push(a);return acc;},{'must-fix':[],improvements:[],ideas:[]});
+}
+function matchRelatedEvidenceSlug(cardName=''){
+ return matchEvidenceCardByName(cardName)?.slug || '';
+}
+
+function renderAiReport(r){
+ const report=document.getElementById('aiReport');
+ const score=Math.round(Number(r.uxQualityScore)||0);
+ const issues=r.potentialIssues||[];
+ const markers=getCalloutMarkers(issues);
+ const badge=getOutcomeBadge(r.uxQualityScore);
+ const takeaways=groupTakeaways(r);
+ const actionGroups=groupRecommendedActions(r.recommendedActions||[]);
+ const scoreDisplay=(typeof r.uxQualityScore==='number'&&!Number.isNaN(r.uxQualityScore))?`${score}/100`:'Not scored';
+ const highCount=issues.filter(i=>getIssueTone(i)==='must-fix').length;
+ const evidenceCount=(r.relatedEvidence||[]).length;
+ const screenType='Other';
+ const userType='Mixed / unknown';
+ document.querySelector('.ai-upload-layout')?.classList.add('ai-upload-layout-collapsed');
+ report.innerHTML=`
+ <section class="ai-report-dashboard">
+  <div class="ai-score-ring" style="--score:${Math.max(0,Math.min(100,score))}"><div><div class="ai-score-value">${esc(scoreDisplay)}</div><div class="ai-score-label">UX Score</div></div></div>
+  <div><div class="meta-row"><span class="ai-outcome-badge ${esc(badge.className)}">${esc(badge.label)}</span><span class="pill">${esc(r.concernRating||'Concern not provided')}</span><span class="pill">Confidence: ${esc(r.reviewConfidence||'Not provided')}</span></div>
+  <div class="ai-report-stats"><div class="ai-report-stat"><strong>${issues.length}</strong><span>Key issues</span></div><div class="ai-report-stat"><strong>${(r.recommendedActions||[]).length}</strong><span>Actions</span></div><div class="ai-report-stat"><strong>${evidenceCount}</strong><span>Evidence cards</span></div><div class="ai-report-stat"><strong>${highCount}</strong><span>Must fix</span></div></div>
+  <div class="ai-report-meta"><span class="pill brand">Screen: ${esc(screenType)}</span><span class="pill brand">User: ${esc(userType)}</span></div></div>
+ </section>
+ <section class="ai-review-canvas section">
+  <div class="panel"><h3>Design review canvas</h3><div class="ai-image-annotation-wrap">${AI_REVIEW_STATE.image?`<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:''}${markers.map(m=>`<button class="ai-callout-marker ${m.tone}" style="${m.top?`top:${m.top};`:''}${m.left?`left:${m.left};`:''}${m.right?`right:${m.right};`:''}" type="button">${m.index}</button>`).join('')}</div></div>
+  <div class="ai-callout-list">${issues.slice(0,6).map((i,idx)=>`<article class="ai-callout-item"><span class="ai-issue-number">${idx+1}</span><div><h4>${esc(i.title||'Issue')}</h4><p>${esc(i.recommendation||i.issue||'')}</p><div class="meta-row"><span class="pill">${esc(getIssueTone(i).replace('-',' '))}</span><span class="pill">${esc(i.confidence||'Not stated')}</span></div></div></article>`).join('')}</div>
+ </section>
+ <section class="ai-takeaways section"><h3>General UX takeaways</h3><div class="ai-takeaway-grid">
+ ${[['good','Good',takeaways.good],['improve','Needs improvement',takeaways.improve],['fix','Must fix',takeaways.mustFix],['ideas','Ideas',takeaways.ideas]].map(([k,t,arr])=>`<article class="ai-takeaway-group ai-takeaway-${k}"><h4>${t}</h4><ul>${(arr.length?arr:['No items identified.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article>`).join('')}
+ </div></section>
+ <section class="section"><h3>Key issues</h3><div class="ai-issue-grid">${issues.map((i,idx)=>`<article class="ai-audit-issue-card ${getIssueTone(i)}"><div class="meta-row"><span class="ai-issue-number">${idx+1}</span><span class="ai-issue-status">${esc(getIssueTone(i).replace('-',' '))}</span><span class="pill">Confidence: ${esc(i.confidence||'Not stated')}</span></div><h4>${esc(i.title||'Issue')}</h4><p>${esc(i.issue||'')}</p><p class="ai-issue-impact"><strong>Impact:</strong> ${esc(i.impact||'')}</p><p class="ai-issue-recommendation"><strong>Recommendation:</strong> ${esc(i.recommendation||'')}</p><div class="meta-row">${(i.relatedCards||[]).map(c=>`<span class="pill brand">${esc(c)}</span>`).join('')}</div></article>`).join('')}</div></section>
+ <section class="ai-action-plan section"><h3>Design enhancement action plan</h3><div class="ai-action-columns">
+ ${[['must-fix','Must fix'],['improvements','Improvements'],['ideas','New concepts / Ideas']].map(([k,t])=>`<div class="ai-action-column ai-action-${k}"><h4>${t}</h4>${(actionGroups[k].length?actionGroups[k]:[{action:'No actions in this group.',why:'',priority:k==='ideas'?'Low':k==='improvements'?'Medium':'High'}]).map(a=>`<article class="ai-action-card"><p><strong>${esc(a.action||'Action')}</strong></p><p>${esc(a.why||'')}</p><div class="meta-row"><span class="pill">Effort: ${esc(String(a.priority).toLowerCase()==='high'?'Medium/High':String(a.priority).toLowerCase()==='medium'?'Medium':'Low')}</span>${(a.relatedCards||[]).map(c=>`<span class="pill brand">${esc(c)}</span>`).join('')}</div></article>`).join('')}</div>`).join('')}
+ </div></section>
+ <section class="ai-evidence-compact section"><h3>Related framework evidence</h3>${(r.relatedEvidence||[]).map(e=>`<article><div><strong>${esc(e.cardName||'Evidence card')}</strong><p>${esc(e.reason||'Relevant to this review.')}</p></div><a class="link" href="#card/${esc(e.slug||matchRelatedEvidenceSlug(e.cardName)||'')}">View card →</a></article>`).join('')}</section>
+ <section class="ai-limitations-compact section"><h4>What this review cannot confirm</h4><ul>${(r.limitations||[]).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></section>`;
 }
 function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; document.getElementById('aiImageMeta').textContent=''; document.getElementById('aiImagePreview').textContent='Upload a PNG/JPG to preview it here.'; document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
 

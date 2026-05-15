@@ -951,4 +951,6 @@ textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-review-card li{margin:.42rem 0;color:#334155}
 .ai-review-card-strengths{border:1px solid #cfeee3;background:#fbfffd}
 .ai-review-card-improvements{border:1px solid #f6e5bd;background:#fffdf6}
+
+.ai-new-review-btn{margin-top:.4rem;min-width:320px}
 @media(max-width:900px){.ai-review-two-cards{grid-template-columns:1fr}.ai-review-score-ring{--size:190px}.ai-review-score-inner{width:152px;height:152px}.ai-review-score-number{font-size:2.8rem}}

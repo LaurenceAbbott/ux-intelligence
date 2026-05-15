@@ -703,29 +703,51 @@ function renderAiDesignReview(){
     <div class="ai-upload-layout">
       <div>
         <h3>Upload design screenshot</h3>
-        <p class="section-subtitle">PNG or JPG. After upload, run AI Design Review to generate the report.</p>
-        <input id="aiImageUpload" class="field" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+        <<p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
+        <input id="aiImageUpload" class="ai-file-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+        <div id="aiDropZone" class="ai-drop-zone" role="button" tabindex="0" aria-label="Upload design image">
+          <div class="ai-drop-content">
+            <div class="ai-drop-icon">✦</div>
+            <h4>Drag & drop your screenshot</h4>
+            <p>or <button type="button" class="ai-browse-link" id="aiBrowseBtn">browse files</button></p>
+            <small>Accepted file types: .png, .jpg, .jpeg</small>
+          </div>
+          <div id="aiImagePreview" class="ai-image-preview">Your uploaded image preview will appear here.</div>
+          <div id="aiDropLoader" class="ai-drop-loader is-hidden" aria-live="polite">
+            <div class="spinner"></div>
+            <p>AI UX expert is reviewing your screen…</p>
+            <div class="progress"><span id="aiLoadingProgress"></span></div>
+          </div>
+        </div>
         <div id="aiImageMeta" class="section-subtitle section"></div>
         <p id="aiValidation" class="field-error is-hidden"></p>
       </div>
       <div>
-        <div id="aiImagePreview" class="ai-image-preview">Upload a PNG/JPG to preview it here.</div>
         <div class="section"><button class="btn dark" id="runAiReviewBtn">Run AI Design Review</button> <button class="btn" id="clearAiImageBtn">Clear image</button></div>
       </div>
     </div>
     <div id="aiErrorPanel" class="panel highlight is-hidden section"></div>
   </section>
-  <section id="aiLoadingState" class="panel section ai-loading-card is-hidden"><div class="spinner"></div><h3>Building your AI design review report…</h3><p id="loadingMessage" class="section-subtitle"></p><div class="progress"><span id="aiLoadingProgress"></span></div></section>
+  <section id="aiLoadingState" class="panel section ai-loading-card is-hidden"><h3>Building your AI design review report…</h3><p id="loadingMessage" class="section-subtitle"></p></section>
   <section id="aiReport" class="section"></section>`;
   AI_REVIEW_STATE.reviewResults = null;
  bindAiReviewEvents();
 }
 function bindAiReviewEvents(){
- document.getElementById('aiImageUpload')?.addEventListener('change', handleAiImageUpload);
+ const uploadInput = document.getElementById('aiImageUpload');
+ const dropZone = document.getElementById('aiDropZone');
+ uploadInput?.addEventListener('change', handleAiImageUpload);
+ document.getElementById('aiBrowseBtn')?.addEventListener('click', ()=>uploadInput?.click());
+ dropZone?.addEventListener('click', ()=>uploadInput?.click());
+ dropZone?.addEventListener('keydown', (e)=>{if(e.key==='Enter' || e.key===' '){e.preventDefault(); uploadInput?.click();}});
+ ['dragenter','dragover'].forEach(evt => dropZone?.addEventListener(evt, (e)=>{e.preventDefault(); dropZone.classList.add('is-dragover');}));
+ ['dragleave','drop'].forEach(evt => dropZone?.addEventListener(evt, (e)=>{e.preventDefault(); dropZone.classList.remove('is-dragover');}));
+ dropZone?.addEventListener('drop', (e)=>{const file=e.dataTransfer?.files?.[0]; if(file) loadAiImageFile(file);});
  document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
  document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
 }
-function handleAiImageUpload(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; document.getElementById('aiImageMeta').textContent=`${file.name} • ${file.type} • ${img.width}x${img.height}`; document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`;}; img.src=reader.result;}; reader.readAsDataURL(file);} 
+function handleAiImageUpload(e){const file=e.target.files[0]; if(file) loadAiImageFile(file);}
+function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; document.getElementById('aiImageMeta').textContent=`${file.name} • ${file.type} • ${img.width}x${img.height}`; document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`;}; img.src=reader.result;}; reader.readAsDataURL(file);} 
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
 function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
@@ -744,7 +766,7 @@ function normaliseAiReviewResponse(response={}){const norm={...response}; norm.m
 function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,8); const score=Math.max(55,Math.min(92,70+cards.length)); return {mode:'Local prototype review',reviewConfidence:'Medium',uxQualityScore:score,concernRating:getConcernRating(score),headlineFindings:['Primary actions are visible, but hierarchy may not always guide first click effectively.','Information grouping could be improved to reduce scan effort.','Accessibility risks may exist around contrast, labels and focus cues.'],strengths:[{title:'Clear review framing',detail:'Context and uploaded screenshot provide enough information for a first-pass UX report.'},{title:'Framework coverage',detail:'Selected framework cards create good breadth across usability and accessibility concerns.'}],potentialIssues:cards.slice(0,5).map(c=>({title:`Potential gap: ${c.name}`,issue:'The current layout may not fully support fast decision-making for the target user flow.',relatedCards:[c.name],impact:'Could increase completion time, errors or support dependency.',recommendation:`Review and iterate using this evidence prompt: ${c.checklistPrompt}`,confidence:'Medium'})),recommendedActions:cards.slice(0,5).map((c,i)=>({priority:i<2?'High':i<4?'Medium':'Low',action:`Prioritise improvements aligned to ${c.name}.`,why:'Improves completion speed and consistency.',relatedCards:[c.name]})),relatedEvidence:cards.map(c=>({cardName:c.name,slug:c.slug,reason:'Matched from selected screen type and user type context.'})),checklistResults:cards.map(c=>({cardName:c.name,slug:c.slug,checklistPrompt:c.checklistPrompt,result:'Review manually',comment:''})),limitations:['This review cannot verify real user behaviour without task-based testing.','This review cannot confirm technical accessibility compliance from screenshot alone.']};}
 function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions));}
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
-function toggleAiLoading(show){const el=document.getElementById('aiLoadingState'); if(!el) return; el.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy…','Checking accessibility signals…','Mapping findings to framework evidence…','Prioritising recommendations…','Building your review report…']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
+function toggleAiLoading(show){const el=document.getElementById('aiLoadingState'); const inlineLoader=document.getElementById('aiDropLoader'); if(!el) return; el.classList.toggle('is-hidden',!show); inlineLoader?.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy…','Checking accessibility signals…','Mapping findings to framework evidence…','Prioritising recommendations…','Building your review report…']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function renderAiReport(r){const report=document.getElementById('aiReport'); const badge=getPassFailBadge(r.uxQualityScore); const scoreDisplay=(typeof r.uxQualityScore==='number'&&!Number.isNaN(r.uxQualityScore))?`${Math.round(r.uxQualityScore)}/100`:'Not scored'; const issues=r.potentialIssues||[]; const highCount=countHighPriorityActions(r.recommendedActions); const evidenceCount=r.relatedEvidence.length;
  report.innerHTML=`<section class="panel ai-scorecard"><div><div class="ai-score-number ${getScoreBand(r.uxQualityScore)}">${esc(scoreDisplay)}</div><div class="section-subtitle">UX Quality Score</div></div><div><div class="meta-row"><span class="ai-score-badge ${badge.className}">${esc(badge.label)}</span><span class="pill">${esc(r.mode)}</span></div><p class="section"><strong>Summary:</strong> ${esc((r.headlineFindings[0]||'AI review completed.').toString())}</p><div class="ai-score-meta"><p><strong>Concern rating:</strong> ${esc(r.concernRating)}</p><p><strong>Review confidence:</strong> ${esc(r.reviewConfidence||'Not provided')}</p><p><strong>Issues found:</strong> ${issues.length}</p><p><strong>High-priority recommendations:</strong> ${highCount}</p><p><strong>Related framework cards:</strong> ${evidenceCount}</p></div></div></section>
  <section class="ai-report-layout section"><div class="ai-report-main">

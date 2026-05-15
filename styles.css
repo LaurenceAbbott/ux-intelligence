@@ -942,11 +942,11 @@ textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-review-score-ring.needs-attention{--ring:#de5e5b}
 .ai-review-score-inner{width:176px;height:176px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;align-content:center;box-shadow:inset 0 0 0 1px #edf1f7}
 .ai-review-score-number{font-size:4rem;line-height:1;font-weight:300;color:#0f172a}
-.ai-review-score-label{font-size:1.2rem;color:#475569;font-weight:600;margin-top:.35rem}
-.ai-review-summary-copy{max-width:760px;text-align:center;font-size:1.1rem;line-height:1.7;color:#334155;margin:0}
+.ai-review-score-label{font-size:1.2rem;color:#0f172a;font-weight:300;margin-top:.35rem}
+.ai-review-summary-copy{max-width:760px;text-align:center;font-size:1.1rem;line-height:1.7;margin-bottom:1rem;color:#334155;margin:0}
 .ai-review-two-cards{width:min(100%,980px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
 .ai-review-card{background:#fff;border-radius:16px;padding:1.1rem 1.2rem;box-shadow:0 8px 18px rgba(15,23,42,.06)}
-.ai-review-card h3{margin-bottom:.6rem}
+.ai-review-card h3{margin-bottom:.6rem;font-weight:400;}
 .ai-review-card ul{margin:.2rem 0 0 1rem}
 .ai-review-card li{margin:.42rem 0;color:#334155}
 .ai-review-card-strengths{border:1px solid #cfeee3;background:#fbfffd}

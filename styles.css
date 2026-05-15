@@ -840,7 +840,7 @@ table.data tr:last-child td{border-bottom:0}
 .ai-drop-zone.is-dragover{border-color:var(--blue);box-shadow:0 0 0 4px rgba(47,75,186,.14);transform:translateY(-1px)}
 .ai-drop-content{text-align:center;padding:1.1rem 1rem .8rem}
 .ai-upload-empty{max-width:420px}
-.ai-drop-content h4{margin:.35rem 0 .2rem;font-size:1.35rem;color:#25326b}
+.ai-drop-content h4{margin:.35rem 0 .2rem;font-size:1.35rem;font-weight:300;color:#25326b}
 .ai-drop-content p{margin:0;color:var(--muted)}
 .ai-drop-content small{display:block;margin-top:.6rem;color:#6b7280}
 .ai-drop-icon{font-size:1.6rem;color:#4457a8}

@@ -838,3 +838,30 @@ table.data tr:last-child td{border-bottom:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 #aiLoadingState{display:flex;flex-direction:column;align-items:flex-start}
 textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
+.ai-context-panel{background:#fcfbf8}
+.ai-upload-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:1.25rem;align-items:start}
+.ai-loading-card{background:#1f2937;color:#f8fafc;border-color:#2f4bba}
+.ai-loading-card .section-subtitle{color:#c7d2fe}
+.ai-report-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);gap:1rem;align-items:start}
+.ai-report-main{display:grid;gap:1rem}
+.ai-scorecard{display:grid;grid-template-columns:220px 1fr;gap:1.25rem;align-items:center;background:linear-gradient(135deg,#fff,#f8f6ef)}
+.ai-score-number{font-size:4rem;font-weight:300;line-height:1;color:var(--blue)}
+.ai-score-number.critical{color:#c0392b}
+.ai-score-badge{display:inline-flex;align-items:center;padding:.42rem .8rem;border-radius:999px;font-size:.78rem;font-weight:700}
+.ai-score-badge.pass{background:#dcfce7;color:#166534}
+.ai-score-badge.watch{background:#fef3c7;color:#92400e}
+.ai-score-badge.needs-review{background:#ffedd5;color:#9a3412}
+.ai-score-badge.fail{background:#fee2e2;color:#991b1b}
+.ai-score-badge.review{background:#e5e7eb;color:#374151}
+.ai-score-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem 1rem}
+.ai-finding-card,.ai-strength-card,.ai-issue-card,.ai-action-card,.ai-evidence-card{border:1px solid var(--line);border-radius:14px;background:var(--white);padding:1rem}
+.ai-finding-card{background:#fafaf9}
+.ai-strength-card{border-left:3px solid #5c7edc}
+.ai-issue-card{border-left:3px solid #d97706}
+.ai-issue-card.high-confidence{border-left-color:#b91c1c;background:#fff7f7}
+.ai-priority-high{border-left:4px solid #b91c1c}
+.ai-priority-medium{border-left:4px solid #d97706}
+.ai-priority-low{border-left:4px solid #2f4bba}
+.ai-limitations{background:#fafaf9;color:#4b5563}
+.ai-image-side-panel{position:sticky;top:92px;display:grid;gap:1rem}
+@media(max-width:1100px){.ai-report-layout{grid-template-columns:1fr}.ai-image-side-panel{position:static}.ai-upload-layout{grid-template-columns:1fr}.ai-scorecard{grid-template-columns:1fr}.ai-score-meta{grid-template-columns:1fr}}

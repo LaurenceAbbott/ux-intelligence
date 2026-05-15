@@ -697,7 +697,7 @@ const USER_CARD_MAP = {
 function renderAiDesignReview(){
  app.innerHTML = `
   ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
-  <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get a polished UX review report with score, concern level, key issues and prioritised recommendations.</p></section>
+   <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get practical, conversational feedback as if a senior design team reviewed the screen together.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
    <section class="panel section ai-upload-section">
       <div class="ai-upload-header">
@@ -749,7 +749,7 @@ function bindAiReviewEvents(){
 function handleAiImageUpload(e){const file=e.target.files[0]; if(file) loadAiImageFile(file);}
 function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; const meta=document.getElementById('aiImageMeta'); meta.textContent=`${file.name} · ${file.type} · ${img.width}×${img.height}`; meta.classList.remove('is-hidden'); document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`; document.getElementById('aiImagePreview').classList.remove('is-hidden'); document.getElementById('aiDropEmpty').classList.add('is-hidden');}; img.src=reader.result;}; reader.readAsDataURL(file);}  
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
-function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards()};}
+function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),preferredOutput:{designersTake:'2-4 short paragraphs in plain English',whatsWorking:'3-5 concise points',whatIdImprove:'practical points',actionPlanNow:'short and clear',actionPlanNext:'short and clear',actionPlanLater:'short and clear',ideas:'optional exploratory ideas'}};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
 function getScoreBand(score){if(typeof score!=='number'||Number.isNaN(score))return 'Not scored'; if(score>=90)return 'excellent'; if(score>=75)return 'good'; if(score>=50)return 'watch'; return 'critical';}
 function getPassFailBadge(score){if(typeof score!=='number'||Number.isNaN(score)) return {label:'REVIEW REQUIRED',className:'review'}; if(score>=90) return {label:'PASS — Low concern',className:'pass'}; if(score>=75) return {label:'PASS WITH WATCHOUTS — Medium concern',className:'watch'}; if(score>=50) return {label:'NEEDS REVIEW — High concern',className:'needs-review'}; return {label:'FAIL — Critical concern',className:'fail'};}
@@ -767,68 +767,105 @@ function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,
 function validateAiResponse(x){return x && (Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions));}
 async function runAiDesignReview(){document.getElementById('aiValidation').classList.add('is-hidden'); if(!AI_REVIEW_STATE.image){const v=document.getElementById('aiValidation');v.textContent='Please upload an image before running the review.';v.classList.remove('is-hidden');return;} const payload=buildAiReviewPayload(); toggleAiLoading(true); let result; try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);} 
 function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
-function getOutcomeBadge(score){
- const badge=getPassFailBadge(score);
- return {label:badge.label.split(' — ')[0],className:badge.className};
-}
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
-function issueKey(item={}){return tidyText(item.title||item.issue||item.recommendation||'').toLowerCase();}
-function scoreIssuePriority(issue={}){
- const text=`${issue.title||''} ${issue.issue||''} ${issue.recommendation||''} ${issue.impact||''}`.toLowerCase();
- if(/(accessibility|contrast|validation|blocked|block|destructive|error|screen reader|keyboard|missing next step|unsafe|risk)/.test(text)) return 'must';
- if(/(unclear|hierarchy|findability|scan|confidence|navigation|label|layout|information)/.test(text)) return 'needs';
- return 'could';
+function scoreIssuePriority(issue={}){const text=`${issue.title||''} ${issue.issue||''} ${issue.recommendation||''} ${issue.impact||''}`.toLowerCase(); if(/(accessibility|contrast|validation|blocked|block|destructive|error|screen reader|keyboard|missing next step|unsafe|risk)/.test(text)) return 'must'; if(/(unclear|hierarchy|findability|scan|confidence|navigation|label|layout|information)/.test(text)) return 'needs'; return 'could';}
+function toPlainEnglish(text=''){
+ const source=tidyText(text);
+ if(!source) return '';
+ const replacements=[
+  [/\binformation density\b/ig,'how much information is shown at once'],
+  [/\bhierarchy\b/ig,'what stands out first'],
+  [/\baffordance\b/ig,'whether something looks clickable'],
+  [/\bcognitive load\b/ig,'how much the user has to work out'],
+  [/\bprogressive disclosure\b/ig,'showing extra detail only when it is needed']
+ ];
+ return replacements.reduce((out,[pattern,value])=>out.replace(pattern,value),source);
 }
-function dedupeByKey(items=[],limit=5){const seen=new Set();const out=[];for(const item of items){const key=issueKey(item)||tidyText(item.action||item||'').toLowerCase();if(!key||seen.has(key))continue;seen.add(key);out.push(item);if(out.length>=limit)break;}return out;}
-function normaliseSectionItems(review){
- const strengths=dedupeByKey((review.strengths||[]).map(s=>({title:tidyText(s.title||s.detail),detail:tidyText(s.detail||s.title)})),5);
- const issues=dedupeByKey((review.potentialIssues||[]).map(i=>({...i,title:tidyText(i.title||i.issue),issue:tidyText(i.issue),recommendation:tidyText(i.recommendation),impact:tidyText(i.impact)})),12);
- const mustFix=[]; const needs=[]; const could=[];
- for(const i of issues){const p=scoreIssuePriority(i); if(p==='must'&&mustFix.length<5){mustFix.push(i);continue;} if(p==='needs'&&needs.length<5){needs.push(i);continue;} if(could.length<5) could.push(i);}
- const usedKeys=new Set(mustFix.map(issueKey));
- const cleanNeeds=needs.filter(i=>!usedKeys.has(issueKey(i))).slice(0,5);
- cleanNeeds.forEach(i=>usedKeys.add(issueKey(i)));
- const cleanCould=could.filter(i=>!usedKeys.has(issueKey(i))).slice(0,5);
- const ideas=dedupeByKey((review.recommendedActions||[]).filter(a=>String(a.priority||'').toLowerCase()==='low').map(a=>({text:tidyText(a.action),why:tidyText(a.why)})),5);
- const now=mustFix.map(i=>`Review and address: ${i.title||i.issue}`);
- const next=cleanNeeds.map(i=>`Improve: ${i.title||i.issue}`);
- const later=[...cleanCould.map(i=>`Refine: ${i.title||i.issue}`),...ideas.map(i=>`Explore: ${i.text}`)].slice(0,8-Math.min(8,now.length+next.length));
- const evidence=dedupeByKey((review.relatedEvidence||[]).map(e=>({cardName:tidyText(e.cardName||'Evidence card'),slug:e.slug||matchRelatedEvidenceSlug(e.cardName)||'',reason:tidyText(e.reason||'From the screenshot, this appears relevant to the observed UX patterns.'),taxonomy:tidyText(bySlug(e.slug||matchRelatedEvidenceSlug(e.cardName))?.['Reference to taxonomy']||'Framework evidence')})),8);
- return {strengths,mustFix,needs:cleanNeeds,could:cleanCould,ideas,now,next,later,evidence};
+function summariseIssue(issue={}){
+ return toPlainEnglish(tidyText(issue.recommendation||issue.issue||issue.title||''));
+}
+function dedupeTextList(items=[],limit=5,blocked=new Set()){
+ const seen=new Set([...blocked].map(x=>tidyText(x).toLowerCase()));
+ const out=[];
+ for(const raw of items){
+  const text=toPlainEnglish(tidyText(raw));
+  const key=text.toLowerCase();
+  if(!text||seen.has(key)) continue;
+  seen.add(key);
+  out.push(text);
+  if(out.length>=limit) break;
+ }
+ return out;
+}
+function splitActionPlan(actions=[]){
+ const buckets={now:[],next:[],later:[]};
+ for(const action of actions){
+  const text=toPlainEnglish(tidyText(action.action||action.recommendation||''));
+  if(!text) continue;
+  const p=String(action.priority||'medium').toLowerCase();
+  if(p==='high') buckets.now.push(text);
+  else if(p==='low') buckets.later.push(text);
+  else buckets.next.push(text);
+ }
+ return buckets;
+}
+function normaliseConversationalReview(review={}){
+ const strengths=Array.isArray(review.whatsWorking)?review.whatsWorking:review.strengths||[];
+ const issues=Array.isArray(review.whatIdImprove)?review.whatIdImprove:review.potentialIssues||[];
+ const actions=Array.isArray(review.recommendedActions)?review.recommendedActions:[];
+ const fallbackTake=[review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'From the screenshot, this looks like a solid starting point with a few areas where clearer guidance and stronger hierarchy could improve confidence.';
+ const working=dedupeTextList(strengths.map(s=>typeof s==='string'?s:(s.detail||s.title||'')),5);
+ const improveRaw=issues.map(i=>typeof i==='string'?i:summariseIssue(i));
+ const planned=splitActionPlan(actions);
+ const nowSeed=[...planned.now,...issues.filter(i=>scoreIssuePriority(i)==='must').map(summariseIssue)];
+ const nextSeed=[...planned.next,...issues.filter(i=>scoreIssuePriority(i)==='needs').map(summariseIssue)];
+ const laterSeed=[...planned.later,...issues.filter(i=>scoreIssuePriority(i)==='could').map(summariseIssue)];
+ const now=dedupeTextList(nowSeed,4);
+ const next=dedupeTextList(nextSeed,4,new Set(now));
+ const later=dedupeTextList(laterSeed,4,new Set([...now,...next]));
+ const improve=dedupeTextList(improveRaw,6,new Set(now));
+ const ideas=dedupeTextList((review.ideas||[]).concat(actions.filter(a=>String(a.priority||'').toLowerCase()==='low').map(a=>a.why||a.action)),5,new Set([...now,...next,...later,...improve]));
+ const take=toPlainEnglish(fallbackTake);
+ return {designersTake:take,whatsWorking:working,whatIdImprove:improve,actionPlan:{now:now.length?now:['Make the primary next step clearer so people know where to start.'],next:next.length?next:['Tidy grouping and spacing so related items feel more intentional.'],later:later.length?later:['Explore helpful enhancements once core clarity is in place.']},ideas:ideas.length?ideas:['If this screen is used frequently, consider personalised shortcuts for repeat tasks.']};
+}
+function renderParagraphs(text=''){
+ const parts=String(text).split(/\n+/).map(t=>tidyText(t)).filter(Boolean);
+ const para=parts.length?parts:[text];
+ return para.slice(0,4).map(p=>`<p>${esc(p)}</p>`).join('');
 }
 function renderListItems(items=[],fallback='No items identified.'){
  return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;
 }
-
 function renderAiReport(r){
  const report=document.getElementById('aiReport');
- const score=Math.round(Number(r.uxQualityScore)||0);
- const badge=getOutcomeBadge(r.uxQualityScore);
- const scoreDisplay=(typeof r.uxQualityScore==='number'&&!Number.isNaN(r.uxQualityScore))?`${score}/100`:'Not scored';
- const screenType='Other';
- const userType='Mixed / unknown';
- const sections=normaliseSectionItems(r);
- const summaryText=tidyText((r.headlineFindings||[])[0]||'From the screenshot, this appears to show a usable foundation with specific clarity and accessibility watchouts that should be reviewed.');
- const limitations=dedupeByKey((r.limitations||[]).map(x=>({title:tidyText(x)})),5).map(x=>x.title);
- const defaultLimitations=['Keyboard behaviour cannot be confirmed from a static image.','Screen reader support cannot be confirmed from a static image.','Task success cannot be confirmed without observing users.','Actual WCAG compliance requires testing.','Business-rule correctness cannot be confirmed from the screenshot alone.'];
- const limitationItems=limitations.length?limitations:defaultLimitations;
+  const c=normaliseConversationalReview(r);
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  report.innerHTML=`
- <section class="ai-review-grid">
-  <div class="ai-review-main">
-   <section class="panel ai-section"><h3>1. Summary</h3><div class="ai-summary-scorecard"><span class="pill brand">UX Quality Score: ${esc(scoreDisplay)}</span><span class="ai-outcome-badge ${esc(badge.className)}">${esc(badge.label)}</span><span class="pill">Concern: ${esc(r.concernRating||'Not provided')}</span><span class="pill">Review confidence: ${esc(r.reviewConfidence||'Not provided')}</span><span class="pill">Screen type: ${esc(screenType)}</span><span class="pill">User type: ${esc(userType)}</span></div><p>${esc(summaryText)}</p></section>
-   <section class="panel ai-section ai-good"><h3>2. Good</h3>${renderListItems(sections.strengths)}</section>
-   <section class="panel ai-section ai-needs"><h3>3. Needs improvement</h3>${renderListItems(sections.needs.map(i=>`${i.title||'Improvement'} — ${i.recommendation||i.issue}`))}</section>
-   <section class="panel ai-section ai-must"><h3>4. Must fix</h3>${renderListItems(sections.mustFix.map(i=>`${i.title||'Must fix'} — ${i.recommendation||i.issue}`))}</section>
-   <section class="panel ai-section ai-could"><h3>5. Could fix</h3>${renderListItems(sections.could.map(i=>`${i.title||'Could fix'} — ${i.recommendation||i.issue}`))}</section>
-   <section class="panel ai-section"><h3>6. Action plan</h3><div class="ai-plan-grid"><article><h4>Now</h4>${renderListItems(sections.now,'No immediate must-fix actions identified.')}</article><article><h4>Next</h4>${renderListItems(sections.next,'No next-step actions identified.')}</article><article><h4>Later</h4>${renderListItems(sections.later,'No later actions identified.')}</article></div></section>
-   <section class="panel ai-section"><h3>7. Ideas</h3>${renderListItems(sections.ideas.map(i=>`Opportunity: ${i.text}${i.why?` — ${i.why}`:''}`),'No additional ideas suggested.')}</section>
-  </div>
-  <aside class="ai-review-side">
-   <section class="panel ai-section"><h3>Uploaded design</h3><div class="ai-image-simple">${AI_REVIEW_STATE.image?`<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div></section>
-   <section class="panel ai-section"><h3>8. Related framework evidence</h3><div class="ai-evidence-accordion">${(sections.evidence.length?sections.evidence:[{cardName:'No related evidence provided',taxonomy:'',reason:'Run a review to map evidence.',slug:''}]).map(e=>`<details><summary>${esc(e.cardName)}</summary><p><strong>Section:</strong> ${esc(e.taxonomy||'Not specified')}</p><p><strong>Why it is relevant:</strong> ${esc(e.reason)}</p>${e.slug?`<p><a class="link" href="#card/${esc(e.slug)}">Open card →</a></p>`:''}</details>`).join('')}</div></section>
-   <section class="panel ai-section ai-limit"><h3>9. What this review cannot confirm</h3><details open><summary>Limitations</summary>${renderListItems(limitationItems)}</details></section>
-  </aside>
+ <section class="ai-conversation-layout">
+   <section class="panel ai-section ai-uploaded-design">
+    <h3>Uploaded design</h3>
+    <div class="ai-image-simple">${AI_REVIEW_STATE.image?`<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
+   </section>
+   <section class="panel ai-section ai-designers-take">
+    <h3>Designer’s take</h3>
+    ${renderParagraphs(c.designersTake)}
+   </section>
+ </section>
+ <section class="ai-two-col">
+   <section class="panel ai-section ai-good"><h3>What’s working</h3>${renderListItems(c.whatsWorking,'The overall direction feels promising and easy to follow at first glance.')}</section>
+   <section class="panel ai-section ai-improve"><h3>What I’d improve</h3>${renderListItems(c.whatIdImprove,'I’d sharpen what stands out first so people can act with less hesitation.')}</section>
+ </section>
+ <section class="panel ai-section">
+   <h3>Action plan</h3>
+   <div class="ai-plan-grid">
+    <article><h4>Now</h4>${renderListItems(c.actionPlan.now)}</article>
+    <article><h4>Next</h4>${renderListItems(c.actionPlan.next)}</article>
+    <article><h4>Later</h4>${renderListItems(c.actionPlan.later)}</article>
+   </div>
+ </section>
+ <section class="panel ai-section ai-ideas">
+   <h3>Ideas</h3>
+   ${renderListItems(c.ideas)}
  </section>`;
 }
 function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}

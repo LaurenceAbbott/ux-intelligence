@@ -783,21 +783,68 @@ function toPlainEnglish(text=''){
  out=out.replace(/\bheuristic\b/ig,'design signal').replace(/\bThis fails\b/ig,'This could be clearer').replace(/\bUsers will definitely\b/ig,'Users may');
  return out;
 }
-function toSentenceCase(text=''){const t=toPlainEnglish(text); if(!t) return ''; return t.charAt(0).toUpperCase()+t.slice(1);}
+function cleanAiSentence(text=''){
+ let out=toPlainEnglish(tidyText(text));
+ if(!out) return '';
+ out=out
+  .replace(/\bcheck\s+check\b/ig,'check')
+  .replace(/^i['’]d\s+check\s+increase\b/i,'Increase')
+  .replace(/^i['’]d\s+check\s+add\b/i,'Add')
+  .replace(/^i['’]d\s+check\s+make\b/i,'Make')
+  .replace(/^i['’]d\s+check\s+review\b/i,'Review')
+  .replace(/^i['’]d\s+check\s+clarify\b/i,'Clarify')
+  .replace(/^i['’]d\s+check\s+tighten\b/i,'Tighten')
+  .replace(/\bi['’]d\s+check\b/ig,'Check whether')
+  .replace(/\bthis screenshot shows\b/ig,'')
+  .replace(/\bthe screen contains\b/ig,'')
+  .replace(/\s*([,;:.!?])\1+/g,'$1')
+  .replace(/\s{2,}/g,' ')
+  .trim();
+ out=out.replace(/^[,:;\-\s]+/,'').trim();
+ if(!out) return '';
+ out=out.charAt(0).toUpperCase()+out.slice(1);
+ if(!/[.!?]$/.test(out)) out+='.';
+ return out;
+}
+function toSentenceCase(text=''){const t=cleanAiSentence(text); if(!t) return ''; return t.charAt(0).toUpperCase()+t.slice(1);}
 function textFromItem(item){if(typeof item==='string') return item; if(!item||typeof item!=='object') return ''; return item.detail||item.title||item.issue||item.recommendation||item.action||item.why||item.text||'';}
+function similarityKey(text=''){return cleanAiSentence(text).toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\b(the|a|an|and|to|of|for|with|that|this|is|are)\b/g,'').replace(/\s+/g,' ').trim();}
 function dedupeTextList(items=[],limit=5,blocked=[]){
- const stop=new Set(blocked.map(x=>toPlainEnglish(tidyText(x)).toLowerCase()).filter(Boolean));
+  const stop=new Set(blocked.map(x=>similarityKey(x)).filter(Boolean));
  const seen=new Set([...stop]);
  const out=[];
  for(const raw of items){
   const text=toSentenceCase(tidyText(textFromItem(raw)));
-  const key=text.toLowerCase();
-  if(!text||seen.has(key)) continue;
+  const key=similarityKey(text);
+  if(!text||!key||seen.has(key)) continue;
   seen.add(key);
   out.push(text);
   if(out.length>=limit) break;
  }
  return out;
+}
+function rewriteStrengthBullet(text=''){
+ const seed=cleanAiSentence(text).replace(/[.!?]+$/,'');
+ const lower=seed.toLowerCase();
+ if(!seed) return '';
+ if(/clear primary action|primary action/.test(lower)) return 'The primary action is easy to identify and stands out at the right moment.';
+ if(/central form|form placement|main form/.test(lower)) return 'The main form placement makes the core task easy to find quickly.';
+ if(/minimal|clean layout|focused/.test(lower)) return 'The layout stays focused and avoids unnecessary distractions.';
+ if(/navigation|scan|scann/.test(lower)) return 'The structure is easy to scan, so people can decide what to do next quickly.';
+ return seed.startsWith('The ')?`${seed}.`:`${seed.charAt(0).toUpperCase()+seed.slice(1)}.`;
+}
+function rewriteImprovementBullet(text=''){
+ const seed=cleanAiSentence(text).replace(/[.!?]+$/,'');
+ const lower=seed.toLowerCase();
+ if(!seed) return '';
+ if(/clickable area|tap target|spacing/.test(lower)) return 'Increase the clickable area and spacing around smaller controls so they are easier to select.';
+ if(/tooltip|label|helper/.test(lower)) return 'Add short helper text or clearer labels where the option may be unclear to first-time users.';
+ if(/contrast|low-?emphasis/.test(lower)) return 'Review text and button contrast, especially for lower-emphasis elements on darker backgrounds.';
+ if(/account creation|sign up|create account/.test(lower)) return 'Make the account creation route more obvious so new users can find it without searching.';
+ if(/social sign.?in|social login/.test(lower)) return 'Clarify the social sign-in options so users understand them as equal alternatives to email login.';
+ if(/secondary link|secondary action/.test(lower)) return 'Tighten secondary links so they are visible enough without competing with the primary action.';
+ if(/consisten|alignment/.test(lower)) return 'Tighten visual alignment and spacing so the interface feels more consistent and intentional.';
+ return seed.match(/^(check whether|increase|make|consider|clarify|tighten|review|add)\b/i) ? `${seed}.` : `Consider ${seed.charAt(0).toLowerCase()+seed.slice(1)}.`;
 }
 function getSimpleRating(score){
  if(score>=90) return 'Excellent';
@@ -810,18 +857,26 @@ function normaliseSimpleAiReview(review={}){
  const scoreRaw=Number(review.uxQualityScore);
  const score=Number.isFinite(scoreRaw)?Math.max(0,Math.min(100,Math.round(scoreRaw))):72;
  const ratingLabel=getSimpleRating(score);
- const summarySource=[review.screenSummary,review.designersTake,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'This is a promising direction with a clear starting point. I\'d focus next on making the most important decision points easier to scan and act on quickly.';
- let summary=toPlainEnglish(summarySource);
- if(/\b(this screen|screen contains|login screen|dashboard|form)\b/i.test(summary)) summary=`Overall, ${summary.charAt(0).toLowerCase()+summary.slice(1)}`;
- const summarySentences=summary.split(/(?<=[.!?])\s+/).filter(Boolean).slice(0,4);
- summary=summarySentences.join(' ');
- const strengths=dedupeTextList((review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent)/i.test(String(x)))),5);
+ const strengthSeed=dedupeTextList((review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),6).map(rewriteStrengthBullet).filter(Boolean);
+ const topStrengths=dedupeTextList(strengthSeed,4).slice(0,4);
  const improveSeed=[];
- (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(/^I\b|^Consider\b|^This could/i.test(txt)?txt:`I’d check ${txt.charAt(0).toLowerCase()+txt.slice(1)}`);});
- (review.recommendedActions||[]).forEach(a=>{const txt=toSentenceCase(a.action||a.recommendation||a.why||''); if(!txt) return; improveSeed.push(/^I\b|^Consider\b|^This could/i.test(txt)?txt:`Consider ${txt.charAt(0).toLowerCase()+txt.slice(1)}`);});
- if(Array.isArray(review.ideas)) review.ideas.forEach(i=>improveSeed.push(toSentenceCase(i)));
- const criticalImprovements=dedupeTextList(improveSeed,5,strengths);
- return {score,ratingLabel,summary,topStrengths:strengths.length?strengths:['Clear core flow with a focused starting point.'],criticalImprovements:criticalImprovements.length?criticalImprovements:['I’d make the next best action clearer so users can move forward with less hesitation.']};
+ (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(rewriteImprovementBullet(txt));});
+ (review.recommendedActions||[]).forEach(a=>{const txt=toSentenceCase(a.action||a.recommendation||a.why||''); if(!txt) return; improveSeed.push(rewriteImprovementBullet(txt));});
+ if(Array.isArray(review.ideas)) review.ideas.forEach(i=>{const txt=rewriteImprovementBullet(i); if(txt) improveSeed.push(txt);});
+ const criticalImprovements=dedupeTextList(improveSeed,4,topStrengths).slice(0,4);
+ const summarySource=[review.designersTake,review.screenSummary,(review.headlineFindings||[]).join(' ')].map(tidyText).find(Boolean)||'';
+ let summary=cleanAiSentence(summarySource).replace(/^overall,?\s+a\b/i,'Overall, this feels like a').replace(/^(this screen contains|this is a screen with)\b/i,'Overall, this feels');
+ if(!summary || /\b(screen contains|screenshot|this is a screen with|overall,\s+a\s+[a-z])/i.test(summary)){
+  const strengthLine=topStrengths[0]||'The main task is easy to understand.';
+  const improveLine=criticalImprovements[0]||'The main thing I’d improve is making secondary actions clearer.';
+  summary=`Overall, this feels focused and on the right track. ${strengthLine} ${improveLine}`;
+ }
+ let summarySentences=summary.split(/(?<=[.!?])\s+/).map(cleanAiSentence).filter(Boolean);
+ if(summarySentences.length<2){
+  summarySentences=['Overall, this feels focused and on the right track.',topStrengths[0]||'The main task is easy to understand.',criticalImprovements[0]||'The main thing I’d improve is making secondary actions clearer.'];
+ }
+ summary=summarySentences.slice(0,4).join(' ');
+ return {score,ratingLabel,summary,topStrengths:topStrengths.length?topStrengths:['The core flow is clear and gives users a focused starting point.'],criticalImprovements:criticalImprovements.length?criticalImprovements:['Make the next best action clearer so users can move forward with less hesitation.']};
 }
 function renderListItems(items=[],fallback='No items identified.'){return `<ul>${(items.length?items:[fallback]).map(i=>`<li>${esc(typeof i==='string'?i:(i.title||i.text||''))}</li>`).join('')}</ul>`;}
 function renderAiReport(r){

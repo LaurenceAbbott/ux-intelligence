@@ -699,7 +699,7 @@ function renderAiDesignReview(){
   ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
    <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get practical, conversational feedback as if a senior design team reviewed the screen together.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
-   <section class="panel section ai-upload-section">
+   <section id="aiUploadSection" class="panel section ai-upload-section">
       <div class="ai-upload-header">
         <h3>Upload design screenshot</h3>
         <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
@@ -844,6 +844,8 @@ function renderAiReport(review){
  console.log('Rendered simple review:', simpleReview);
  const tone=scoreRingTone(simpleReview.ratingLabel);
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
+ const uploadSection=document.getElementById('aiUploadSection');
+ uploadSection?.classList.add('is-hidden');
  report.innerHTML=`
  <section class="ai-simple-review">
    <div class="ai-simple-image-wrap">${AI_REVIEW_STATE.image?`<img class="ai-simple-image" src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
@@ -860,9 +862,14 @@ function renderAiReport(review){
      <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simpleReview.topStrengths)}</section>
      <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
    </div>
+   <button class="btn primary ai-new-review-btn" id="createNewAiReviewBtn">Create a new AI Design Review</button>
  </section>`;
+ document.getElementById('createNewAiReviewBtn')?.addEventListener('click', ()=>{
+  clearAiImage();
+  document.getElementById('aiUploadSection')?.classList.remove('is-hidden');
+ });
 }
-function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
+function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed'); document.getElementById('aiUploadSection')?.classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
 
 function calcTimeSaving(){
   const seconds = Number(document.getElementById('secondsSaved').value || 0);

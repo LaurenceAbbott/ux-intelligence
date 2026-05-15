@@ -935,7 +935,7 @@ textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-simple-image-wrap{width:min(100%,860px);max-height:420px;min-height:220px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #e4e7ee;border-radius:16px;box-shadow:0 10px 26px rgba(15,23,42,.07);padding:1rem;overflow:hidden}
 .ai-simple-image{max-width:100%;max-height:390px;object-fit:contain;display:block}
 .ai-review-score-wrap{display:flex;justify-content:center}
-.ai-review-score-ring{--size:220px;--ring:#11a87a;width:var(--size);height:var(--size);border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--ring) calc(var(--score) * 1%), #e8edf4 0)}
+.ai-review-score-ring{--size:185px;--ring:#11a87a;width:var(--size);height:var(--size);border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--ring) calc(var(--score) * 1%), #e8edf4 0)}
 .ai-review-score-ring.excellent{--ring:#0ea672}
 .ai-review-score-ring.strong{--ring:#0f9f8f}
 .ai-review-score-ring.needs-work{--ring:#d29a1a}

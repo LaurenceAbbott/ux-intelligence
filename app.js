@@ -902,7 +902,7 @@ function normaliseSimpleAiReview(review={}){
  const scoreRaw=Number(review.uxQualityScore);
  const score=Number.isFinite(scoreRaw)?Math.max(0,Math.min(100,Math.round(scoreRaw))):72;
  const ratingLabel=getSimpleRating(score);
-  const strengthSeed=dedupeTextList((review.topStrengths||[]).concat(review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),8).map(cleanStrengthBullet).filter(Boolean);
+  const strengthSeed=dedupeTextList((review.topStrengths||[]).concat(review.strengths||[]).concat(review.whatsWorking||[]).concat((review.headlineFindings||[]).filter(x=>/(clear|strong|good|effective|works|focused|consistent|easy|simple)/i.test(String(x)))),8).map(rewriteStrengthBullet).filter(Boolean);
  const topStrengths=dedupeAndBalanceBullets(dedupeTextList(strengthSeed,6),3);
  const improveSeed=[];
   (review.potentialIssues||[]).forEach(i=>{const txt=toSentenceCase(i.recommendation||i.issue||i.title||''); if(txt) improveSeed.push(cleanImprovementBullet(txt));});

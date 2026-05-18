@@ -705,7 +705,7 @@ function renderAiDesignReview(){
         <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
         </div>
       <div class="ai-upload-panel-wrap">
-        <input id="aiImageUpload" class="ai-file-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+        <input id="aiImageUpload" class="ai-file-input" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg">
         <div id="aiDropZone" class="ai-drop-zone ai-upload-panel" role="button" tabindex="0" aria-label="Upload design image">
           <div id="aiDropEmpty" class="ai-drop-content ai-upload-empty">
             <div class="ai-drop-icon">✦</div>
@@ -736,18 +736,80 @@ function renderAiDesignReview(){
 function bindAiReviewEvents(){
  const uploadInput = document.getElementById('aiImageUpload');
  const dropZone = document.getElementById('aiDropZone');
+ const browseBtn = document.getElementById('aiBrowseBtn');
  uploadInput?.addEventListener('change', handleAiImageUpload);
- document.getElementById('aiBrowseBtn')?.addEventListener('click', ()=>uploadInput?.click());
+ browseBtn?.addEventListener('click', (event)=>{
+  event.preventDefault();
+  event.stopPropagation();
+  uploadInput?.click();
+ });
  dropZone?.addEventListener('click', ()=>uploadInput?.click());
  dropZone?.addEventListener('keydown', (e)=>{if(e.key==='Enter' || e.key===' '){e.preventDefault(); uploadInput?.click();}});
  ['dragenter','dragover'].forEach(evt => dropZone?.addEventListener(evt, (e)=>{e.preventDefault(); dropZone.classList.add('is-dragover');}));
  ['dragleave','drop'].forEach(evt => dropZone?.addEventListener(evt, (e)=>{e.preventDefault(); dropZone.classList.remove('is-dragover');}));
- dropZone?.addEventListener('drop', (e)=>{const file=e.dataTransfer?.files?.[0]; if(file) loadAiImageFile(file);});
+ dropZone?.addEventListener('drop', (e)=>{const file=e.dataTransfer?.files?.[0]; if(file) handleSelectedAiFile(file);});
  document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
  document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
+ setRunReviewButtonState();
 }
-function handleAiImageUpload(e){const file=e.target.files[0]; if(file) loadAiImageFile(file);}
-function loadAiImageFile(file){if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=()=>{ const img=new Image(); img.onload=()=>{AI_REVIEW_STATE.image=reader.result; AI_REVIEW_STATE.imageMeta={fileName:file.name,mimeType:file.type,width:img.width,height:img.height}; const meta=document.getElementById('aiImageMeta'); meta.textContent=`${file.name} · ${file.type} · ${img.width}×${img.height}`; meta.classList.remove('is-hidden'); document.getElementById('aiImagePreview').innerHTML=`<img src="${reader.result}" alt="Uploaded design preview">`; document.getElementById('aiImagePreview').classList.remove('is-hidden'); document.getElementById('aiDropEmpty').classList.add('is-hidden');}; img.src=reader.result;}; reader.readAsDataURL(file);}  
+function handleAiImageUpload(event){
+ const file = event.target.files && event.target.files[0];
+ if(!file) return;
+ handleSelectedAiFile(file);
+ event.target.value = '';
+}
+function handleSelectedAiFile(file){
+ if(!file){
+  showAiValidationMessage('Please select an image file.');
+  return;
+ }
+ const validMimeTypes = ['image/png','image/jpeg','image/jpg'];
+ if(!validMimeTypes.includes(file.type)){
+  showAiValidationMessage('Please upload a PNG or JPG image (.png, .jpg, .jpeg).');
+  return;
+ }
+ const reader = new FileReader();
+ reader.onload = () => {
+  const dataUrl = reader.result;
+  const img = new Image();
+  img.onload = () => {
+   AI_REVIEW_STATE.image = dataUrl;
+   AI_REVIEW_STATE.imageMeta = { fileName: file.name, mimeType: file.type, width: img.width, height: img.height };
+   AI_REVIEW_STATE.reviewResults = null;
+   updateAiUploadUi();
+  };
+  img.src = dataUrl;
+ };
+ reader.readAsDataURL(file);
+}
+function showAiValidationMessage(message=''){
+ const validation = document.getElementById('aiValidation');
+ if(!validation) return;
+ validation.textContent = message;
+ validation.classList.toggle('is-hidden', !message);
+}
+function setRunReviewButtonState(){
+ const runButton = document.getElementById('runAiReviewBtn');
+ if(runButton) runButton.disabled = !AI_REVIEW_STATE.image;
+}
+function updateAiUploadUi(){
+ const meta = document.getElementById('aiImageMeta');
+ const preview = document.getElementById('aiImagePreview');
+ const emptyState = document.getElementById('aiDropEmpty');
+ if(!meta || !preview || !emptyState || !AI_REVIEW_STATE.imageMeta || !AI_REVIEW_STATE.image) return;
+ const { fileName, mimeType, width, height } = AI_REVIEW_STATE.imageMeta;
+ meta.textContent = `${fileName} · ${mimeType} · ${width}×${height}`;
+ meta.classList.remove('is-hidden');
+ preview.innerHTML = `<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`;
+ preview.classList.remove('is-hidden');
+ emptyState.classList.add('is-hidden');
+ document.getElementById('aiErrorPanel')?.classList.add('is-hidden');
+ document.getElementById('aiReport').innerHTML = '';
+ document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed');
+ document.getElementById('aiUploadSection')?.classList.remove('is-hidden');
+ showAiValidationMessage('');
+ setRunReviewButtonState();
+}
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
 function buildAiReviewPayload(){return {context:{screenType:'Other',userType:'Mixed / unknown'},image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"The summary must be a design critique, not a description of the screenshot. Do not start with 'A login page', 'This screen shows', 'The screenshot contains', 'The design features', or similar descriptive wording. Start with a design judgement such as 'Overall, this feels…', 'This is working well because…', 'The main task is clear, but…', or 'I’d say this is…'. Explain what is working, what feels weaker, and what should be improved first. Write all visible copy as finished, polished sentences. Do not return rough notes, fragments, or awkward phrases. Do not use phrases like 'Consider show', 'Consider ensure', 'I’d check increase', or 'Button what stands out first'. Critical improvements should be direct actions. Prefer 'Show inline validation…', 'Increase spacing…', 'Review contrast…', 'Clarify…', 'Make…', 'Add…'. Only use 'Consider…' for genuinely optional ideas, not essential fixes. designerSummary should be 2-3 sentences. topStrengths should contain 3 polished sentences. criticalImprovements should contain 3 polished action-oriented sentences. These fields are displayed directly to users and must be grammatically correct.",preferredOutput:{designerSummary:'2-3 sentence critique for direct display',topStrengths:['3 polished complete sentences'],criticalImprovements:['3 polished action-oriented sentences'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
@@ -869,7 +931,7 @@ function renderAiReport(review){
   document.getElementById('aiUploadSection')?.classList.remove('is-hidden');
  });
 }
-function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed'); document.getElementById('aiUploadSection')?.classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden');}
+function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed'); document.getElementById('aiUploadSection')?.classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden'); showAiValidationMessage(''); setRunReviewButtonState();}
 
 function calcTimeSaving(){
   const seconds = Number(document.getElementById('secondsSaved').value || 0);

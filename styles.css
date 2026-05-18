@@ -258,7 +258,7 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
 .kicker{
   color:var(--white);
   text-transform:uppercase;
-  letter-spacing:0px;
+  letter-spacing:3px;
   font-weight:300;
   font-size:.75rem;
   line-height:1.2;

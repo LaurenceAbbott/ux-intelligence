@@ -759,6 +759,7 @@ const AI_REVIEW_STATE = {
   image: null,
   imageMeta: null,
   reviewResults: null,
+  lastPayloadContext: null,
   checklistResponses: {},
   loadingInterval: null,
   aiReviewContext: {
@@ -1062,11 +1063,13 @@ async function runAiDesignReview(){
   return;
  }
  console.log("Sending AI review payload:", payload);
- console.log("AI review context sent:", payload.context?.aiReviewContext||{});
- console.log("Open GI context sent:", payload.openGiContext||payload.context?.openGiContext||{});
+ AI_REVIEW_STATE.lastPayloadContext = payload.context?.openGiContext || payload.openGiContext || null;
+ console.log("AI review payload context:", payload.context);
+ console.log("AI review payload openGiContext:", payload.openGiContext || payload.context?.openGiContext);
+ console.log("AI review related cards:", payload.relatedCards);
  toggleAiLoading(true);
  let result;
- try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);}
+ try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); console.log("Raw Worker AI review response:", result); console.log("Designer summary from Worker:", result?.designerSummary); console.log("Top strengths from Worker:", result?.topStrengths); console.log("Critical improvements from Worker:", result?.criticalImprovements); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);}
 function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
 function getValidScore(value){
@@ -1108,9 +1111,14 @@ function fallbackSummary(){return FALLBACK_SUMMARY;}
 function normaliseSimpleAiReview(review={}){
  const score=getValidScore(review.score ?? review.uxQualityScore);
  const ratingLabel=review.ratingLabel || getRatingLabel(score);
- const summary=cleanDisplayText(review.designerSummary)
-  || cleanDisplayText(review.screenSummary)
+ const cleanedDesignerSummary = cleanDisplayText(review.designerSummary);
+ const cleanedScreenSummary = cleanDisplayText(review.screenSummary);
+ const summary=cleanedDesignerSummary
+  || cleanedScreenSummary
   || fallbackSummary();
+ if(!cleanedDesignerSummary){
+  console.warn("AI review is using fallback summary instead of Worker designerSummary");
+ }
 
  const directStrengths=cleanList(review.topStrengths);
  const fallbackStrengths=directStrengths.length?[]:cleanList(review.strengths||review.headlineFindings);
@@ -1144,6 +1152,7 @@ function renderAiReport(review){
  const simpleReview=normaliseSimpleAiReview(review||{});
  console.log('Rendered simple review:', simpleReview);
  const tone=scoreRingTone(simpleReview.ratingLabel);
+ const debugContext = AI_REVIEW_STATE.lastPayloadContext || {};
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  const uploadSection=document.getElementById('aiUploadSection');
  uploadSection?.classList.add('is-hidden');
@@ -1163,6 +1172,20 @@ function renderAiReport(review){
      <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simpleReview.topStrengths)}</section>
      <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
    </div>
+   <details class="panel section" style="margin-top:12px;">
+     <summary><strong>Context sent to AI</strong></summary>
+     <div style="margin-top:10px;">
+       <p><strong>Selected value stream:</strong> ${esc(debugContext.selectedValueStream || 'Not sure')}</p>
+       <p><strong>Selected persona:</strong> ${esc(debugContext.selectedPersona || 'Not sure')}</p>
+       <p><strong>Selected product / area:</strong> ${esc(debugContext.selectedProductArea || 'Not sure')}</p>
+       <p><strong>Selected screen type:</strong> ${esc(debugContext.selectedScreenType || 'Not sure')}</p>
+       <p><strong>User task:</strong> ${esc(debugContext.userTask || '')}</p>
+       <p><strong>Inferred value stream if available:</strong> ${esc((debugContext.valueStreamContext && debugContext.valueStreamContext.name) || debugContext.selectedValueStream || 'Not sure')}</p>
+       <p><strong>Relevant outcomes sent:</strong> ${esc((debugContext.relevantOutcomes || []).join(' | ') || 'None')}</p>
+       <p><strong>Relevant journey sent:</strong> ${esc(debugContext.relevantJourney || 'None')}</p>
+       <p><strong>Relevant capabilities sent:</strong> ${esc((debugContext.relevantCapabilities || []).join(' | ') || 'None')}</p>
+     </div>
+   </details>
    <button class="btn primary ai-new-review-btn" id="createNewAiReviewBtn">Create a new AI Design Review</button>
  </section>`;
  document.getElementById('createNewAiReviewBtn')?.addEventListener('click', ()=>{
@@ -1204,3 +1227,4 @@ searchInput.addEventListener('keydown', (e) => {
 
 window.addEventListener('hashchange', render);
 render();
+ const debugContext = AI_REVIEW_STATE.lastPayloadContext || {};

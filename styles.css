@@ -317,6 +317,17 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
   filter:brightness(.96);
 }
 
+.hero-text-link{
+  color:var(--white);
+  text-decoration:none;
+  font-weight:300;
+  padding:.25rem 0;
+}
+.hero-text-link:hover,
+.hero-text-link:focus-visible{
+  text-decoration:underline;
+}
+
 /* Layout utilities */
 .section{margin-top:2rem}
 .section-header{

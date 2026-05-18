@@ -2,7 +2,7 @@
 // Source: Open_GI_Personas_and_Value_Streams_AI_Worker_Context.docx
 // This file intentionally includes BOTH structured helper metadata and the full raw extracted document text.
 
-export const OGI_CONTEXT = {
+const OGI_CONTEXT = {
   "meta": {
     "name": "Open GI Personas & Value Streams AI Worker Context Pack",
     "sourceDocument": "Open_GI_Personas_and_Value_Streams_AI_Worker_Context.docx",

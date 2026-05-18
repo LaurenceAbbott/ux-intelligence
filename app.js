@@ -1206,9 +1206,6 @@ function renderAiReport(review){
  const simpleReview=normaliseSimpleAiReview(review||{});
  console.log('Rendered simple review:', simpleReview);
  const tone=scoreRingTone(simpleReview.ratingLabel);
- const debugPayload = AI_REVIEW_STATE.lastPayloadContext || {};
- const debugAiReviewContext = debugPayload.aiReviewContext || {};
- const debugContext = debugPayload.openGiContext || {};
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  const uploadSection=document.getElementById('aiUploadSection');
  uploadSection?.classList.add('is-hidden');
@@ -1228,20 +1225,7 @@ function renderAiReport(review){
      <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simpleReview.topStrengths)}</section>
      <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
    </div>
-   <details class="panel section" style="margin-top:12px;">
-     <summary><strong>Context sent to AI</strong></summary>
-     <div style="margin-top:10px;">
-       <p><strong>Selected value stream:</strong> ${esc(debugAiReviewContext.selectedValueStream || 'Not sure')}</p>
-       <p><strong>Selected persona:</strong> ${esc(debugAiReviewContext.selectedPersona || 'Not sure')}</p>
-       <p><strong>Selected product / area:</strong> ${esc(debugAiReviewContext.selectedProductArea || 'Not sure')}</p>
-       <p><strong>Selected screen type:</strong> ${esc(debugAiReviewContext.selectedScreenType || 'Not sure')}</p>
-       <p><strong>User task:</strong> ${esc(debugAiReviewContext.userTask || '')}</p>
-       <p><strong>Inferred value stream if available:</strong> ${esc(debugContext.selectedValueStream || 'Not sure')}</p>
-       <p><strong>Relevant outcomes sent:</strong> ${esc((debugContext.relevantOutcomes || []).join(' | ') || 'None')}</p>
-       <p><strong>Relevant journey sent:</strong> ${esc(Array.isArray(debugContext.relevantJourney) ? (debugContext.relevantJourney.join(' → ') || 'None') : (debugContext.relevantJourney || 'None'))}</p>
-       <p><strong>Relevant capabilities sent:</strong> ${esc((debugContext.relevantCapabilities || []).join(' | ') || 'None')}</p>
-     </div>
-   </details>
+
    <button class="btn primary ai-new-review-btn" id="createNewAiReviewBtn">Create a new AI Design Review</button>
  </section>`;
  document.getElementById('createNewAiReviewBtn')?.addEventListener('click', ()=>{

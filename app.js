@@ -42,43 +42,35 @@ function inferValueStreamFromText(text=''){
 }
 
 function getRelevantOpenGiContext(reviewContext={}){
+  const ogiContext = getOgiContext() || {};
   const selectedValueStreamInput = reviewContext.selectedValueStream || reviewContext.valueStream || 'Not sure';
   const selectedPersona = reviewContext.selectedPersona || reviewContext.persona || 'Not sure';
-  const selectedProductArea = reviewContext.selectedProductArea || reviewContext.productArea || 'Not sure';
-  const selectedScreenType = reviewContext.selectedScreenType || reviewContext.screenType || 'Not sure';
+  const selectedProductArea = reviewContext.selectedProductArea || reviewContext.selectedProduct || reviewContext.productArea || 'Not sure';
+  const selectedScreenType = reviewContext.selectedScreenType || reviewContext.selectedScreen || reviewContext.screenType || 'Not sure';
   const userTask = reviewContext.userTask || '';
 
-  const inferredValueStream = selectedValueStreamInput === 'Not sure'
-    ? inferValueStreamFromText(`${selectedProductArea} ${selectedScreenType} ${userTask}`)
-    : selectedValueStreamInput;
+  const resolvedValueStream = (selectedValueStreamInput && selectedValueStreamInput !== 'Not sure')
+    ? selectedValueStreamInput
+    : inferValueStreamFromText(`${selectedProductArea} ${selectedScreenType} ${userTask}`);
 
-  const valueStreamContextRaw = getOgiContext()?.valueStreams?.[inferredValueStream] || null;
-  const personaContextRaw = selectedPersona !== 'Not sure' ? (getOgiContext()?.personas?.[selectedPersona] || null) : null;
+  const valueStreamContextRaw = ogiContext?.valueStreams?.[resolvedValueStream] || null;
+  const personaContextRaw = (selectedPersona !== 'Not sure' && resolvedValueStream !== 'Not sure')
+    ? (ogiContext?.personas?.[resolvedValueStream]?.[selectedPersona] || null)
+    : null;
 
   return {
-    selectedValueStream: inferredValueStream,
+    selectedValueStream: resolvedValueStream,
     selectedPersona,
     selectedProductArea,
     selectedScreenType,
     userTask,
-    valueStreamContext: valueStreamContextRaw ? {
-      name: inferredValueStream,
-      purpose: valueStreamContextRaw.purpose,
-      coreContext: valueStreamContextRaw.coreContext
-    } : null,
-    personaContext: personaContextRaw ? {
-      name: selectedPersona,
-      summary: personaContextRaw.personaSummary,
-      goals: personaContextRaw.goalsAndMotivations,
-      painPoints: personaContextRaw.painPointsAndChallenges
-    } : (selectedPersona === 'Not sure' ? {
-      likelyPrimaryUsers: getPersonasForValueStream(inferredValueStream).slice(0,6)
-    } : null),
-    relevantOutcomes: (valueStreamContextRaw?.diagramDerived?.outcomes || []).slice(0,6),
-    relevantJourney: valueStreamContextRaw?.diagramDerived?.journey || '',
-    relevantProductAreas: (valueStreamContextRaw?.productPlatformAreas || []).slice(0,8),
-    relevantCapabilities: (valueStreamContextRaw?.diagramDerived?.capabilitiesServices || []).slice(0,8),
-    relevantSharedCapabilities: (getOgiContext()?.sharedHorizontalCapabilities || []).slice(0,8)
+    valueStreamContext: valueStreamContextRaw,
+    personaContext: personaContextRaw,
+    relevantOutcomes: valueStreamContextRaw?.outcomes || [],
+    relevantJourney: valueStreamContextRaw?.journey || [],
+    relevantProductAreas: valueStreamContextRaw?.productPlatformAreas || [],
+    relevantCapabilities: valueStreamContextRaw?.capabilitiesServices || [],
+    relevantSharedCapabilities: ogiContext?.sharedHorizontalCapabilities || {}
   };
 }
 
@@ -1079,7 +1071,12 @@ async function runAiDesignReview(){
   if (payload?.context) payload.context.openGiContext = compactOpenGiContext;
   payload.openGiContext = compactOpenGiContext;
 
-  console.log("Open GI context before review:", compactOpenGiContext);
+  console.log("Current AI review context:", currentAiReviewContext);
+  console.log("window.OGI_CONTEXT available:", Boolean(window.OGI_CONTEXT));
+  console.log("Resolved Open GI context:", compactOpenGiContext);
+  console.log("Resolved outcomes:", compactOpenGiContext.relevantOutcomes);
+  console.log("Resolved journey:", compactOpenGiContext.relevantJourney);
+  console.log("Resolved capabilities:", compactOpenGiContext.relevantCapabilities);
   console.log("Sending AI review payload:", payload);
 
   AI_REVIEW_STATE.lastPayloadContext = {
@@ -1239,9 +1236,9 @@ function renderAiReport(review){
        <p><strong>Selected product / area:</strong> ${esc(debugAiReviewContext.selectedProductArea || 'Not sure')}</p>
        <p><strong>Selected screen type:</strong> ${esc(debugAiReviewContext.selectedScreenType || 'Not sure')}</p>
        <p><strong>User task:</strong> ${esc(debugAiReviewContext.userTask || '')}</p>
-       <p><strong>Inferred value stream if available:</strong> ${esc((debugContext.valueStreamContext && debugContext.valueStreamContext.name) || debugContext.selectedValueStream || 'Not sure')}</p>
+       <p><strong>Inferred value stream if available:</strong> ${esc(debugContext.selectedValueStream || 'Not sure')}</p>
        <p><strong>Relevant outcomes sent:</strong> ${esc((debugContext.relevantOutcomes || []).join(' | ') || 'None')}</p>
-       <p><strong>Relevant journey sent:</strong> ${esc(debugContext.relevantJourney || 'None')}</p>
+       <p><strong>Relevant journey sent:</strong> ${esc(Array.isArray(debugContext.relevantJourney) ? (debugContext.relevantJourney.join(' → ') || 'None') : (debugContext.relevantJourney || 'None'))}</p>
        <p><strong>Relevant capabilities sent:</strong> ${esc((debugContext.relevantCapabilities || []).join(' | ') || 'None')}</p>
      </div>
    </details>

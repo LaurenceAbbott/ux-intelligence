@@ -312,6 +312,25 @@ input[type="date"].field::-webkit-calendar-picker-indicator{
   background:var(--blue);
   border-color:var(--blue);
 }
+
+.hero .hero-primary-button{
+  color:var(--white);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.9);
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.hero .hero-primary-button:hover{
+  background:var(--white);
+  color:var(--blue-dark);
+  border-color:var(--white);
+  filter:none;
+}
+.hero .hero-primary-button:focus-visible{
+  outline:2px solid var(--white);
+  outline-offset:2px;
+  box-shadow:0 0 0 4px rgba(255,255,255,.3);
+}
+
 .btn:hover,
 .topbar-cta:hover{
   filter:brightness(.96);

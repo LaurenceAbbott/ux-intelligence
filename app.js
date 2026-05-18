@@ -67,7 +67,7 @@ function renderHome(){
       <h1>Operational UX Intelligence Framework</h1>
       <p>A complete local prototype for the framework: evidence cards, section filters, value mapping, anti-patterns, standards, playbooks and an interactive UX review scorecard.</p>
       <div class="hero-actions">
-        <a class="btn primary" href="#library">Browse the evidence library</a>
+        <a class="btn primary hero-primary-button" href="#library">Browse the evidence library</a>
         <a class="btn" href="#value">Prove the value of UX</a>
         <a class="btn" href="#evaluation">Run a UX review</a>
       </div>

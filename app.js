@@ -3,6 +3,81 @@ const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
 const AI_REVIEW_ENDPOINT = "https://long-rain-83b1ux-ai-review-agent.laurence-ogi.workers.dev/review-image";
+
+const OGI_CONTEXT_REF = (typeof window !== 'undefined' && window.OGI_CONTEXT) ? window.OGI_CONTEXT : null;
+
+function getAllValueStreams(){
+  return Object.keys(OGI_CONTEXT_REF?.valueStreams || {});
+}
+
+function getPersonasForValueStream(valueStream='Not sure'){
+  if(!OGI_CONTEXT_REF) return [];
+  if(valueStream && valueStream !== 'Not sure'){
+    return OGI_CONTEXT_REF.personaNamesByValueStream?.[valueStream] || [];
+  }
+  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.personaNamesByValueStream?.[v] || []))];
+}
+
+function getProductAreasForValueStream(valueStream='Not sure'){
+  if(!OGI_CONTEXT_REF) return [];
+  if(valueStream && valueStream !== 'Not sure'){
+    return OGI_CONTEXT_REF.valueStreams?.[valueStream]?.productPlatformAreas || [];
+  }
+  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.valueStreams?.[v]?.productPlatformAreas || []))];
+}
+
+function inferValueStreamFromText(text=''){
+  const t = String(text || '').toLowerCase();
+  if(/customer portal|policy|renewal|document|payment|mta|claim|quote|buy|service/.test(t)) return 'Serve';
+  if(/rating|insurer gateway|dynamic pricing|panel|enrich|rate calculation|underwriter/.test(t)) return 'Distribute';
+  if(/onboarding|integration hub|user management|api|webhook|third party integration|security|compliance/.test(t)) return 'Acquire';
+  return 'Not sure';
+}
+
+function getRelevantOpenGiContext(reviewContext={}){
+  const selectedValueStreamInput = reviewContext.selectedValueStream || reviewContext.valueStream || 'Not sure';
+  const selectedPersona = reviewContext.selectedPersona || reviewContext.persona || 'Not sure';
+  const selectedProductArea = reviewContext.selectedProductArea || reviewContext.productArea || 'Not sure';
+  const selectedScreenType = reviewContext.selectedScreenType || reviewContext.screenType || 'Not sure';
+  const userTask = reviewContext.userTask || '';
+
+  const inferredValueStream = selectedValueStreamInput === 'Not sure'
+    ? inferValueStreamFromText(`${selectedProductArea} ${selectedScreenType} ${userTask}`)
+    : selectedValueStreamInput;
+
+  const valueStreamContextRaw = OGI_CONTEXT_REF?.valueStreams?.[inferredValueStream] || null;
+  const personaContextRaw = selectedPersona !== 'Not sure' ? (OGI_CONTEXT_REF?.personas?.[selectedPersona] || null) : null;
+
+  return {
+    selectedValueStream: inferredValueStream,
+    selectedPersona,
+    selectedProductArea,
+    selectedScreenType,
+    userTask,
+    valueStreamContext: valueStreamContextRaw ? {
+      name: inferredValueStream,
+      purpose: valueStreamContextRaw.purpose,
+      coreContext: valueStreamContextRaw.coreContext
+    } : null,
+    personaContext: personaContextRaw ? {
+      name: selectedPersona,
+      summary: personaContextRaw.personaSummary,
+      goals: personaContextRaw.goalsAndMotivations,
+      painPoints: personaContextRaw.painPointsAndChallenges
+    } : (selectedPersona === 'Not sure' ? {
+      likelyPrimaryUsers: getPersonasForValueStream(inferredValueStream).slice(0,6)
+    } : null),
+    relevantOutcomes: (valueStreamContextRaw?.diagramDerived?.outcomes || []).slice(0,6),
+    relevantJourney: valueStreamContextRaw?.diagramDerived?.journey || '',
+    relevantProductAreas: (valueStreamContextRaw?.productPlatformAreas || []).slice(0,8),
+    relevantCapabilities: (valueStreamContextRaw?.diagramDerived?.capabilitiesServices || []).slice(0,8),
+    relevantSharedCapabilities: (OGI_CONTEXT_REF?.sharedHorizontalCapabilities || []).slice(0,8)
+  };
+}
+
+console.log("OGI_CONTEXT loaded:", Boolean(window.OGI_CONTEXT));
+console.log("Available value streams:", getAllValueStreams());
+
 document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
 
 const esc = (str='') => String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));

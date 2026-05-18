@@ -13,9 +13,9 @@ function getAllValueStreams(){
 function getPersonasForValueStream(valueStream='Not sure'){
   if(!OGI_CONTEXT_REF) return [];
   if(valueStream && valueStream !== 'Not sure'){
-    return OGI_CONTEXT_REF.personaNamesByValueStream?.[valueStream] || [];
+    return OGI_CONTEXT_REF.personaNamesByValueStream?.[valueStream] || OGI_CONTEXT_REF.personasByValueStream?.[valueStream] || [];
   }
-  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.personaNamesByValueStream?.[v] || []))];
+  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.personaNamesByValueStream?.[v] || OGI_CONTEXT_REF.personasByValueStream?.[v] || []))];
 }
 
 function getProductAreasForValueStream(valueStream='Not sure'){
@@ -789,23 +789,31 @@ function renderAiDesignReview(){
       </div>
       <div class="ai-context-grid">
         <label><span>Value stream</span>
-          <select id="aiContextValueStream" class="field">
+          <span class="ai-context-select-wrap">
+          <select id="aiContextValueStream" class="field ai-context-select">
             <option>Not sure</option>
             <option>Acquire</option>
             <option>Distribute</option>
             <option>Serve</option>
           </select>
+          </span>
         </label>
         <label><span>Primary user / persona</span>
-          <select id="aiContextPersona" class="field"></select>
+          <span class="ai-context-select-wrap">
+          <select id="aiContextPersona" class="field ai-context-select"></select>
+          </span>
         </label>
         <label><span>Product / area</span>
-          <select id="aiContextProductArea" class="field"></select>
+          <span class="ai-context-select-wrap">
+          <select id="aiContextProductArea" class="field ai-context-select"></select>
+          </span>
         </label>
         <label><span>Screen type</span>
-          <select id="aiContextScreenType" class="field">
+          <span class="ai-context-select-wrap">
+          <select id="aiContextScreenType" class="field ai-context-select">
             <option>Not sure</option><option>Login</option><option>Dashboard</option><option>Form</option><option>Data table</option><option>Workflow</option><option>Quote journey</option><option>Policy servicing</option><option>Payment/document screen</option><option>Admin/configuration screen</option><option>Other</option>
           </select>
+          </span>
         </label>
         <label class="ai-context-user-task"><span>What is the user trying to do?</span>
           <textarea id="aiContextUserTask" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
@@ -882,19 +890,23 @@ function syncAiReviewContextFromFields(){
  console.log('AI review context:', AI_REVIEW_STATE.aiReviewContext);
 }
 
-function refreshAiContextDependentOptions(){
- const valueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
+function refreshAiContextDependentOptions({ resetSelections = false } = {}){
+ const selectedValueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
  const personaSelect = document.getElementById('aiContextPersona');
  const productAreaSelect = document.getElementById('aiContextProductArea');
  if(!personaSelect || !productAreaSelect) return;
  const currentPersona = personaSelect.value || 'Not sure';
  const currentProductArea = productAreaSelect.value || 'Not sure';
- const personas = getPersonasForValueStream(valueStream);
- const productAreas = getProductAreasForValueStream(valueStream);
- personaSelect.innerHTML = getNotSureOptions(personas);
- productAreaSelect.innerHTML = getNotSureOptions(productAreas);
- personaSelect.value = personas.includes(currentPersona) ? currentPersona : 'Not sure';
- productAreaSelect.value = productAreas.includes(currentProductArea) ? currentProductArea : 'Not sure';
+ const personaOptions = getPersonasForValueStream(selectedValueStream);
+ const productAreaOptions = getProductAreasForValueStream(selectedValueStream);
+ console.log("OGI_CONTEXT available:", Boolean(window.OGI_CONTEXT || OGI_CONTEXT_REF));
+ console.log("Selected value stream:", selectedValueStream);
+ console.log("Persona options:", personaOptions);
+ console.log("Product area options:", productAreaOptions);
+ personaSelect.innerHTML = getNotSureOptions(personaOptions);
+ productAreaSelect.innerHTML = getNotSureOptions(productAreaOptions);
+ personaSelect.value = resetSelections ? 'Not sure' : (personaOptions.includes(currentPersona) ? currentPersona : 'Not sure');
+ productAreaSelect.value = resetSelections ? 'Not sure' : (productAreaOptions.includes(currentProductArea) ? currentProductArea : 'Not sure');
 }
 
 function bindAiReviewContextEvents(){
@@ -906,13 +918,13 @@ function bindAiReviewContextEvents(){
  if(!valueStreamSelect || !personaSelect || !productAreaSelect || !userTaskInput || !screenTypeSelect) return;
 
  valueStreamSelect.value = AI_REVIEW_STATE.aiReviewContext.valueStream || 'Not sure';
- refreshAiContextDependentOptions();
+ refreshAiContextDependentOptions({ resetSelections: true });
  personaSelect.value = AI_REVIEW_STATE.aiReviewContext.persona || 'Not sure';
  productAreaSelect.value = AI_REVIEW_STATE.aiReviewContext.productArea || 'Not sure';
  userTaskInput.value = AI_REVIEW_STATE.aiReviewContext.userTask || '';
  screenTypeSelect.value = AI_REVIEW_STATE.aiReviewContext.screenType || 'Not sure';
 
- valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions(); syncAiReviewContextFromFields();});
+ valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions({ resetSelections: true }); syncAiReviewContextFromFields();});
  [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', syncAiReviewContextFromFields));
  userTaskInput.addEventListener('input', syncAiReviewContextFromFields);
  syncAiReviewContextFromFields();

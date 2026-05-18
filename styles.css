@@ -902,6 +902,10 @@ textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem 1rem}
 .ai-context-grid label{display:grid;gap:.35rem;font-size:.92rem;color:#334155}
 .ai-context-grid label>span{font-weight:600;color:#1f2a44}
+
+.ai-context-select-wrap{position:relative;display:block}
+.ai-context-select-wrap::after{content:"";position:absolute;right:16px;top:50%;width:9px;height:9px;border-right:2px solid #1f2a44;border-bottom:2px solid #1f2a44;transform:translateY(-60%) rotate(45deg);pointer-events:none}
+.ai-context-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;padding-right:2.7rem;background-image:none}
 .ai-context-user-task{grid-column:1 / -1}
 .ai-context-grid textarea.field{min-height:68px;resize:vertical}
 @media(max-width:900px){.ai-context-grid{grid-template-columns:1fr}}

@@ -898,6 +898,13 @@ table.data tr:last-child td{border-bottom:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-context-panel{background:#fcfbf8}
+.ai-context-header{margin-bottom:.65rem}
+.ai-context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem 1rem}
+.ai-context-grid label{display:grid;gap:.35rem;font-size:.92rem;color:#334155}
+.ai-context-grid label>span{font-weight:600;color:#1f2a44}
+.ai-context-user-task{grid-column:1 / -1}
+.ai-context-grid textarea.field{min-height:68px;resize:vertical}
+@media(max-width:900px){.ai-context-grid{grid-template-columns:1fr}}
 .ai-report-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);gap:1rem;align-items:start}
 .ai-report-main{display:grid;gap:1rem}
 .ai-scorecard{display:grid;grid-template-columns:220px 1fr;gap:1.25rem;align-items:center;background:linear-gradient(135deg,#fff,#f8f6ef)}

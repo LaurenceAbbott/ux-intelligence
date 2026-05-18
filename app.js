@@ -748,7 +748,14 @@ const AI_REVIEW_STATE = {
   imageMeta: null,
   reviewResults: null,
   checklistResponses: {},
-  loadingInterval: null
+  loadingInterval: null,
+  aiReviewContext: {
+    valueStream: 'Not sure',
+    persona: 'Not sure',
+    productArea: 'Not sure',
+    userTask: '',
+    screenType: 'Not sure'
+  }
 };
 
 const SCREEN_CARD_MAP = {
@@ -774,7 +781,39 @@ function renderAiDesignReview(){
   ${renderBreadcrumbs([{ label: 'Framework', href: '#home' }, { label: 'AI Design Review', href: '#ai-design-review' }])}
    <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get practical, conversational feedback as if a senior design team reviewed the screen together.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
-   <section id="aiUploadSection" class="panel section ai-upload-section">
+ 
+   <section class="panel section ai-context-panel">
+      <div class="ai-context-header">
+        <h3>Review context (optional)</h3>
+        <p class="section-subtitle">Add extra context to guide this review. You can leave everything as Not sure.</p>
+      </div>
+      <div class="ai-context-grid">
+        <label><span>Value stream</span>
+          <select id="aiContextValueStream" class="field">
+            <option>Not sure</option>
+            <option>Acquire</option>
+            <option>Distribute</option>
+            <option>Serve</option>
+          </select>
+        </label>
+        <label><span>Primary user / persona</span>
+          <select id="aiContextPersona" class="field"></select>
+        </label>
+        <label><span>Product / area</span>
+          <select id="aiContextProductArea" class="field"></select>
+        </label>
+        <label><span>Screen type</span>
+          <select id="aiContextScreenType" class="field">
+            <option>Not sure</option><option>Login</option><option>Dashboard</option><option>Form</option><option>Data table</option><option>Workflow</option><option>Quote journey</option><option>Policy servicing</option><option>Payment/document screen</option><option>Admin/configuration screen</option><option>Other</option>
+          </select>
+        </label>
+        <label class="ai-context-user-task"><span>What is the user trying to do?</span>
+          <textarea id="aiContextUserTask" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
+        </label>
+      </div>
+    </section>
+
+  <section id="aiUploadSection" class="panel section ai-upload-section">
       <div class="ai-upload-header">
         <h3>Upload design screenshot</h3>
         <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
@@ -825,8 +864,60 @@ function bindAiReviewEvents(){
  dropZone?.addEventListener('drop', (e)=>{const file=e.dataTransfer?.files?.[0]; if(file) handleSelectedAiFile(file);});
  document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
  document.getElementById('runAiReviewBtn')?.addEventListener('click', runAiDesignReview);
+ bindAiReviewContextEvents();
  setRunReviewButtonState();
 }
+
+function getNotSureOptions(items=[]){
+ return ['Not sure', ...items.filter(Boolean)].map(item=>`<option>${esc(item)}</option>`).join('');
+}
+
+function syncAiReviewContextFromFields(){
+ const valueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
+ const persona = document.getElementById('aiContextPersona')?.value || 'Not sure';
+ const productArea = document.getElementById('aiContextProductArea')?.value || 'Not sure';
+ const userTask = document.getElementById('aiContextUserTask')?.value || '';
+ const screenType = document.getElementById('aiContextScreenType')?.value || 'Not sure';
+ AI_REVIEW_STATE.aiReviewContext = { valueStream, persona, productArea, userTask, screenType };
+ console.log('AI review context:', AI_REVIEW_STATE.aiReviewContext);
+}
+
+function refreshAiContextDependentOptions(){
+ const valueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
+ const personaSelect = document.getElementById('aiContextPersona');
+ const productAreaSelect = document.getElementById('aiContextProductArea');
+ if(!personaSelect || !productAreaSelect) return;
+ const currentPersona = personaSelect.value || 'Not sure';
+ const currentProductArea = productAreaSelect.value || 'Not sure';
+ const personas = getPersonasForValueStream(valueStream);
+ const productAreas = getProductAreasForValueStream(valueStream);
+ personaSelect.innerHTML = getNotSureOptions(personas);
+ productAreaSelect.innerHTML = getNotSureOptions(productAreas);
+ personaSelect.value = personas.includes(currentPersona) ? currentPersona : 'Not sure';
+ productAreaSelect.value = productAreas.includes(currentProductArea) ? currentProductArea : 'Not sure';
+}
+
+function bindAiReviewContextEvents(){
+ const valueStreamSelect = document.getElementById('aiContextValueStream');
+ const personaSelect = document.getElementById('aiContextPersona');
+ const productAreaSelect = document.getElementById('aiContextProductArea');
+ const userTaskInput = document.getElementById('aiContextUserTask');
+ const screenTypeSelect = document.getElementById('aiContextScreenType');
+ if(!valueStreamSelect || !personaSelect || !productAreaSelect || !userTaskInput || !screenTypeSelect) return;
+
+ valueStreamSelect.value = AI_REVIEW_STATE.aiReviewContext.valueStream || 'Not sure';
+ refreshAiContextDependentOptions();
+ personaSelect.value = AI_REVIEW_STATE.aiReviewContext.persona || 'Not sure';
+ productAreaSelect.value = AI_REVIEW_STATE.aiReviewContext.productArea || 'Not sure';
+ userTaskInput.value = AI_REVIEW_STATE.aiReviewContext.userTask || '';
+ screenTypeSelect.value = AI_REVIEW_STATE.aiReviewContext.screenType || 'Not sure';
+
+ valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions(); syncAiReviewContextFromFields();});
+ [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', syncAiReviewContextFromFields));
+ userTaskInput.addEventListener('input', syncAiReviewContextFromFields);
+ syncAiReviewContextFromFields();
+}
+
 function handleAiImageUpload(event){
  const file = event.target.files && event.target.files[0];
  if(!file) return;

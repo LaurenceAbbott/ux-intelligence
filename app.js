@@ -248,7 +248,7 @@ function renderSection(slug){
       <span class="kicker">Framework section</span>
       <h1 class="detail-title">${esc(section.name)}</h1>
       <p class="detail-definition">${esc(section.description)}</p>
-      <div class="meta-row section"><span class="pill brand">${cards.length} evidence cards</span><a class="btn" href="#library">Back to all cards</a></div>
+      <div class="meta-row section"><span class="pill brand">${cards.length} evidence cards</span><a class="hero-text-link" href="#library">Back to all cards</a></div>
     </section>
     <section class="section card-grid">${cards.map(cardPreview).join('')}</section>
   `;

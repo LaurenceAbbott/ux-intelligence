@@ -997,7 +997,11 @@ function showAiValidationMessage(message=''){
 }
 function setRunReviewButtonState(){
  const runButton = document.getElementById('run-ai-review-button');
- if(runButton) runButton.disabled = !AI_REVIEW_STATE.image;
+ if(!runButton) return;
+ const hasImage = !!AI_REVIEW_STATE.image;
+ runButton.disabled = false;
+ runButton.classList.toggle('is-disabled', !hasImage);
+ runButton.setAttribute('aria-disabled', String(!hasImage));
 }
 function updateAiUploadUi(){
  const meta = document.getElementById('aiImageMeta');

@@ -763,11 +763,11 @@ const AI_REVIEW_STATE = {
   checklistResponses: {},
   loadingInterval: null,
   aiReviewContext: {
-    valueStream: 'Not sure',
-    persona: 'Not sure',
-    productArea: 'Not sure',
-    userTask: '',
-    screenType: 'Not sure'
+    selectedValueStream: 'Not sure',
+    selectedPersona: 'Not sure',
+    selectedProductArea: 'Not sure',
+    selectedScreenType: 'Not sure',
+    userTask: ''
   }
 };
 
@@ -803,7 +803,7 @@ function renderAiDesignReview(){
       <div class="ai-context-grid">
         <label><span>Value stream</span>
           <span class="ai-context-select-wrap">
-          <select id="aiContextValueStream" class="field ai-context-select">
+          <select id="ai-review-value-stream" class="field ai-context-select">
             <option>Not sure</option>
             <option>Acquire</option>
             <option>Distribute</option>
@@ -813,23 +813,23 @@ function renderAiDesignReview(){
         </label>
         <label><span>Primary user / persona</span>
           <span class="ai-context-select-wrap">
-          <select id="aiContextPersona" class="field ai-context-select"></select>
+          <select id="ai-review-persona" class="field ai-context-select"></select>
           </span>
         </label>
         <label><span>Product / area</span>
           <span class="ai-context-select-wrap">
-          <select id="aiContextProductArea" class="field ai-context-select"></select>
+          <select id="ai-review-product-area" class="field ai-context-select"></select>
           </span>
         </label>
         <label><span>Screen type</span>
           <span class="ai-context-select-wrap">
-          <select id="aiContextScreenType" class="field ai-context-select">
+          <select id="ai-review-screen-type" class="field ai-context-select">
             <option>Not sure</option><option>Login</option><option>Dashboard</option><option>Form</option><option>Data table</option><option>Workflow</option><option>Quote journey</option><option>Policy servicing</option><option>Payment/document screen</option><option>Admin/configuration screen</option><option>Other</option>
           </select>
           </span>
         </label>
         <label class="ai-context-user-task"><span>What is the user trying to do?</span>
-          <textarea id="aiContextUserTask" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
+          <textarea id="ai-review-user-task" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
         </label>
       </div>
     </section>
@@ -897,20 +897,30 @@ function getNotSureOptions(items=[]){
  return [...new Set(items.filter(Boolean))].map(item=>`<option>${esc(item)}</option>`).join('');
 }
 
+function getCurrentAiReviewContext(){
+ const valueStreamSelect = document.getElementById('ai-review-value-stream');
+ const personaSelect = document.getElementById('ai-review-persona');
+ const productAreaSelect = document.getElementById('ai-review-product-area');
+ const screenTypeSelect = document.getElementById('ai-review-screen-type');
+ const userTaskInput = document.getElementById('ai-review-user-task');
+ return {
+  selectedValueStream: valueStreamSelect?.value || 'Not sure',
+  selectedPersona: personaSelect?.value || 'Not sure',
+  selectedProductArea: productAreaSelect?.value || 'Not sure',
+  selectedScreenType: screenTypeSelect?.value || 'Not sure',
+  userTask: userTaskInput?.value?.trim() || ''
+ };
+}
+
 function syncAiReviewContextFromFields(){
- const valueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
- const persona = document.getElementById('aiContextPersona')?.value || 'Not sure';
- const productArea = document.getElementById('aiContextProductArea')?.value || 'Not sure';
- const userTask = document.getElementById('aiContextUserTask')?.value || '';
- const screenType = document.getElementById('aiContextScreenType')?.value || 'Not sure';
- AI_REVIEW_STATE.aiReviewContext = { valueStream, persona, productArea, userTask, screenType };
- console.log('AI review context:', AI_REVIEW_STATE.aiReviewContext);
+ AI_REVIEW_STATE.aiReviewContext = getCurrentAiReviewContext();
+ console.log('AI review context updated:', AI_REVIEW_STATE.aiReviewContext);
 }
 
 function refreshAiContextDependentOptions({ resetSelections = false } = {}){
- const selectedValueStream = document.getElementById('aiContextValueStream')?.value || 'Not sure';
- const personaSelect = document.getElementById('aiContextPersona');
- const productAreaSelect = document.getElementById('aiContextProductArea');
+ const selectedValueStream = document.getElementById('ai-review-value-stream')?.value || 'Not sure';
+ const personaSelect = document.getElementById('ai-review-persona');
+ const productAreaSelect = document.getElementById('ai-review-product-area');
  if(!personaSelect || !productAreaSelect) return;
  const currentPersona = personaSelect.value || 'Not sure';
  const currentProductArea = productAreaSelect.value || 'Not sure';
@@ -929,19 +939,19 @@ function refreshAiContextDependentOptions({ resetSelections = false } = {}){
 }
 
 function bindAiReviewContextEvents(){
- const valueStreamSelect = document.getElementById('aiContextValueStream');
- const personaSelect = document.getElementById('aiContextPersona');
- const productAreaSelect = document.getElementById('aiContextProductArea');
- const userTaskInput = document.getElementById('aiContextUserTask');
- const screenTypeSelect = document.getElementById('aiContextScreenType');
+ const valueStreamSelect = document.getElementById('ai-review-value-stream');
+ const personaSelect = document.getElementById('ai-review-persona');
+ const productAreaSelect = document.getElementById('ai-review-product-area');
+ const userTaskInput = document.getElementById('ai-review-user-task');
+ const screenTypeSelect = document.getElementById('ai-review-screen-type');
  if(!valueStreamSelect || !personaSelect || !productAreaSelect || !userTaskInput || !screenTypeSelect) return;
 
- valueStreamSelect.value = AI_REVIEW_STATE.aiReviewContext.valueStream || 'Not sure';
+ valueStreamSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedValueStream || 'Not sure';
  refreshAiContextDependentOptions({ resetSelections: true });
- personaSelect.value = AI_REVIEW_STATE.aiReviewContext.persona || 'Not sure';
- productAreaSelect.value = AI_REVIEW_STATE.aiReviewContext.productArea || 'Not sure';
+ personaSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedPersona || 'Not sure';
+ productAreaSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedProductArea || 'Not sure';
  userTaskInput.value = AI_REVIEW_STATE.aiReviewContext.userTask || '';
- screenTypeSelect.value = AI_REVIEW_STATE.aiReviewContext.screenType || 'Not sure';
+ screenTypeSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedScreenType || 'Not sure';
 
  valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions({ resetSelections: true }); syncAiReviewContextFromFields();});
  [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', syncAiReviewContextFromFields));
@@ -1009,15 +1019,16 @@ function updateAiUploadUi(){
 }
 function getSelectedRelatedCards(){const names=[...(SCREEN_CARD_MAP['Other']||[]),...(USER_CARD_MAP['Mixed / unknown']||[])]; const seen=new Set(); return DATA.cards.filter(c=>names.some(n=>c.Name.toLowerCase()===n.toLowerCase())).filter(c=>{const k=c.Slug||c.Name;if(seen.has(k))return false;seen.add(k);return true;}).map(c=>({name:c.Name,slug:c.Slug,taxonomy:c['Reference to taxonomy'],definition:c.Definition,evidence:c['Evidence / Research'],checklistPrompt:c['Checklist prompt'],potentialValue:c['Potential value'],operationalRoiImpact:c['Operational/ROI impact'],goodExample:c['Good example'],badExample:c['Bad example']}));}
 function buildAiReviewPayload(){
- const aiReviewContext={...AI_REVIEW_STATE.aiReviewContext};
+ const currentAiReviewContext = getCurrentAiReviewContext();
+ AI_REVIEW_STATE.aiReviewContext = currentAiReviewContext;
  let openGiContext = {};
  try {
-  openGiContext = (typeof getRelevantOpenGiContext === 'function') ? getRelevantOpenGiContext(aiReviewContext) : {};
+  openGiContext = (typeof getRelevantOpenGiContext === 'function') ? getRelevantOpenGiContext(currentAiReviewContext) : {};
  } catch (error) {
   console.warn("Could not build Open GI context. Continuing without it.", error);
   openGiContext = {};
  }
- return {context:{screenType:'Other',userType:'Mixed / unknown',aiReviewContext,openGiContext},openGiContext,image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"The summary must be a design critique, not a description of the screenshot. Do not start with 'A login page', 'This screen shows', 'The screenshot contains', 'The design features', or similar descriptive wording. Start with a design judgement such as 'Overall, this feels…', 'This is working well because…', 'The main task is clear, but…', or 'I’d say this is…'. Explain what is working, what feels weaker, and what should be improved first. Write all visible copy as finished, polished sentences. Do not return rough notes, fragments, or awkward phrases. Do not use phrases like 'Consider show', 'Consider ensure', 'I’d check increase', or 'Button what stands out first'. Critical improvements should be direct actions. Prefer 'Show inline validation…', 'Increase spacing…', 'Review contrast…', 'Clarify…', 'Make…', 'Add…'. Only use 'Consider…' for genuinely optional ideas, not essential fixes. designerSummary should be 2-3 sentences. topStrengths should contain 3 polished sentences. criticalImprovements should contain 3 polished action-oriented sentences. These fields are displayed directly to users and must be grammatically correct.",preferredOutput:{designerSummary:'2-3 sentence critique for direct display',topStrengths:['3 polished complete sentences'],criticalImprovements:['3 polished action-oriented sentences'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
+ return {context:{screenType:'Other',userType:'Mixed / unknown',aiReviewContext: currentAiReviewContext,openGiContext},openGiContext,image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"The summary must be a design critique, not a description of the screenshot. Do not start with 'A login page', 'This screen shows', 'The screenshot contains', 'The design features', or similar descriptive wording. Start with a design judgement such as 'Overall, this feels…', 'This is working well because…', 'The main task is clear, but…', or 'I’d say this is…'. Explain what is working, what feels weaker, and what should be improved first. Write all visible copy as finished, polished sentences. Do not return rough notes, fragments, or awkward phrases. Do not use phrases like 'Consider show', 'Consider ensure', 'I’d check increase', or 'Button what stands out first'. Critical improvements should be direct actions. Prefer 'Show inline validation…', 'Increase spacing…', 'Review contrast…', 'Clarify…', 'Make…', 'Add…'. Only use 'Consider…' for genuinely optional ideas, not essential fixes. designerSummary should be 2-3 sentences. topStrengths should contain 3 polished sentences. criticalImprovements should contain 3 polished action-oriented sentences. These fields are displayed directly to users and must be grammatically correct.",preferredOutput:{designerSummary:'2-3 sentence critique for direct display',topStrengths:['3 polished complete sentences'],criticalImprovements:['3 polished action-oriented sentences'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
 function getScoreBand(score){if(typeof score!=='number'||Number.isNaN(score))return 'Not scored'; if(score>=90)return 'excellent'; if(score>=75)return 'good'; if(score>=50)return 'watch'; return 'critical';}
 function getPassFailBadge(score){if(typeof score!=='number'||Number.isNaN(score)) return {label:'REVIEW REQUIRED',className:'review'}; if(score>=90) return {label:'PASS — Low concern',className:'pass'}; if(score>=75) return {label:'PASS WITH WATCHOUTS — Medium concern',className:'watch'}; if(score>=50) return {label:'NEEDS REVIEW — High concern',className:'needs-review'}; return {label:'FAIL — Critical concern',className:'fail'};}
@@ -1041,11 +1052,12 @@ async function runAiDesignReview(){
  document.getElementById('aiValidation').classList.add('is-hidden');
  const uploadedImage = AI_REVIEW_STATE.image ? { dataUrl: AI_REVIEW_STATE.image, ...(AI_REVIEW_STATE.imageMeta || {}) } : null;
  const selectedImage = null;
- const aiReviewContext = { ...AI_REVIEW_STATE.aiReviewContext };
- const openGiContext = aiReviewContext;
+ const currentAiReviewContext = getCurrentAiReviewContext();
+ const compactOpenGiContext = (typeof getRelevantOpenGiContext === 'function') ? getRelevantOpenGiContext(currentAiReviewContext) : {};
+ AI_REVIEW_STATE.aiReviewContext = currentAiReviewContext;
  console.log("Selected image state before review:", uploadedImage || selectedImage);
- console.log("AI review context before review:", aiReviewContext);
- console.log("Open GI context before review:", openGiContext);
+ console.log("AI review context before review:", currentAiReviewContext);
+ console.log("Open GI context before review:", compactOpenGiContext);
  if(!uploadedImage || !uploadedImage.dataUrl){
   const v=document.getElementById('aiValidation');
   v.textContent='Please upload an image before running the review.';
@@ -1063,7 +1075,10 @@ async function runAiDesignReview(){
   return;
  }
  console.log("Sending AI review payload:", payload);
- AI_REVIEW_STATE.lastPayloadContext = payload.context?.openGiContext || payload.openGiContext || null;
+ AI_REVIEW_STATE.lastPayloadContext = {
+  aiReviewContext: payload.context?.aiReviewContext || currentAiReviewContext,
+  openGiContext: payload.context?.openGiContext || payload.openGiContext || compactOpenGiContext
+ };
  console.log("AI review payload context:", payload.context);
  console.log("AI review payload openGiContext:", payload.openGiContext || payload.context?.openGiContext);
  console.log("AI review related cards:", payload.relatedCards);
@@ -1152,7 +1167,9 @@ function renderAiReport(review){
  const simpleReview=normaliseSimpleAiReview(review||{});
  console.log('Rendered simple review:', simpleReview);
  const tone=scoreRingTone(simpleReview.ratingLabel);
- const debugContext = AI_REVIEW_STATE.lastPayloadContext || {};
+ const debugPayload = AI_REVIEW_STATE.lastPayloadContext || {};
+ const debugAiReviewContext = debugPayload.aiReviewContext || {};
+ const debugContext = debugPayload.openGiContext || {};
  document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
  const uploadSection=document.getElementById('aiUploadSection');
  uploadSection?.classList.add('is-hidden');
@@ -1175,11 +1192,11 @@ function renderAiReport(review){
    <details class="panel section" style="margin-top:12px;">
      <summary><strong>Context sent to AI</strong></summary>
      <div style="margin-top:10px;">
-       <p><strong>Selected value stream:</strong> ${esc(debugContext.selectedValueStream || 'Not sure')}</p>
-       <p><strong>Selected persona:</strong> ${esc(debugContext.selectedPersona || 'Not sure')}</p>
-       <p><strong>Selected product / area:</strong> ${esc(debugContext.selectedProductArea || 'Not sure')}</p>
-       <p><strong>Selected screen type:</strong> ${esc(debugContext.selectedScreenType || 'Not sure')}</p>
-       <p><strong>User task:</strong> ${esc(debugContext.userTask || '')}</p>
+       <p><strong>Selected value stream:</strong> ${esc(debugAiReviewContext.selectedValueStream || 'Not sure')}</p>
+       <p><strong>Selected persona:</strong> ${esc(debugAiReviewContext.selectedPersona || 'Not sure')}</p>
+       <p><strong>Selected product / area:</strong> ${esc(debugAiReviewContext.selectedProductArea || 'Not sure')}</p>
+       <p><strong>Selected screen type:</strong> ${esc(debugAiReviewContext.selectedScreenType || 'Not sure')}</p>
+       <p><strong>User task:</strong> ${esc(debugAiReviewContext.userTask || '')}</p>
        <p><strong>Inferred value stream if available:</strong> ${esc((debugContext.valueStreamContext && debugContext.valueStreamContext.name) || debugContext.selectedValueStream || 'Not sure')}</p>
        <p><strong>Relevant outcomes sent:</strong> ${esc((debugContext.relevantOutcomes || []).join(' | ') || 'None')}</p>
        <p><strong>Relevant journey sent:</strong> ${esc(debugContext.relevantJourney || 'None')}</p>
@@ -1227,4 +1244,3 @@ searchInput.addEventListener('keydown', (e) => {
 
 window.addEventListener('hashchange', render);
 render();
- const debugContext = AI_REVIEW_STATE.lastPayloadContext || {};

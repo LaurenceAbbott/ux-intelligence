@@ -4,26 +4,32 @@ const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
 const AI_REVIEW_ENDPOINT = "https://long-rain-83b1ux-ai-review-agent.laurence-ogi.workers.dev/review-image";
 
-const OGI_CONTEXT_REF = (typeof window !== 'undefined' && window.OGI_CONTEXT) ? window.OGI_CONTEXT : null;
+function getOgiContext(){
+  return (typeof window !== 'undefined' && window.OGI_CONTEXT) ? window.OGI_CONTEXT : null;
+}
 
 function getAllValueStreams(){
-  return Object.keys(OGI_CONTEXT_REF?.valueStreams || {});
+  const ogiContext = getOgiContext();
+  if(!ogiContext?.valueStreams) return ['Not sure'];
+  return ['Not sure', ...Object.keys(ogiContext.valueStreams)];
 }
 
 function getPersonasForValueStream(valueStream='Not sure'){
-  if(!OGI_CONTEXT_REF) return [];
+  const ogiContext = getOgiContext();
+  if(!ogiContext) return ['Not sure'];
   if(valueStream && valueStream !== 'Not sure'){
-    return OGI_CONTEXT_REF.personaNamesByValueStream?.[valueStream] || OGI_CONTEXT_REF.personasByValueStream?.[valueStream] || [];
+    return ['Not sure', ...(ogiContext.personaNamesByValueStream?.[valueStream] || [])];
   }
-  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.personaNamesByValueStream?.[v] || OGI_CONTEXT_REF.personasByValueStream?.[v] || []))];
+  return ['Not sure'];
 }
 
 function getProductAreasForValueStream(valueStream='Not sure'){
-  if(!OGI_CONTEXT_REF) return [];
+  const ogiContext = getOgiContext();
+  if(!ogiContext) return ['Not sure'];
   if(valueStream && valueStream !== 'Not sure'){
-    return OGI_CONTEXT_REF.valueStreams?.[valueStream]?.productPlatformAreas || [];
+    return ['Not sure', ...(ogiContext.valueStreams?.[valueStream]?.productPlatformAreas || [])];
   }
-  return [...new Set(getAllValueStreams().flatMap(v => OGI_CONTEXT_REF.valueStreams?.[v]?.productPlatformAreas || []))];
+  return ['Not sure'];
 }
 
 function inferValueStreamFromText(text=''){
@@ -45,8 +51,8 @@ function getRelevantOpenGiContext(reviewContext={}){
     ? inferValueStreamFromText(`${selectedProductArea} ${selectedScreenType} ${userTask}`)
     : selectedValueStreamInput;
 
-  const valueStreamContextRaw = OGI_CONTEXT_REF?.valueStreams?.[inferredValueStream] || null;
-  const personaContextRaw = selectedPersona !== 'Not sure' ? (OGI_CONTEXT_REF?.personas?.[selectedPersona] || null) : null;
+  const valueStreamContextRaw = getOgiContext()?.valueStreams?.[inferredValueStream] || null;
+  const personaContextRaw = selectedPersona !== 'Not sure' ? (getOgiContext()?.personas?.[selectedPersona] || null) : null;
 
   return {
     selectedValueStream: inferredValueStream,
@@ -71,11 +77,16 @@ function getRelevantOpenGiContext(reviewContext={}){
     relevantJourney: valueStreamContextRaw?.diagramDerived?.journey || '',
     relevantProductAreas: (valueStreamContextRaw?.productPlatformAreas || []).slice(0,8),
     relevantCapabilities: (valueStreamContextRaw?.diagramDerived?.capabilitiesServices || []).slice(0,8),
-    relevantSharedCapabilities: (OGI_CONTEXT_REF?.sharedHorizontalCapabilities || []).slice(0,8)
+    relevantSharedCapabilities: (getOgiContext()?.sharedHorizontalCapabilities || []).slice(0,8)
   };
 }
 
-console.log("OGI_CONTEXT loaded:", Boolean(window.OGI_CONTEXT));
+console.log("window.OGI_CONTEXT:", window.OGI_CONTEXT);
+console.log("OGI valueStreams:", window.OGI_CONTEXT && window.OGI_CONTEXT.valueStreams);
+console.log("OGI personas:", window.OGI_CONTEXT && window.OGI_CONTEXT.personaNamesByValueStream);
+if (!window.OGI_CONTEXT) {
+  console.warn("OGI_CONTEXT is not loaded. Check ogi-context.js script order and module/export format.");
+}
 console.log("Available value streams:", getAllValueStreams());
 
 document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
@@ -877,7 +888,7 @@ function bindAiReviewEvents(){
 }
 
 function getNotSureOptions(items=[]){
- return ['Not sure', ...items.filter(Boolean)].map(item=>`<option>${esc(item)}</option>`).join('');
+ return [...new Set(items.filter(Boolean))].map(item=>`<option>${esc(item)}</option>`).join('');
 }
 
 function syncAiReviewContextFromFields(){
@@ -899,10 +910,12 @@ function refreshAiContextDependentOptions({ resetSelections = false } = {}){
  const currentProductArea = productAreaSelect.value || 'Not sure';
  const personaOptions = getPersonasForValueStream(selectedValueStream);
  const productAreaOptions = getProductAreasForValueStream(selectedValueStream);
- console.log("OGI_CONTEXT available:", Boolean(window.OGI_CONTEXT || OGI_CONTEXT_REF));
+ console.log("window.OGI_CONTEXT:", window.OGI_CONTEXT);
+ console.log("OGI valueStreams:", window.OGI_CONTEXT && window.OGI_CONTEXT.valueStreams);
+ console.log("OGI personas:", window.OGI_CONTEXT && window.OGI_CONTEXT.personaNamesByValueStream);
  console.log("Selected value stream:", selectedValueStream);
- console.log("Persona options:", personaOptions);
- console.log("Product area options:", productAreaOptions);
+ console.log("Persona options generated:", personaOptions);
+ console.log("Product options generated:", productAreaOptions);
  personaSelect.innerHTML = getNotSureOptions(personaOptions);
  productAreaSelect.innerHTML = getNotSureOptions(productAreaOptions);
  personaSelect.value = resetSelections ? 'Not sure' : (personaOptions.includes(currentPersona) ? currentPersona : 'Not sure');

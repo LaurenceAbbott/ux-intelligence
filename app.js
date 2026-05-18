@@ -3,7 +3,7 @@ const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
 const AI_REVIEW_ENDPOINT = "https://long-rain-83b1ux-ai-review-agent.laurence-ogi.workers.dev/review-image";
-console.log("AI review script loaded");
+console.log("AI review app.js loaded");
 
 function getOgiContext(){
   return (typeof window !== 'undefined' && window.OGI_CONTEXT) ? window.OGI_CONTEXT : null;
@@ -1053,42 +1053,80 @@ async function handleRunAiDesignReview(){
  return runAiDesignReview();
 }
 async function runAiDesignReview(){
- document.getElementById('aiValidation').classList.add('is-hidden');
- const uploadedImage = AI_REVIEW_STATE.image ? { dataUrl: AI_REVIEW_STATE.image, ...(AI_REVIEW_STATE.imageMeta || {}) } : null;
- const selectedImage = null;
- const currentAiReviewContext = getCurrentAiReviewContext();
- const compactOpenGiContext = (typeof getRelevantOpenGiContext === 'function') ? getRelevantOpenGiContext(currentAiReviewContext) : {};
- AI_REVIEW_STATE.aiReviewContext = currentAiReviewContext;
- console.log("Selected image state before review:", uploadedImage || selectedImage);
- console.log("AI review context before review:", currentAiReviewContext);
- console.log("Open GI context before review:", compactOpenGiContext);
- if(!uploadedImage || !uploadedImage.dataUrl){
-  const v=document.getElementById('aiValidation');
-  v.textContent='Please upload an image before running the review.';
-  v.classList.remove('is-hidden');
-  return;
- }
- let payload;
  try {
-  payload=buildAiReviewPayload();
+  document.getElementById('aiValidation').classList.add('is-hidden');
+  const runButton = document.getElementById('run-ai-review-button');
+  const uploadedImage = AI_REVIEW_STATE.image ? { dataUrl: AI_REVIEW_STATE.image, ...(AI_REVIEW_STATE.imageMeta || {}) } : null;
+  AI_REVIEW_STATE.aiReviewContext = getCurrentAiReviewContext();
+  console.log("Selected image state before review:", uploadedImage);
+  console.log("AI review context before review:", AI_REVIEW_STATE.aiReviewContext);
+
+  if(!uploadedImage || !uploadedImage.dataUrl){
+   showAiValidationMessage('Please upload a design screenshot first.');
+   return;
+  }
+
+  const currentAiReviewContext = getCurrentAiReviewContext();
+  let compactOpenGiContext = {};
+  try {
+   compactOpenGiContext = getRelevantOpenGiContext(currentAiReviewContext);
+  } catch (error) {
+   console.warn("Could not build Open GI context. Continuing without it.", error);
+   compactOpenGiContext = {};
+  }
+
+  const payload = buildAiReviewPayload();
+  if (payload?.context) payload.context.openGiContext = compactOpenGiContext;
+  payload.openGiContext = compactOpenGiContext;
+
+  console.log("Open GI context before review:", compactOpenGiContext);
+  console.log("Sending AI review payload:", payload);
+
+  AI_REVIEW_STATE.lastPayloadContext = {
+   aiReviewContext: payload.context?.aiReviewContext || currentAiReviewContext,
+   openGiContext: payload.context?.openGiContext || payload.openGiContext || compactOpenGiContext
+  };
+
+  document.getElementById('aiErrorPanel')?.classList.add('is-hidden');
+  if(runButton){
+   runButton.disabled = true;
+   runButton.classList.add('is-disabled');
+   runButton.setAttribute('aria-disabled', 'true');
+  }
+  toggleAiLoading(true);
+
+  let result;
+  try {
+   result = AI_REVIEW_ENDPOINT ? await callAiReviewWorker(payload) : runLocalDesignReview(payload);
+  } catch (err) {
+   const panel=document.getElementById('aiErrorPanel');
+   panel.classList.remove('is-hidden');
+   panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`;
+   document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);});
+   return;
+  }
+
+  console.log("Raw Worker AI review response:", result);
+  if(!validateAiResponse(result)){
+   document.getElementById('aiErrorPanel').classList.remove('is-hidden');
+   document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.';
+   return;
+  }
+
+  AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result);
+  renderAiReport(AI_REVIEW_STATE.reviewResults);
  } catch (error) {
-  const panel=document.getElementById('aiErrorPanel');
-  panel.classList.remove('is-hidden');
-  panel.textContent='Something went wrong starting the review. Please check the console for details.';
-  console.error('Failed to build AI review payload', error);
-  return;
+  const panel = document.getElementById('aiErrorPanel');
+  if(panel){
+   panel.classList.remove('is-hidden');
+   panel.textContent = 'Something went wrong starting the AI review. Please check the console.';
+  }
+  console.error("AI review failed before or during Worker call:", error);
+ } finally {
+  toggleAiLoading(false);
+  setRunReviewButtonState();
  }
- console.log("Sending AI review payload:", payload);
- AI_REVIEW_STATE.lastPayloadContext = {
-  aiReviewContext: payload.context?.aiReviewContext || currentAiReviewContext,
-  openGiContext: payload.context?.openGiContext || payload.openGiContext || compactOpenGiContext
- };
- console.log("AI review payload context:", payload.context);
- console.log("AI review payload openGiContext:", payload.openGiContext || payload.context?.openGiContext);
- console.log("AI review related cards:", payload.relatedCards);
- toggleAiLoading(true);
- let result;
- try{result=AI_REVIEW_ENDPOINT?await callAiReviewWorker(payload):runLocalDesignReview(payload);}catch(err){const panel=document.getElementById('aiErrorPanel'); panel.classList.remove('is-hidden'); panel.innerHTML=`<p>The AI review service could not be reached. You can run a local prototype review instead.</p><button class="btn dark" id="runLocalFallback">Run local prototype review</button>`; document.getElementById('runLocalFallback').addEventListener('click', ()=>{AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(runLocalDesignReview(payload)); renderAiReport(AI_REVIEW_STATE.reviewResults);}); toggleAiLoading(false); return;} toggleAiLoading(false); console.log("Raw Worker AI review response:", result); console.log("Designer summary from Worker:", result?.designerSummary); console.log("Top strengths from Worker:", result?.topStrengths); console.log("Critical improvements from Worker:", result?.criticalImprovements); if(!validateAiResponse(result)){document.getElementById('aiErrorPanel').classList.remove('is-hidden');document.getElementById('aiErrorPanel').textContent='Worker response was invalid. Please retry or run local prototype review.'; return;} AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result); renderAiReport(AI_REVIEW_STATE.reviewResults);}
+}
 function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
 function getValidScore(value){

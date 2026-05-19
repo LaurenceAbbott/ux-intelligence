@@ -11,6 +11,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close menu">×</button>
       <a class="brand" href="#home">
          <img class="brand-mark" src="portal-logo.svg" alt="Operational UX portal logo" />
         <span>
@@ -34,10 +35,11 @@
         <p>Static HTML/CSS/JS. No build tools. Open index.html locally.</p>
       </div>
     </aside>
+    <button class="menu-overlay" id="menuOverlay" type="button" aria-label="Close menu"></button>
 
     <main class="main">
       <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
+        <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="sidebar">☰</button>
         <div class="topbar-search">
           <input id="globalSearch" type="search" placeholder="Search evidence cards…" />
         </div>

@@ -1007,7 +1007,25 @@ textarea.field{min-height:84px;border-radius:.75rem;margin-top:.6rem}
 .ai-review-card-strengths{border:1px solid #cfeee3;background:#fbfffd}
 .ai-review-card-improvements{border:1px solid #f6e5bd;background:#fffdf6}
 
-.ai-new-review-btn{margin-top:.4rem;min-width:320px}
+.ai-review-actions{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:1rem;
+  margin-top:2rem;
+  flex-wrap:wrap;
+}
+.ai-review-actions .secondary-button{order:1}
+.ai-review-actions .primary-button{order:2}
+.ai-new-review-btn{margin-top:0;min-width:320px}
+@media (max-width:640px){
+  .ai-review-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .ai-review-actions .primary-button{order:1}
+  .ai-review-actions .secondary-button{order:2}
+}
 @media(max-width:900px){.ai-review-two-cards{grid-template-columns:1fr}.ai-review-score-ring{--size:190px}.ai-review-score-inner{width:152px;height:152px}.ai-review-score-number{font-size:2.8rem}}
 
 .btn.is-disabled{opacity:.62}

@@ -2,8 +2,32 @@ const DATA = window.UX_DATA;
 const app = document.getElementById('app');
 const searchInput = document.getElementById('globalSearch');
 const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menuBtn');
+const sidebarClose = document.getElementById('sidebarClose');
+const menuOverlay = document.getElementById('menuOverlay');
 const AI_REVIEW_ENDPOINT = "https://long-rain-83b1ux-ai-review-agent.laurence-ogi.workers.dev/review-image";
 console.log("AI review app.js loaded");
+
+function openSidebar(){
+  sidebar.classList.add('open');
+  menuOverlay?.classList.add('open');
+  menuBtn?.setAttribute('aria-expanded', 'true');
+}
+
+function closeSidebar(){
+  sidebar.classList.remove('open');
+  menuOverlay?.classList.remove('open');
+  menuBtn?.setAttribute('aria-expanded', 'false');
+}
+
+function toggleSidebar(){
+  const isOpen = sidebar.classList.contains('open');
+  if(isOpen){
+    closeSidebar();
+    return;
+  }
+  openSidebar();
+}
 
 function getOgiContext(){
   return (typeof window !== 'undefined' && window.OGI_CONTEXT) ? window.OGI_CONTEXT : null;
@@ -82,7 +106,12 @@ if (!window.OGI_CONTEXT) {
 }
 console.log("Available value streams:", getAllValueStreams());
 
-document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
+menuBtn?.addEventListener('click', toggleSidebar);
+sidebarClose?.addEventListener('click', closeSidebar);
+menuOverlay?.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeSidebar();
+});
 
 const esc = (str='') => String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 const slugify = (str='') => String(str).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
@@ -110,7 +139,7 @@ function render(){
   const hash = location.hash.replace(/^#/, '') || 'home';
   const [route, ...parts] = hash.split('/');
   setActive(route);
-  sidebar.classList.remove('open');
+  closeSidebar();
 
   if(route === 'home') return renderHome();
   if(route === 'value') return renderValue();

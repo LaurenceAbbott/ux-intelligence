@@ -58,6 +58,32 @@ button,input,select,textarea{font:inherit}
   gap:1rem;
   overflow:auto;
 }
+
+.sidebar-close{
+  display:none;
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:44px;
+  height:44px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  color:var(--white);
+  font-size:1.5rem;
+  line-height:1;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.sidebar-close:hover,
+.sidebar-close:focus-visible{
+  background:rgba(255,255,255,.12);
+  outline:none;
+}
+.menu-overlay{
+  display:none;
+}
 .brand{
   color:var(--white);
   text-decoration:none;
@@ -762,6 +788,24 @@ table.data tr:last-child td{border-bottom:0}
     box-shadow:0 20px 80px rgba(0,0,0,.35);
   }
   .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:flex}
+  .menu-overlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    border:0;
+    padding:0;
+    margin:0;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:30;
+  }
+  .menu-overlay.open{
+    opacity:1;
+    pointer-events:auto;
+  }
   .menu-btn{display:inline-flex}
   .content{padding:1.5rem}
   .card-grid,.grid.cols-3,.grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -793,7 +837,7 @@ table.data tr:last-child td{border-bottom:0}
 
 @media print{
   body,.main,.content,.panel,.card{background:#fff !important;color:#000 !important}
-  .sidebar,.topbar,.menu-btn,.topbar-search,.hero-actions,.btn,.breadcrumbs{display:none !important}
+  .sidebar,.topbar,.menu-btn,.sidebar-close,.menu-overlay,.topbar-search,.hero-actions,.btn,.breadcrumbs{display:none !important}
   .hero,.detail-hero{
     min-height:auto !important;
     padding:0 0 1rem !important;

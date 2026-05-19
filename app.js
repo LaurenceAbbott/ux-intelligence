@@ -748,6 +748,7 @@ function renderSources(){
 
 
 const AI_REVIEW_STATE = {
+  currentStep: 1,
   image: null,
   imageMeta: null,
   reviewResults: null,
@@ -787,7 +788,12 @@ function renderAiDesignReview(){
    <section class="hero"><span class="kicker">AI-assisted evaluation</span><h1>AI Design Review</h1><p>Upload a design screenshot and get practical, conversational feedback as if a senior design team reviewed the screen together.</p></section>
   <section class="panel section ai-caveat">This is an AI-assisted first-pass review. It can identify visible UX risks and likely accessibility concerns, but it does not replace user research, accessibility testing or design judgement.</section>
  
-   <section class="panel section ai-context-panel">
+   <div class="review-steps ai-review-steps">
+      <button type="button" class="step-chip ai-step-chip active" data-step="1">Review context</button>
+      <button type="button" class="step-chip ai-step-chip" data-step="2">Upload design</button>
+      <button type="button" class="step-chip ai-step-chip" data-step="3">AI review</button>
+    </div>
+   <section class="panel section ai-context-panel ai-review-step" data-step-panel="1">
       <div class="ai-context-header">
         <h3>Review context (optional)</h3>
         <p class="section-subtitle">Add extra context to guide this review. You can leave these fields unselected if you're unsure.</p>
@@ -825,9 +831,12 @@ function renderAiDesignReview(){
           <textarea id="ai-review-user-task" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
         </label>
       </div>
+      <div class="step-actions">
+        <button type="button" class="btn dark" id="aiStepToUploadBtn">Next: Upload design</button>
+      </div>
     </section>
 
-  <section id="aiUploadSection" class="panel section ai-upload-section">
+  <section id="aiUploadSection" class="panel section ai-upload-section ai-review-step is-hidden" data-step-panel="2">
       <div class="ai-upload-header">
         <h3>Upload design screenshot</h3>
         <p class="section-subtitle">Drag and drop a PNG or JPG, or browse files. Then run AI Design Review.</p>
@@ -853,12 +862,17 @@ function renderAiDesignReview(){
         </div>
         <div id="aiImageMeta" class="ai-upload-meta section-subtitle is-hidden"></div>
         <div class="ai-upload-actions section"><button class="btn dark" id="run-ai-review-button">Run AI Design Review</button> <button class="btn" id="clearAiImageBtn">Clear image</button></div>
+        <div class="step-actions"><button type="button" class="btn" id="aiStepBackToContextBtn">Back: Review context</button></div>
         <p id="aiValidation" class="field-error is-hidden"></p>
       </div>
     <div id="aiErrorPanel" class="panel highlight is-hidden section"></div>
   </section>
-  <section id="aiReport" class="section"></section>`;
-  AI_REVIEW_STATE.reviewResults = null;
+  <section class="section ai-review-step is-hidden" data-step-panel="3">
+    <section id="aiReport" class="section"></section>
+    <div class="step-actions">
+      <button type="button" class="btn" id="aiStepBackToUploadBtn">Back: Upload design</button>
+    </div>
+  </section>`;
  bindAiReviewEvents();
 }
 function bindAiReviewEvents(){
@@ -878,12 +892,34 @@ function bindAiReviewEvents(){
  dropZone?.addEventListener('drop', (e)=>{const file=e.dataTransfer?.files?.[0]; if(file) handleSelectedAiFile(file);});
  document.getElementById('clearAiImageBtn')?.addEventListener('click', clearAiImage);
  const runAiReviewButton = document.getElementById('run-ai-review-button');
- console.log("Run AI Design Review button found:", runAiReviewButton);
  if(runAiReviewButton){
   runAiReviewButton.addEventListener('click', handleRunAiDesignReview);
  }
+ document.getElementById('aiStepToUploadBtn')?.addEventListener('click', ()=>setAiReviewStep(2));
+ document.getElementById('aiStepBackToContextBtn')?.addEventListener('click', ()=>setAiReviewStep(1));
+ document.getElementById('aiStepBackToUploadBtn')?.addEventListener('click', ()=>setAiReviewStep(2));
+ document.querySelectorAll('.ai-step-chip').forEach(chip => chip.addEventListener('click', ()=>{
+  const step = Number(chip.dataset.step);
+  if(step === 3 && !AI_REVIEW_STATE.reviewResults) return;
+  setAiReviewStep(step);
+ }));
  bindAiReviewContextEvents();
  setRunReviewButtonState();
+ if(AI_REVIEW_STATE.reviewResults){
+  renderAiReport(AI_REVIEW_STATE.reviewResults);
+  setAiReviewStep(3);
+ } else {
+  setAiReviewStep(Math.max(1, Math.min(2, AI_REVIEW_STATE.currentStep || 1)));
+ }
+}
+function setAiReviewStep(step=1){
+ AI_REVIEW_STATE.currentStep = step;
+ document.querySelectorAll('.ai-step-chip').forEach(chip=>{
+  chip.classList.toggle('active', Number(chip.dataset.step) === step);
+ });
+ document.querySelectorAll('.ai-review-step').forEach(panel=>{
+  panel.classList.toggle('is-hidden', Number(panel.dataset.stepPanel) !== step);
+ });
 }
 
 function getNotSureOptions(items=[]){
@@ -910,6 +946,10 @@ function getCurrentAiReviewContext(){
   userTask: userTaskInput?.value?.trim() || ''
  };
 }
+function setSelectPlaceholderState(selectEl){
+ if(!selectEl) return;
+ selectEl.classList.toggle('is-placeholder', !selectEl.value);
+}
 
 function syncAiReviewContextFromFields(){
  AI_REVIEW_STATE.aiReviewContext = getCurrentAiReviewContext();
@@ -935,6 +975,8 @@ function refreshAiContextDependentOptions({ resetSelections = false } = {}){
  productAreaSelect.innerHTML = getNotSureOptions(productAreaOptions);
  personaSelect.value = resetSelections ? 'Not sure' : (personaOptions.includes(currentPersona) ? currentPersona : 'Not sure');
  productAreaSelect.value = resetSelections ? 'Not sure' : (productAreaOptions.includes(currentProductArea) ? currentProductArea : 'Not sure');
+ setSelectPlaceholderState(personaSelect);
+ setSelectPlaceholderState(productAreaSelect);
 }
 
 function bindAiReviewContextEvents(){
@@ -952,9 +994,10 @@ function bindAiReviewContextEvents(){
  userTaskInput.value = AI_REVIEW_STATE.aiReviewContext.userTask || '';
  screenTypeSelect.value = (AI_REVIEW_STATE.aiReviewContext.selectedScreenType === 'Not sure' ? '' : (AI_REVIEW_STATE.aiReviewContext.selectedScreenType || ''));
 
- valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions({ resetSelections: true }); syncAiReviewContextFromFields();});
- [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', syncAiReviewContextFromFields));
+ valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions({ resetSelections: true }); setSelectPlaceholderState(valueStreamSelect); syncAiReviewContextFromFields();});
+ [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', ()=>{setSelectPlaceholderState(el); syncAiReviewContextFromFields();}));
  userTaskInput.addEventListener('input', syncAiReviewContextFromFields);
+ [valueStreamSelect, personaSelect, productAreaSelect, screenTypeSelect].forEach(setSelectPlaceholderState);
  syncAiReviewContextFromFields();
 }
 
@@ -1119,6 +1162,7 @@ async function runAiDesignReview(){
 
   AI_REVIEW_STATE.reviewResults=normaliseAiReviewResponse(result);
   renderAiReport(AI_REVIEW_STATE.reviewResults);
+  setAiReviewStep(3);
  } catch (error) {
   const panel = document.getElementById('aiErrorPanel');
   if(panel){
@@ -1213,9 +1257,6 @@ function renderAiReport(review){
  const simpleReview=normaliseSimpleAiReview(review||{});
  console.log('Rendered simple review:', simpleReview);
  const tone=scoreRingTone(simpleReview.ratingLabel);
- document.querySelector('.ai-upload-panel-wrap')?.classList.add('ai-upload-layout-collapsed');
- const uploadSection=document.getElementById('aiUploadSection');
- uploadSection?.classList.add('is-hidden');
  report.innerHTML=`
  <section class="ai-simple-review">
    <div class="ai-simple-image-wrap">${AI_REVIEW_STATE.image?`<img class="ai-simple-image" src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`:'<p>No image uploaded.</p>'}</div>
@@ -1236,11 +1277,16 @@ function renderAiReport(review){
    <button class="btn primary ai-new-review-btn" id="createNewAiReviewBtn">Create a new AI Design Review</button>
  </section>`;
  document.getElementById('createNewAiReviewBtn')?.addEventListener('click', ()=>{
-  clearAiImage();
-  document.getElementById('aiUploadSection')?.classList.remove('is-hidden');
+  resetAiReviewSession();
  });
 }
-function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed'); document.getElementById('aiUploadSection')?.classList.remove('is-hidden'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden'); showAiValidationMessage(''); setRunReviewButtonState();}
+function clearAiImage(){AI_REVIEW_STATE.image=null; AI_REVIEW_STATE.imageMeta=null; AI_REVIEW_STATE.reviewResults=null; const up=document.getElementById('aiImageUpload'); if(up) up.value=''; const meta=document.getElementById('aiImageMeta'); meta.textContent=''; meta.classList.add('is-hidden'); const preview=document.getElementById('aiImagePreview'); preview.innerHTML=''; preview.classList.add('is-hidden'); document.getElementById('aiDropEmpty').classList.remove('is-hidden'); document.querySelector('.ai-upload-panel-wrap')?.classList.remove('ai-upload-layout-collapsed'); document.getElementById('aiReport').innerHTML=''; document.getElementById('aiErrorPanel').classList.add('is-hidden'); showAiValidationMessage(''); setRunReviewButtonState();}
+function resetAiReviewSession(){
+ clearAiImage();
+ AI_REVIEW_STATE.aiReviewContext = { selectedValueStream:'Not sure', selectedPersona:'Not sure', selectedProductArea:'Not sure', selectedScreenType:'Not sure', userTask:'' };
+ AI_REVIEW_STATE.currentStep = 1;
+ renderAiDesignReview();
+}
 
 function calcTimeSaving(){
   const seconds = Number(document.getElementById('secondsSaved').value || 0);

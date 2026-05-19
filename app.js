@@ -869,7 +869,7 @@ function renderAiDesignReview(){
             <div class="ai-drop-icon">✦</div>
             <h4>Drag & drop your screenshot</h4>
             <p>or <button type="button" class="ai-browse-link" id="aiBrowseBtn">browse files</button></p>
-            <small>Accepted file types: .png, .jpg, .jpeg</small>
+            <small>Accepted file types: .png, .jpg, .jpeg. Max file size: 8MB.</small>
           </div>
           <div id="aiImagePreview" class="ai-image-preview is-hidden"></div>
           <div id="aiDropLoader" class="ai-drop-loader ai-upload-loading-overlay is-hidden" aria-live="polite">
@@ -1019,6 +1019,22 @@ function bindAiReviewContextEvents(){
  syncAiReviewContextFromFields();
 }
 
+const MAX_AI_REVIEW_FILE_SIZE = 8 * 1024 * 1024;
+
+function formatAiReviewFileSize(bytes=0){
+ if(!Number.isFinite(bytes) || bytes <= 0) return '0MB';
+ const megabytes = bytes / (1024 * 1024);
+ return `${megabytes.toFixed(1)}MB`;
+}
+
+function validateAiReviewFile(file){
+ if(!file) return 'Please choose a file.';
+ const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+ if(!validTypes.includes(file.type)) return 'Unsupported file type. Please upload a PNG or JPG.';
+ if(file.size > MAX_AI_REVIEW_FILE_SIZE) return 'File is too large. Please upload a PNG or JPG under 8MB.';
+ return '';
+}
+
 function handleAiImageUpload(event){
  const file = event.target.files && event.target.files[0];
  if(!file) return;
@@ -1026,13 +1042,13 @@ function handleAiImageUpload(event){
  event.target.value = '';
 }
 function handleSelectedAiFile(file){
- if(!file){
-  showAiValidationMessage('Please select an image file.');
-  return;
- }
- const validMimeTypes = ['image/png','image/jpeg','image/jpg'];
- if(!validMimeTypes.includes(file.type)){
-  showAiValidationMessage('Please upload a PNG or JPG image (.png, .jpg, .jpeg).');
+ const validationError = validateAiReviewFile(file);
+ if(validationError){
+  AI_REVIEW_STATE.image = null;
+  AI_REVIEW_STATE.imageMeta = null;
+  AI_REVIEW_STATE.reviewResults = null;
+  showAiValidationMessage(validationError);
+  updateAiUploadUi();
   return;
  }
  const reader = new FileReader();
@@ -1041,7 +1057,7 @@ function handleSelectedAiFile(file){
   const img = new Image();
   img.onload = () => {
    AI_REVIEW_STATE.image = dataUrl;
-   AI_REVIEW_STATE.imageMeta = { fileName: file.name, mimeType: file.type, width: img.width, height: img.height };
+   AI_REVIEW_STATE.imageMeta = { fileName: file.name, mimeType: file.type, width: img.width, height: img.height, sizeBytes: file.size };
    AI_REVIEW_STATE.reviewResults = null;
    updateAiUploadUi();
   };
@@ -1059,17 +1075,27 @@ function setRunReviewButtonState(){
  const runButton = document.getElementById('run-ai-review-button');
  if(!runButton) return;
  const hasImage = !!AI_REVIEW_STATE.image;
- runButton.disabled = false;
- runButton.classList.toggle('is-disabled', !hasImage);
- runButton.setAttribute('aria-disabled', String(!hasImage));
+ const hasValidationError = !!document.getElementById('aiValidation')?.textContent?.trim();
+ runButton.disabled = !hasImage || hasValidationError;
+ runButton.classList.toggle('is-disabled', runButton.disabled);
+ runButton.setAttribute('aria-disabled', String(runButton.disabled));
 }
 function updateAiUploadUi(){
  const meta = document.getElementById('aiImageMeta');
  const preview = document.getElementById('aiImagePreview');
  const emptyState = document.getElementById('aiDropEmpty');
- if(!meta || !preview || !emptyState || !AI_REVIEW_STATE.imageMeta || !AI_REVIEW_STATE.image) return;
- const { fileName, mimeType, width, height } = AI_REVIEW_STATE.imageMeta;
- meta.textContent = `${fileName} · ${mimeType} · ${width}×${height}`;
+ if(!meta || !preview || !emptyState) return;
+ if(!AI_REVIEW_STATE.imageMeta || !AI_REVIEW_STATE.image){
+  meta.textContent = '';
+  meta.classList.add('is-hidden');
+  preview.innerHTML = '';
+  preview.classList.add('is-hidden');
+  emptyState.classList.remove('is-hidden');
+  setRunReviewButtonState();
+  return;
+ }
+ const { fileName, mimeType, width, height, sizeBytes } = AI_REVIEW_STATE.imageMeta;
+ meta.textContent = `${fileName} · ${mimeType} · ${width}×${height} · ${formatAiReviewFileSize(sizeBytes)}`;
  meta.classList.remove('is-hidden');
  preview.innerHTML = `<img src="${AI_REVIEW_STATE.image}" alt="Uploaded design preview">`;
  preview.classList.remove('is-hidden');

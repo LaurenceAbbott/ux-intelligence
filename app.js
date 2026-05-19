@@ -790,16 +790,17 @@ function renderAiDesignReview(){
    <section class="panel section ai-context-panel">
       <div class="ai-context-header">
         <h3>Review context (optional)</h3>
-        <p class="section-subtitle">Add extra context to guide this review. You can leave everything as Not sure.</p>
+        <p class="section-subtitle">Add extra context to guide this review. You can leave these fields unselected if you're unsure.</p>
       </div>
       <div class="ai-context-grid">
         <label><span>Value stream</span>
           <span class="ai-context-select-wrap">
           <select id="ai-review-value-stream" class="field ai-context-select">
-            <option>Not sure</option>
-            <option>Acquire</option>
-            <option>Distribute</option>
-            <option>Serve</option>
+            <option value="">Please select</option>
+            <option value="Not sure">I’m not sure</option>
+            <option value="Acquire">Acquire</option>
+            <option value="Distribute">Distribute</option>
+            <option value="Serve">Serve</option>
           </select>
           </span>
         </label>
@@ -816,7 +817,7 @@ function renderAiDesignReview(){
         <label><span>Screen type</span>
           <span class="ai-context-select-wrap">
           <select id="ai-review-screen-type" class="field ai-context-select">
-            <option>Not sure</option><option>Login</option><option>Dashboard</option><option>Form</option><option>Data table</option><option>Workflow</option><option>Quote journey</option><option>Policy servicing</option><option>Payment/document screen</option><option>Admin/configuration screen</option><option>Other</option>
+            <option value="">Please select</option><option value="Not sure">I’m not sure</option><option value="Login">Login</option><option value="Dashboard">Dashboard</option><option value="Form">Form</option><option value="Data table">Data table</option><option value="Workflow">Workflow</option><option value="Quote journey">Quote journey</option><option value="Policy servicing">Policy servicing</option><option value="Payment/document screen">Payment/document screen</option><option value="Admin/configuration screen">Admin/configuration screen</option><option value="Other">Other</option>
           </select>
           </span>
         </label>
@@ -886,7 +887,13 @@ function bindAiReviewEvents(){
 }
 
 function getNotSureOptions(items=[]){
- return [...new Set(items.filter(Boolean))].map(item=>`<option>${esc(item)}</option>`).join('');
+ const unique = [...new Set(items.filter(Boolean))];
+ const filtered = unique.filter(item=>item !== 'Not sure');
+ return [
+  '<option value="">Please select</option>',
+  '<option value="Not sure">I’m not sure</option>',
+  ...filtered.map(item=>`<option value="${esc(item)}">${esc(item)}</option>`)
+ ].join('');
 }
 
 function getCurrentAiReviewContext(){
@@ -938,12 +945,12 @@ function bindAiReviewContextEvents(){
  const screenTypeSelect = document.getElementById('ai-review-screen-type');
  if(!valueStreamSelect || !personaSelect || !productAreaSelect || !userTaskInput || !screenTypeSelect) return;
 
- valueStreamSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedValueStream || 'Not sure';
+ valueStreamSelect.value = (AI_REVIEW_STATE.aiReviewContext.selectedValueStream === 'Not sure' ? '' : (AI_REVIEW_STATE.aiReviewContext.selectedValueStream || ''));
  refreshAiContextDependentOptions({ resetSelections: true });
- personaSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedPersona || 'Not sure';
- productAreaSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedProductArea || 'Not sure';
+ personaSelect.value = (AI_REVIEW_STATE.aiReviewContext.selectedPersona === 'Not sure' ? '' : (AI_REVIEW_STATE.aiReviewContext.selectedPersona || ''));
+ productAreaSelect.value = (AI_REVIEW_STATE.aiReviewContext.selectedProductArea === 'Not sure' ? '' : (AI_REVIEW_STATE.aiReviewContext.selectedProductArea || ''));
  userTaskInput.value = AI_REVIEW_STATE.aiReviewContext.userTask || '';
- screenTypeSelect.value = AI_REVIEW_STATE.aiReviewContext.selectedScreenType || 'Not sure';
+ screenTypeSelect.value = (AI_REVIEW_STATE.aiReviewContext.selectedScreenType === 'Not sure' ? '' : (AI_REVIEW_STATE.aiReviewContext.selectedScreenType || ''));
 
  valueStreamSelect.addEventListener('change', ()=>{refreshAiContextDependentOptions({ resetSelections: true }); syncAiReviewContextFromFields();});
  [personaSelect, productAreaSelect, screenTypeSelect].forEach(el=>el.addEventListener('change', syncAiReviewContextFromFields));

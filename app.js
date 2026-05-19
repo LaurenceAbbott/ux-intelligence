@@ -869,9 +869,6 @@ function renderAiDesignReview(){
   </section>
   <section class="section ai-review-step is-hidden" data-step-panel="3">
     <section id="aiReport" class="section"></section>
-    <div class="step-actions">
-      <button type="button" class="btn" id="aiStepBackToUploadBtn">Back: Upload design</button>
-    </div>
   </section>`;
  bindAiReviewEvents();
 }
@@ -1274,7 +1271,10 @@ function renderAiReport(review){
      <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
    </div>
 
-   <button class="btn primary ai-new-review-btn" id="createNewAiReviewBtn">Create a new AI Design Review</button>
+   <div class="ai-review-actions">
+     <button type="button" class="btn secondary-button" id="aiStepBackToUploadBtn">Back: Upload design</button>
+     <button class="btn primary ai-new-review-btn primary-button" id="createNewAiReviewBtn">Create a new AI Design Review</button>
+   </div>
  </section>`;
  document.getElementById('createNewAiReviewBtn')?.addEventListener('click', ()=>{
   resetAiReviewSession();

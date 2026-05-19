@@ -798,36 +798,28 @@ function renderAiDesignReview(){
         <h3>Review context (optional)</h3>
         <p class="section-subtitle">Add extra context to guide this review. You can leave these fields unselected if you're unsure.</p>
       </div>
-      <div class="ai-context-grid">
-        <label><span>Value stream</span>
-          <span class="ai-context-select-wrap">
-          <select id="ai-review-value-stream" class="field ai-context-select">
+      <div class="review-details-grid ai-context-grid">
+        <label class="check-control"><span>Value stream</span>
+          <select id="ai-review-value-stream">
             <option value="">Please select</option>
             <option value="Not sure">I’m not sure</option>
             <option value="Acquire">Acquire</option>
             <option value="Distribute">Distribute</option>
             <option value="Serve">Serve</option>
           </select>
-          </span>
         </label>
-        <label><span>Primary user / persona</span>
-          <span class="ai-context-select-wrap">
-          <select id="ai-review-persona" class="field ai-context-select"></select>
-          </span>
+        <label class="check-control"><span>Primary user / persona</span>
+          <select id="ai-review-persona"></select>
         </label>
-        <label><span>Product / area</span>
-          <span class="ai-context-select-wrap">
-          <select id="ai-review-product-area" class="field ai-context-select"></select>
-          </span>
+        <label class="check-control"><span>Product / area</span>
+          <select id="ai-review-product-area"></select>
         </label>
-        <label><span>Screen type</span>
-          <span class="ai-context-select-wrap">
-          <select id="ai-review-screen-type" class="field ai-context-select">
+        <label class="check-control"><span>Screen type</span>
+          <select id="ai-review-screen-type">
             <option value="">Please select</option><option value="Not sure">I’m not sure</option><option value="Login">Login</option><option value="Dashboard">Dashboard</option><option value="Form">Form</option><option value="Data table">Data table</option><option value="Workflow">Workflow</option><option value="Quote journey">Quote journey</option><option value="Policy servicing">Policy servicing</option><option value="Payment/document screen">Payment/document screen</option><option value="Admin/configuration screen">Admin/configuration screen</option><option value="Other">Other</option>
           </select>
-          </span>
         </label>
-        <label class="ai-context-user-task"><span>What is the user trying to do?</span>
+        <label class="check-control ai-context-user-task"><span>What is the user trying to do?</span>
           <textarea id="ai-review-user-task" class="field" rows="2" placeholder="Optional context about the user's goal"></textarea>
         </label>
       </div>

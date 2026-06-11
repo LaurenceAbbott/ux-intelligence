@@ -1118,14 +1118,14 @@ function buildAiReviewPayload(){
   console.warn("Could not build Open GI context. Continuing without it.", error);
   openGiContext = {};
  }
- return {context:{screenType:'Other',userType:'Mixed / unknown',aiReviewContext: currentAiReviewContext,openGiContext},openGiContext,image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"The summary must be a design critique, not a description of the screenshot. Do not start with 'A login page', 'This screen shows', 'The screenshot contains', 'The design features', or similar descriptive wording. Start with a design judgement such as 'Overall, this feels…', 'This is working well because…', 'The main task is clear, but…', or 'I’d say this is…'. Explain what is working, what feels weaker, and what should be improved first. Write all visible copy as finished, polished sentences. Do not return rough notes, fragments, or awkward phrases. Do not use phrases like 'Consider show', 'Consider ensure', 'I’d check increase', or 'Button what stands out first'. Critical improvements should be direct actions. Prefer 'Show inline validation…', 'Increase spacing…', 'Review contrast…', 'Clarify…', 'Make…', 'Add…'. Only use 'Consider…' for genuinely optional ideas, not essential fixes. designerSummary should be 2-3 sentences. topStrengths should contain 3 polished sentences. criticalImprovements should contain 3 polished action-oriented sentences. These fields are displayed directly to users and must be grammatically correct.",preferredOutput:{designerSummary:'2-3 sentence critique for direct display',topStrengths:['3 polished complete sentences'],criticalImprovements:['3 polished action-oriented sentences'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
+ return {context:{screenType:'Other',userType:'Mixed / unknown',aiReviewContext: currentAiReviewContext,openGiContext},openGiContext,image:{...AI_REVIEW_STATE.imageMeta,dataUrl:AI_REVIEW_STATE.image},relatedCards:getSelectedRelatedCards(),promptInstructions:"The summary must be a design critique, not a description of the screenshot. Do not start with 'A login page', 'This screen shows', 'The screenshot contains', 'The design features', or similar descriptive wording. Start with a design judgement such as 'Overall, this feels…', 'This is working well because…', 'The main task is clear, but…', or 'I’d say this is…'. Explain what is working, what feels weaker, and what should be improved first. Write all visible copy as finished, polished sentences. Do not return rough notes, fragments, or awkward phrases. Do not use phrases like 'Consider show', 'Consider ensure', 'I’d check increase', or 'Button what stands out first'. Critical improvements should be direct actions. Prefer 'Show inline validation…', 'Increase spacing…', 'Review contrast…', 'Clarify…', 'Make…', 'Add…'. Only use 'Consider…' for genuinely optional ideas, not essential fixes. designerSummary should be 2-3 sentences. topStrengths should contain 3 polished sentences. criticalImprovements should contain 3 polished action-oriented sentences. suggestedDesignChanges should contain 3 practical, plain-English changes a designer could try next, with concrete examples where useful. These fields are displayed directly to users and must be grammatically correct.",preferredOutput:{score:'0-100 number scored by the Worker',ratingLabel:'short rating label for the score',designerSummary:'2-3 sentence critique for direct display',topStrengths:['3 polished complete sentences'],criticalImprovements:['3 polished action-oriented sentences'],suggestedDesignChanges:['3 practical design changes to try next'],screenSummary:'fallback summary field for backwards compatibility',strengths:'fallback strengths field for backwards compatibility',potentialIssues:'fallback issues field for backwards compatibility',recommendedActions:'fallback actions field for backwards compatibility'}};}
 async function callAiReviewWorker(payload){const r=await fetch(AI_REVIEW_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error(`Worker request failed (${r.status})`); return r.json();}
 function getScoreBand(score){if(typeof score!=='number'||Number.isNaN(score))return 'Not scored'; if(score>=90)return 'excellent'; if(score>=75)return 'good'; if(score>=50)return 'watch'; return 'critical';}
 function getPassFailBadge(score){if(typeof score!=='number'||Number.isNaN(score)) return {label:'REVIEW REQUIRED',className:'review'}; if(score>=90) return {label:'PASS — Low concern',className:'pass'}; if(score>=75) return {label:'PASS WITH WATCHOUTS — Medium concern',className:'watch'}; if(score>=50) return {label:'NEEDS REVIEW — High concern',className:'needs-review'}; return {label:'FAIL — Critical concern',className:'fail'};}
 function getConcernRating(score){if(typeof score!=='number'||Number.isNaN(score)) return 'Not scored — review required'; if(score>=90)return 'Low concern — Minor improvements only'; if(score>=75)return 'Medium concern — Noticeable friction or inconsistency'; if(score>=50)return 'High concern — Significant usability, accessibility or workflow issue'; return 'Critical concern — Blocks completion, creates risk or prevents accessibility';}
 function countHighPriorityActions(actions=[]){return actions.filter(a=>String(a.priority).toLowerCase()==='high').length;}
 function matchEvidenceCardByName(name=''){const match=DATA.cards.find(c=>String(c.Name).toLowerCase()===String(name).toLowerCase()); return match?{slug:match.Slug,name:match.Name}:null;}
-function normaliseAiReviewResponse(response={}){const norm={...response}; norm.mode=norm.mode||'AI Design Review'; norm.uxQualityScore=Number.isFinite(Number(norm.uxQualityScore))?Number(norm.uxQualityScore):null; norm.headlineFindings=Array.isArray(norm.headlineFindings)?norm.headlineFindings.slice(0,5):[]; norm.strengths=Array.isArray(norm.strengths)?norm.strengths:[]; norm.potentialIssues=Array.isArray(norm.potentialIssues)?norm.potentialIssues:[]; norm.recommendedActions=Array.isArray(norm.recommendedActions)?norm.recommendedActions:[]; norm.relatedEvidence=Array.isArray(norm.relatedEvidence)?norm.relatedEvidence:[]; norm.limitations=Array.isArray(norm.limitations)?norm.limitations:[]; norm.checklistResults=Array.isArray(norm.checklistResults)?norm.checklistResults:[];
+function normaliseAiReviewResponse(response={}){const norm={...response}; norm.mode=norm.mode||'AI Design Review'; norm.uxQualityScore=Number.isFinite(Number(norm.uxQualityScore))?Number(norm.uxQualityScore):null; norm.headlineFindings=Array.isArray(norm.headlineFindings)?norm.headlineFindings.slice(0,5):[]; norm.strengths=Array.isArray(norm.strengths)?norm.strengths:[]; norm.suggestedDesignChanges=Array.isArray(norm.suggestedDesignChanges)?norm.suggestedDesignChanges:[]; norm.potentialIssues=Array.isArray(norm.potentialIssues)?norm.potentialIssues:[]; norm.recommendedActions=Array.isArray(norm.recommendedActions)?norm.recommendedActions:[]; norm.relatedEvidence=Array.isArray(norm.relatedEvidence)?norm.relatedEvidence:[]; norm.limitations=Array.isArray(norm.limitations)?norm.limitations:[]; norm.checklistResults=Array.isArray(norm.checklistResults)?norm.checklistResults:[];
  norm.concernRating=norm.concernRating||getConcernRating(norm.uxQualityScore);
  const order={high:0,medium:1,low:2};
  norm.recommendedActions=norm.recommendedActions.map(a=>({...a,priority:(a.priority||'Medium')})).sort((a,b)=>(order[String(a.priority).toLowerCase()]??1)-(order[String(b.priority).toLowerCase()]??1));
@@ -1133,7 +1133,7 @@ function normaliseAiReviewResponse(response={}){const norm={...response}; norm.m
  return norm;
 }
 function runLocalDesignReview(payload){const cards=payload.relatedCards.slice(0,8); const score=Math.max(55,Math.min(92,70+cards.length)); return {mode:'Local prototype review',reviewConfidence:'Medium',uxQualityScore:score,concernRating:getConcernRating(score),headlineFindings:['Primary actions are visible, but hierarchy may not always guide first click effectively.','Information grouping could be improved to reduce scan effort.','Accessibility risks may exist around contrast, labels and focus cues.'],strengths:[{title:'Clear review framing',detail:'Context and uploaded screenshot provide enough information for a first-pass UX report.'},{title:'Framework coverage',detail:'Selected framework cards create good breadth across usability and accessibility concerns.'}],potentialIssues:cards.slice(0,5).map(c=>({title:`Potential gap: ${c.name}`,issue:'The current layout may not fully support fast decision-making for the target user flow.',relatedCards:[c.name],impact:'Could increase completion time, errors or support dependency.',recommendation:`Review and iterate using this evidence prompt: ${c.checklistPrompt}`,confidence:'Medium'})),recommendedActions:cards.slice(0,5).map((c,i)=>({priority:i<2?'High':i<4?'Medium':'Low',action:`Prioritise improvements aligned to ${c.name}.`,why:'Improves completion speed and consistency.',relatedCards:[c.name]})),relatedEvidence:cards.map(c=>({cardName:c.name,slug:c.slug,reason:'Matched from selected screen type and user type context.'})),checklistResults:cards.map(c=>({cardName:c.name,slug:c.slug,checklistPrompt:c.checklistPrompt,result:'Review manually',comment:''})),limitations:['This review cannot verify real user behaviour without task-based testing.','This review cannot confirm technical accessibility compliance from screenshot alone.']};}
-function validateAiResponse(x){return !!(x && (x.designerSummary || Array.isArray(x.topStrengths) || Array.isArray(x.criticalImprovements) || Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions)));}
+function validateAiResponse(x){return !!(x && (x.designerSummary || Array.isArray(x.topStrengths) || Array.isArray(x.criticalImprovements) || Array.isArray(x.suggestedDesignChanges) || Array.isArray(x.headlineFindings) || Array.isArray(x.potentialIssues) || Array.isArray(x.recommendedActions)));}
 async function handleRunAiDesignReview(){
  console.log("Run AI Design Review clicked");
  return runAiDesignReview();
@@ -1219,7 +1219,7 @@ async function runAiDesignReview(){
   setRunReviewButtonState();
  }
 }
-function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping findings to framework evidence...','Prioritising recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
+function toggleAiLoading(show){const inlineLoader=document.getElementById('aiDropLoader'); if(!inlineLoader) return; inlineLoader.classList.toggle('is-hidden',!show); const progress=document.getElementById('aiLoadingProgress'); const messages=['Reviewing visible hierarchy...','Checking accessibility signals...','Mapping design feedback...','Prioritising practical recommendations...','Building your review report...']; if(show){let i=0; progress.style.width='8%'; document.getElementById('loadingMessage').textContent=messages[0]; AI_REVIEW_STATE.loadingInterval=setInterval(()=>{i=(i+1)%messages.length;document.getElementById('loadingMessage').textContent=messages[i]; progress.style.width=`${Math.min(95,(i+1)*18)}%`;},1200);} else {clearInterval(AI_REVIEW_STATE.loadingInterval); progress.style.width='100%'; setTimeout(()=>progress.style.width='0%',250);} }
 function tidyText(value=''){return String(value||'').replace(/\s+/g,' ').trim();}
 function getValidScore(value){
  const raw=Number(value);
@@ -1276,13 +1276,18 @@ function normaliseSimpleAiReview(review={}){
  const directImprovements=cleanList(review.criticalImprovements);
  const fallbackImprovements=directImprovements.length?[]:cleanList([...(review.potentialIssues||[]).map(i=>i?.recommendation||i?.issue||i?.title||''),...(review.recommendedActions||[]).map(a=>a?.action||a?.recommendation||a?.why||'')]);
  const criticalImprovements=(directImprovements.length?directImprovements:fallbackImprovements).slice(0,3);
+ const resolvedCriticalImprovements=criticalImprovements.length?criticalImprovements:FALLBACK_IMPROVEMENTS;
+
+ const directSuggestedChanges=cleanList(review.suggestedDesignChanges);
+ const suggestedDesignChanges=(directSuggestedChanges.length?directSuggestedChanges:resolvedCriticalImprovements).slice(0,3);
 
  return {
   score,
   ratingLabel,
   summary,
   topStrengths:topStrengths.length?topStrengths:FALLBACK_STRENGTHS,
-  criticalImprovements:criticalImprovements.length?criticalImprovements:FALLBACK_IMPROVEMENTS
+  criticalImprovements:resolvedCriticalImprovements,
+  suggestedDesignChanges
  };
 }
 
@@ -1295,6 +1300,7 @@ function renderAiReport(review){
   designerSummary: review?.designerSummary,
   topStrengths: review?.topStrengths,
   criticalImprovements: review?.criticalImprovements,
+  suggestedDesignChanges: review?.suggestedDesignChanges,
   score: review?.score,
   ratingLabel: review?.ratingLabel
  });
@@ -1313,9 +1319,10 @@ function renderAiReport(review){
      </div>
    </div>
    <p class="ai-review-summary-copy">${esc(simpleReview.summary)}</p>
-   <div class="ai-review-two-cards">
+   <div class="ai-review-cards">
      <section class="ai-review-card ai-review-card-strengths"><h3>Top strengths</h3>${renderListItems(simpleReview.topStrengths)}</section>
      <section class="ai-review-card ai-review-card-improvements"><h3>Critical improvements</h3>${renderListItems(simpleReview.criticalImprovements)}</section>
+     <section class="ai-review-card ai-review-card-suggestions"><h3>What I’d try</h3>${renderListItems(simpleReview.suggestedDesignChanges)}</section>
    </div>
 
    <div class="ai-review-actions">
